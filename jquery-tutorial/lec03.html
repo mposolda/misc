@@ -49,5 +49,33 @@
         </div>
 
         <div class="gold">Tenhle span bude vybranej selektorem: div[class ^= 'g'][class $= 'ld']</div>
+
+        <div id="traversing-example1">
+            <span id="trv-span1">
+                <a id="trv-text">tenhle odkaz se zabarvi cyanem</a>
+            </span>
+            <br />
+            <span id="trv-span2">
+                <a id="trv-text2">tenhle odkaz se taky zabarvi cyanem, ale pak hned greenem</a>
+            </span>
+            <br />
+            Samostatnej text, ktery se zbarvi hnede
+        </div>
+
+        <ul id="traversing-example2">
+            <li>Klikni na me, abych se zbarvil cervene, ale jen na netucnou cast <strong>Pri kliku na tucnou cast se zbarvim modre, pac su ve "strongu"</strong></li>
+            <li><span>Klikni na me, abych se zbarvil zelene, protoze su ve "spanu"</span></li>
+            <li>Klikni na me, abych se zbarvil cervene</li>
+        </ul>
+
+        <div id="lastpart1">Tenhle div se zbarvi zelene</div>
+        <div id="lastpart2">A tenhle taky</div>
+
+        <div>
+            <div id="lastpart3">Vnitrni div (zbarvi se modre). Celej parent se zbarvi modre</div>
+            <span>Vnitrni span (zbarvi se zelene)</span>
+            <span>Dalsi span se uz nezbarvi (zustane modrej)</span>
+        </div>
+
     </body>
 </html>

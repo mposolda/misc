@@ -51,4 +51,30 @@ $(document).ready(function(){
 
     // Podminka, ktera vybere div s class='gold' protoze zacina na 'g' a zaroven konci na 'ld'
     $("div[class ^= 'g'][class $= 'ld']").css("color", "blue");
+
+    // Traversing -
+    $("#traversing-example1").children().css("color", "cyan");
+    $("#traversing-example1 #trv-span1").siblings().css("color", "green");
+
+    $("#traversing-example2").click(function(event) {
+         // pri kliknuti na seznam (i prvky v nem). Kdyz to bude "li"
+         if ($(event.target).is('li') ) {
+             // tak mu nastavi barvu pozadi na cervenou
+             $(event.target).css('background-color', 'red');
+         } else if ($(event.target).is('strong') ) {
+             $(event.target).css('background-color', 'blue');
+         } else if ($(event.target).is('span') ) {
+             $(event.target).css('background-color', 'green');
+         }
+    });
+
+    // Carka vybere vsechny
+    $("#lastpart1, #lastpart2").css("background-color", "green");
+
+    // Ale nevim, jak se z parenta dostat k podelementum (treba ke vsem spanum)
+    $("#lastpart3").parent().css("background-color", "blue");
+
+
+    // Workaround je tohle. Chci zbarvit zelene prvni 'span' ktery je sibling od divu s ID="lastpart3"
+    $("#lastpart3 ~ span:first").css("background-color", "green");
 });
