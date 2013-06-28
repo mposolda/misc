@@ -11,7 +11,8 @@
 
 
   <modules>
-    <!--    <module>jquery-tutorial</module>-->
+    <!--<module>jquery-tutorial</module>-->
+    <module>distributable-webapp</module>
   </modules>
 
 </project>
