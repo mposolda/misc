@@ -14,9 +14,15 @@ public class SessionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.getWriter().println("SessionServlet triggered");
+        String some = (String)req.getSession().getAttribute("some");
+        if (some == null) {
+            some = "12345679";
+        }
 
-        req.getSession().getAttribute("some");
-        req.getSession().setAttribute("some", "123456789123456789123456789123465789123456789");
+        int increased = Integer.parseInt(some) + 1;
+        some = String.valueOf(increased);
+        req.getSession().setAttribute("some", some);
+
+        resp.getWriter().println("SessionServlet triggered: " + some);
     }
 }
