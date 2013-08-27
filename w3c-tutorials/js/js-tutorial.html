@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<script>
+// Definition of object (class constructor)
+function person(firstname,lastname,age,eyecolor)
+{
+// Object properties
+this.firstname=firstname;
+this.lastname=lastname;
+this.age=age;
+this.eyecolor=eyecolor;
+
+// Function in object
+this.greetings = function(greeting)  {  
+  return greeting + " " + this.firstname + " " + this.lastname + "<br>";
+};
+
+}
+
+
+myFather=new person("John","Doe",50,"blue");
+yourFather=new person("kokos", "Malaks", 75, "red");
+
+
+// Prototype is cool thing, as it allows to extend any JS class dynamically
+person.prototype.hello=function() {
+  return this.greetings("Hello");
+}
+
+
+// One-time object
+koko={
+  fn:"Gary", 
+  ln:"Hu",
+  fullname:function() {
+     return "FN: " + this.fn + " " + this.ln + "<br>";
+  }
+};
+
+koko.hello=function(greet) {
+  return greet + " " + this.fullname();
+};
+
+
+document.write(myFather.firstname + " is " + myFather.age + " years old. " + myFather.greetings("Hello"));
+document.write(yourFather.firstname + " is " + yourFather.age + " years old." + yourFather.greetings("Hi"));
+document.write("HELLO: " + yourFather.hello());
+document.write(koko.fullname());
+document.write(koko.hello("Hello"));
+</script>
+
+</body>
+</html>
+
+

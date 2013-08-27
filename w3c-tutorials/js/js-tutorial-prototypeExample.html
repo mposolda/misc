@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<script>
+
+function Wrapper(wrapped) {
+  this.insert = function(text) {
+    wrapped.innerHTML=text;
+  }  
+}
+
+function $(id) {
+  var element = document.getElementById(id);
+  var wrapper = new Wrapper(element);
+  return wrapper;
+}
+
+function myFunction()
+{
+$("h01").insert("Hello Prototyper!");
+}
+
+Event={
+
+  observe:function(elment, argumentFunction) {    
+    elment.onLoared = argumentFunction;   
+    argumentFunction();     
+  }
+
+};
+
+</script>
+</head>
+
+<body>
+<h1 id="h01"></h1>
+
+<script>
+Event.observe(document.getElementsByTagName("body")[0], myFunction);
+</script>
+
+</body>
+</html> 
+

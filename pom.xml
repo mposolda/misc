@@ -13,6 +13,7 @@
   <modules>
     <!--<module>jquery-tutorial</module>-->
     <module>distributable-webapp</module>
+      <module>mongodb-tutorial</module>
   </modules>
 
 </project>
