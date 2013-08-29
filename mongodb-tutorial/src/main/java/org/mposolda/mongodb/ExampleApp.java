@@ -28,9 +28,10 @@ public class ExampleApp {
         printCollectionNames(javaDB);
 
         DBCollection orders = javaDB.getCollection("orders");
+        DBCollection orderTimes = javaDB.getCollection("orderTimes");
         //writeInitialOrders(orders);
-        printOrders(orders);
-        // removeOrders(orders);
+
+        testDAO(orders, orderTimes);
 
         mongoClient.close();
     }
@@ -66,24 +67,70 @@ public class ExampleApp {
         System.out.println("Added item to orders with result: " + result);
     }
 
-    private static void printOrders(DBCollection orders) {
-        System.out.println("find()");
-        DBCursor cursor = orders.find();
-        printCursor(cursor);
+    private static void testDAO(DBCollection orders, DBCollection orderTimes) {
+        System.out.println("testDAO()");
+        DAOApi dao = new DAO(orders, orderTimes);
 
-        long count = orders.count();
-        System.out.println("orders count: " + count);
-        System.out.println("---------------");
+        // Add some orders first
+        String oid1 = dao.addOrder(1, 1);
+        String oid2 = dao.addOrder(1, 2);
+        String oid3 = dao.addOrder(2, 3);
 
-        System.out.println("find({cust_id, 1})");
-        cursor = orders.find(new BasicDBObject("cust_id", 1));
-        printCursor(cursor);
-    }
+        Order order1 = dao.getOrder(oid1);
+        Order order2 = dao.getOrder(oid2);
+        Order order3 = dao.getOrder(2, 3);
+        Order order4 = dao.getOrder(2, 4);
 
-    private static void printCursor(DBCursor cursor) {
-        for (DBObject dbObject : cursor) {
-            System.out.println(dbObject);
-        }
-        System.out.println("---------------");
+        System.out.println(order1);
+        System.out.println(order2);
+        System.out.println(order3);
+        System.out.println(order4);
+        System.out.println("-------------------");
+
+        Set<Order> orders1 = dao.getOrders(1);
+        Set<Order> orders2 = dao.getOrders(2);
+        Set<Order> orders3 = dao.getOrdersOr(1, 3);
+        Set<Order> orders4 = dao.getOrdersOr(1, 2);
+
+        System.out.println(orders1);
+        System.out.println(orders2);
+        System.out.println(orders3);
+        System.out.println(orders4);
+        System.out.println("-------------------");
+
+        dao.pushItemToOrder(order1, new Item("item1", 100));
+        dao.pushItemToOrder(order1, new Item("item2", 200));
+        dao.pushItemToOrder(order2, new Item("item3", 300));
+        Set<Item> items1 = dao.getItemsOfOrder(order1);
+        Set<Item> items2 = dao.getItemsOfOrder(order2);
+        Set<Item> items3 = dao.getItemsOfOrder(order3);
+
+        System.out.println(items1);
+        System.out.println(items2);
+        System.out.println(items3);
+        System.out.println("-------------------");
+
+        dao.removeItemFromOrder(order1, "item1");
+        items1 = dao.getItemsOfOrder(order1);
+        System.out.println(items1);
+        System.out.println("-------------------");
+
+        dao.addOrderTimeToOrder(order1, 12);
+        dao.addOrderTimeToOrder(order1, 34);
+        dao.addOrderTimeToOrder(order2, 56);
+        Set<OrderTime> orderTimes1 = dao.getOrderTimesOfOrder(order1);
+        Set<OrderTime> orderTimes2 = dao.getOrderTimesOfOrder(order2);
+        OrderTime orderTime1 = dao.getOrderTime(orderTimes1.iterator().next().getOid());
+
+        System.out.println(orderTimes1);
+        System.out.println(orderTimes2);
+        System.out.println(orderTime1);
+        System.out.println("-------------------");
+
+        // Cleanup everything
+        dao.removeOrder(order1);
+        dao.removeOrder(order2);
+        dao.removeOrder(order3);
+        System.out.println("testDAO() finished --------------------------");
     }
 }
