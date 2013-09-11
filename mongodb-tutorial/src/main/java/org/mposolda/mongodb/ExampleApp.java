@@ -1,7 +1,10 @@
 package org.mposolda.mongodb;
 
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +32,14 @@ public class ExampleApp {
 
         DBCollection orders = javaDB.getCollection("orders");
         DBCollection orderTimes = javaDB.getCollection("orderTimes");
-        //writeInitialOrders(orders);
+        DBCollection customers = javaDB.getCollection("customers");
+
+        orders.drop();
+        orderTimes.drop();
+        customers.drop();
+
+        writeInitialCustomers(customers);
+        readInitialCustomers(customers);
 
         testDAO(orders, orderTimes);
 
@@ -57,14 +67,31 @@ public class ExampleApp {
     }
 
 
-    private static void writeInitialOrders(DBCollection orders) {
-        BasicDBObject dbObject = new BasicDBObject("cust_id", 2).append("order_id", 3);
-        BasicDBObject subitem1 = new BasicDBObject("item_name", "item5").append("cost", 50);
-        BasicDBObject subitem2 = new BasicDBObject("item_name", "item6").append("cost", 10);
-        dbObject.append("items", new BasicDBObject[] { subitem1, subitem2});
+    private static void writeInitialCustomers(DBCollection customers) {
+        List<String> embedded = new ArrayList<String>(); //Arrays.asList(new String[] { "Venca", "Jenda", "Cenda"});
 
-        WriteResult result = orders.insert(dbObject);
-        System.out.println("Added item to orders with result: " + result);
+        BasicDBObject dbObject = new BasicDBObject("firstName", "John").append("lastName", "Doe").append("createdData", new Date());
+        dbObject.append("kids", embedded );
+
+        WriteResult result = customers.insert(dbObject);
+        System.out.println("Added customer with result: " + result);
+    }
+
+    private static void readInitialCustomers(DBCollection customers) {
+        DBObject found = customers.findOne();
+        System.out.println("Found object: " + found);
+
+        List<String> kids = (List)found.get("kids");
+
+        // Remove item "Venca" from kids
+        BasicDBObject query = new BasicDBObject("_id", found.get("_id"));
+        BasicDBObject pullCommand = new BasicDBObject("$pull", new BasicDBObject("kids", "Venca"));
+        BasicDBObject pushCommand = new BasicDBObject("$push", new BasicDBObject("kids", "Zdenda"));
+        customers.update(query, pullCommand);
+        customers.update(query, pushCommand);
+
+        DBObject found2 = customers.findOne();
+        System.out.println("Found object after unshift: " + found2);
     }
 
     private static void testDAO(DBCollection orders, DBCollection orderTimes) {
