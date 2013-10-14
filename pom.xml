@@ -15,6 +15,7 @@
     <module>distributable-webapp</module>
       <module>mongodb-tutorial</module>
       <module>mongo-course</module>
+      <module>ldap-test</module>
   </modules>
 
 </project>
