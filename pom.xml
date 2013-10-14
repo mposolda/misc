@@ -16,6 +16,7 @@
       <module>mongodb-tutorial</module>
       <module>mongo-course</module>
       <module>ldap-test</module>
+      <module>simple-web-app</module>
   </modules>
 
 </project>

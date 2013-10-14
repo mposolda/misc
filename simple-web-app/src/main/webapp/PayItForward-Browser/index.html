@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Pay It Forward</title>
+
+    <meta name="description" content="Pay It Forward">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery. -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+    <!-- Application scripts. -->
+    <script src="scripts/init.js"></script>
+
+    <!-- jQuery Mobile. -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.3.2/jquery.mobile.min.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/jquery-mobile/1.3.2/jquery.mobile.min.css" rel="stylesheet" />
+    
+    
+    <!-- Application styles. -->
+    <link href="styles/main.css" rel="stylesheet" />
+  </head>
+  <body>
+
+    <!-- Splash page. -->
+    <div data-role="page" id="splash">
+      <div data-role="header" data-position="fixed">
+        <h1>Pay It Forward</h1>
+      </div>
+      <div data-role="content">
+        <div data-role="navbar">
+          <ul>
+            <li><a class="signup" href="#">Login with Facebook</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Home. -->
+    <div data-role="page" data-title="Requests - Pay It Forward" id="home">
+      <div data-role="header" data-position="fixed">
+        <h1>Pay It Forward</h1>
+        <a class="logout ui-btn-right" href="#">Logout</a>
+      </div>
+      <div data-role="content">
+        <ul class="data" data-role="listview" data-icon="forward" data-inset="true"></ul>
+        <div class="empty hidden ui-bar ui-bar-e">No data yet.</div>
+        <a class="more" data-role="button" href="#">More</a>
+      </div>
+      <div data-id="navigation" data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a class="ui-btn-active ui-state-persist" href="#home">Requests</a></li>
+            <li><a href="#new">New</a></li>
+            <li><a href="#forwards">Forwards</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Forward -->
+      <div class="popup" data-role="popup" data-theme="a" id="forward">
+        <h3>Enter message</h3>
+        <form action="#forward" data-ajax="false" method="post">
+          <input autofocus id="message" name="message" />
+          <div data-role="controlgroup" data-type="horizontal">
+            <button data-icon="check" data-mini="true" type="submit">Submit</button>
+            <a data-role="button" data-icon="delete" data-mini="true" data-rel="back" href="#">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- New. -->
+    <div data-role="page" data-title="What help do you need? - Pay It Forward" id="new">
+      <div data-role="header" data-position="fixed">
+        <a data-icon="delete" data-rel="back">Cancel</a>
+        <h1>What help do you need?</h1>
+      </div>
+      <div data-role="content">
+        <form action="#new" data-ajax="false" method="post">
+          <label for="message">I am looking for an introduction to</label>
+          <input autofocus id="message" name="message" type="text" />
+          <button data-icon="check" type="submit">Submit</button>
+        </form>
+      </div>
+      <div data-id="navigation" data-position="fixed" data-role="footer">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#home">Requests</a></li>
+            <li><a class="ui-btn-active ui-state-persist" href="#new">New</a></li>
+            <li><a href="#forwards">Forwards</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- My Forwards. -->
+    <div data-role="page" data-title="My Forwards - Pay It Forward" id="forwards">
+      <div data-role="header" data-position="fixed">
+        <h1>Pay It Forward</h1>
+        <a class="logout ui-btn-right" href="#">Logout</a>
+        <div data-role="navbar">
+          <ul>
+            <li><a class="ui-btn-active ui-state-persist">My Forwards</a></li>
+            <li><a href="#allForwards">All Forwards</a></li>
+            <li><a href="#leaderboard">Leaderboard</a></li>
+          </ul>
+        </div>
+      </div>
+      <div data-role="content">
+        <ul class="data" data-role="listview" data-inset="true"></ul>
+        <div class="empty hidden ui-bar ui-bar-e">No data yet.</div>
+        <a class="more" data-role="button" href="#">More</a>
+      </div>
+      <div data-id="navigation" data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#home">Requests</a></li>
+            <li><a href="#new">New</a></li>
+            <li><a class="ui-btn-active ui-state-persist">Forwards</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- All Forwards. -->
+    <div data-role="page" data-title="All Forwards - Pay It Forward" id="allForwards">
+      <div data-role="header" data-position="fixed">
+        <h1>Pay It Forward</h1>
+        <a class="logout ui-btn-right" href="#">Logout</a>
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#forwards">My Forwards</a></li>
+            <li><a class="ui-btn-active ui-state-persist">All Forwards</a></li>
+            <li><a href="#leaderboard">Leaderboard</a></li>
+          </ul>
+        </div>
+      </div>
+      <div data-role="content">
+        <ul class="data" data-role="listview" data-inset="true"></ul>
+        <div class="empty hidden ui-bar ui-bar-e">No data yet.</div>
+        <a class="more" data-role="button" href="#">More</a>
+      </div>
+      <div data-id="navigation" data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#home">Requests</a></li>
+            <li><a href="#new">New</a></li>
+            <li><a class="ui-btn-active ui-state-persist">Forwards</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard. -->
+    <div data-role="page" data-title="Leaderboard - Pay It Forward" id="leaderboard">
+      <div data-role="header" data-position="fixed">
+        <h1>Pay It Forward</h1>
+        <a class="logout ui-btn-right" href="#">Logout</a>
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#forwards">My Forwards</a></li>
+            <li><a href="#allForwards">All Forwards</a></li>
+            <li><a class="ui-btn-active ui-state-persist">Leaderboard</a></li>
+          </ul>
+        </div>
+      </div>
+      <div data-role="content"></div>
+      <div data-id="navigation" data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#home">Requests</a></li>
+            <li><a href="#new">New</a></li>
+            <li><a class="ui-btn-active ui-state-persist">Forwards</a></li>
+            <li><a href="#settings">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings. -->
+    <div data-role="page" data-title="Settings - Pay It Forward" id="settings">
+      <div data-role="header" data-position="fixed">
+        <h1>Settings</h1>
+        <a data-icon="arrow-l" data-rel="back">Back</a>
+      </div>
+      <div data-role="content">
+        <h2>About</h2>
+        <p>This app demos the use of the Kinvey JavaScript Library. This app was used as official app for the #RubyRiot event.</p>
+      </div>
+      <div data-id="navigation" data-role="footer" data-position="fixed">
+        <div data-role="navbar">
+          <ul>
+            <li><a href="#home">Requests</a></li>
+            <li><a href="#new">New</a></li>
+            <li><a href="#forwards">Forwards</a></li>
+            <li><a class="ui-btn-active ui-state-persist">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Libraries. -->
+    <script src="vendor/jquery.mustache.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
+    <script src="//da189i1jfloii.cloudfront.net/js/kinvey-html5-1.1.1.min.js"></script>
+    
+    <script src="scripts/app.js"></script>
+  </body>
+</html>

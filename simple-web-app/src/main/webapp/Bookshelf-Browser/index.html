@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Bookshelf Sample Application</title>
+    
+    <meta name="description" content="Bookshelf Sample Application" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="MobileOptimized" content="320" />
+    <meta name="viewport" content="width=device-width" />
+
+    <!-- Bootstrap. -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body>
+    <!-- Header. -->
+    <div class="page-header">
+      <h1>Bookshelf Sample Application</h1>
+    </div>
+
+    <!-- Status. -->
+    <p class="alert alert-info" id="status">Loading…</p>
+
+    <!-- Add. -->
+    <form class="form-inline well" id="add" role="form">
+      <div class="form-group">
+        <label class="sr-only" for="title">Title</label>
+        <input autofocus required class="form-control" id="title" name="title" type="text" placeholder="Enter Title" />
+      </div>
+      <div class="form-group">
+        <label class="sr-only" for="author">Author</label>
+        <input required class="form-control" id="author" name="author" type="text" placeholder="Enter Author" />
+      </div>
+      <button class="btn btn-primary" type="submit">Place the book onto the shelf!</button>
+    </form>
+
+    <!-- List. -->
+    <h2>Books</h2>
+    <table class="table table-hover" id="list">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody class="hide" id="row-template">
+        <tr>
+          <td data-placeholder="index"></td>
+          <td data-placeholder="title"></td>
+          <td data-placeholder="author"></td>
+          <td><button class="btn btn-danger btn-xs" data-action="shred">Shred</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Filter. -->
+    <form class="form-inline well" id="filter" role="form">
+      <div class="form-group">
+        <label class="sr-only" for="search">Search</label>
+        <input class="form-control input-sm" id="search" name="search" type="search" placeholder="Search" />
+      </div>
+      <div class="form-group">
+        <label class="sr-only" for="sort">Sort</label>
+        <select class="form-control input-sm" id="sort" name="sort">
+          <option value="author">Sort by author</option>
+          <option value="title">Sort by title</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="sr-only" for="limit">Limit</label>
+        <select class="form-control input-sm" id="limit" name="limit">
+          <option value="">No limit</option>
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+        </select>
+      </div>
+      <button class="btn btn-link">Show!</button>
+    </form>
+
+    <!-- Footer. -->
+    <footer>
+      <em><small>Bookshelf Sample Application demonstrating Kinvey’s JavaScript library.</small></em>
+    </footer>
+
+    <!-- Libraries -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//da189i1jfloii.cloudfront.net/js/kinvey-html5-1.1.1.min.js"></script>
+
+    <script src="scripts/app.js"></script>
+  </body>
+</html>
