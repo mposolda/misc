@@ -18,6 +18,7 @@
       <module>hw2-3</module>
       <module>ldap-test</module>
       <module>simple-web-app</module>
+      <module>hw3-3</module>
   </modules>
 
 </project>
