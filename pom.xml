@@ -19,6 +19,7 @@
       <module>ldap-test</module>
       <module>simple-web-app</module>
       <module>hw3-3</module>
+      <module>java8</module>
   </modules>
 
 </project>
