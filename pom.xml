@@ -20,6 +20,7 @@
       <module>simple-web-app</module>
       <module>hw3-3</module>
       <module>java8</module>
+      <module>hw4-3</module>
   </modules>
 
 </project>
