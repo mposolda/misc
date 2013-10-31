@@ -1,0 +1,10 @@
+import org.mposolda.drools.hw.Message;
+import org.mposolda.drools.hw.Action;
+
+rule "Act on high value in message"
+when
+  message:Message (messageValue > 17)
+then
+  Action action = new Action();
+  action.performAction(message);
+end

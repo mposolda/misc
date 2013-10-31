@@ -1,0 +1,8 @@
+import org.mposolda.drools.hw.Message;
+
+rule "Hello World"
+when
+  message:Message (type == 'Hello')
+then
+  message.printMessage();
+end

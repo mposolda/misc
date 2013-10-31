@@ -21,6 +21,7 @@
       <module>hw3-3</module>
       <module>java8</module>
       <module>hw4-3</module>
+      <module>drools-examples</module>
   </modules>
 
 </project>
