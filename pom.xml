@@ -22,6 +22,7 @@
       <module>java8</module>
       <module>hw4-3</module>
       <module>drools-examples</module>
+      <module>drools-examples</module>
   </modules>
 
 </project>
