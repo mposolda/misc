@@ -27,7 +27,7 @@ rule Recurse
         f : Fibonacci ( value == -1 )
     then
         insert( new Fibonacci( f.sequence - 1 ) );
-        System.out.println( "recurse for " + f.sequence );
+        System.out.println( "recurse for " + f.sequence + ", actual f is " + f);
 end
 
 rule Bootstrap
@@ -35,7 +35,7 @@ rule Bootstrap
         f : Fibonacci( sequence == 1 || == 2, value == -1 ) // this is a multi-restriction || on a single field
     then 
         modify ( f ){ value = 1 };
-        System.out.println( f.sequence + " == " + f.value );
+        System.out.println("Bootstrap: " + f.sequence + " == " + f.value );
 end
 
 rule Calculate
@@ -45,5 +45,5 @@ rule Calculate
         f3 : Fibonacci( s3 : sequence == (f2.sequence + 1 ), value == -1 )              
     then    
         modify ( f3 ) { value = f1.value + f2.value };
-        System.out.println( s3 + " == " + f3.value ); // see how you can access pattern and field  bindings
+        System.out.println("Calculate: " + s3 + " == " + f3.value ); // see how you can access pattern and field  bindings
 end 

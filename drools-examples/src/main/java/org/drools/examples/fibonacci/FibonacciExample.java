@@ -21,12 +21,15 @@ import org.drools.KnowledgeBaseFactory;
 import org.drools.builder.KnowledgeBuilder;
 import org.drools.builder.KnowledgeBuilderFactory;
 import org.drools.builder.ResourceType;
+import org.drools.event.rule.DebugAgendaEventListener;
+import org.drools.event.rule.DebugWorkingMemoryEventListener;
 import org.drools.io.ResourceFactory;
 import org.drools.runtime.StatefulKnowledgeSession;
 
 public class FibonacciExample {
 
     public static void main(final String[] args) {
+        long l = System.currentTimeMillis();
 
         final KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
         kbuilder.add( ResourceFactory.newClassPathResource( "Fibonacci.drl",
@@ -40,6 +43,8 @@ public class FibonacciExample {
             throw new RuntimeException("Compilation error.\n" + kbuilder.getErrors().toString());
         }
 
+        System.out.println("TIME1: " + (System.currentTimeMillis() - l));
+        for (int i=0 ; i<1 ; i++) {
         final StatefulKnowledgeSession ksession = kbase.newStatefulKnowledgeSession();
 
 //        KnowledgeRuntimeLogger logger = KnowledgeRuntimeLoggerFactory.newFileLogger(ksession, "log/fibonacci.log");
@@ -51,6 +56,9 @@ public class FibonacciExample {
 //        logger.close();
 
         ksession.dispose(); // Stateful rule session must always be disposed when finished
+        }
+
+        System.out.println(System.currentTimeMillis() - l);
 
     }
 

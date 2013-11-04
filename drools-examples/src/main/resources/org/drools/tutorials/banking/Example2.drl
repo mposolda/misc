@@ -18,7 +18,7 @@ package org.drools.tutorials.banking
    
 rule "Rule 01"   
     when
-        Number( $intValue : intValue )
+        Number( iintValue : intValue )
     then
-        System.out.println("Number found with value: " + $intValue); 
+        System.out.println("Number found with value: " + iintValue);
 end

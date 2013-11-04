@@ -110,10 +110,10 @@ public class PricingRuleTemplateExample {
 
 
         //Uncomment to see the base pricing rules
-        //System.out.println(basePricingDRL);
+        System.out.println("BASE PRICING DRL: " + basePricingDRL);
         //Uncomment to see the promotional pricing rules
-        //System.out.println(promotionalPricingDRL);
-
+        System.out.println("PROMOTIONAL PRICING DRL: " + promotionalPricingDRL);
+        System.out.println("---------------------------------------");
         //BUILD KBASE
         KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
         kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());

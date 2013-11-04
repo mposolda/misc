@@ -1,0 +1,11 @@
+import org.mposolda.drools.uripolicytest.Result;
+import org.mposolda.drools.uripolicytest.Decision;
+
+rule "Hello World"
+when
+  result: Result()
+  eval (1 == 1)
+then
+  System.out.println("Hello 1");
+  result.mergeDecision(Decision.ACCEPT);
+end

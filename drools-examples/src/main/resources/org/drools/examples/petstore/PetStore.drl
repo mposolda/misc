@@ -40,6 +40,7 @@ rule "Explode Cart"
         $order : Order( grossTotal == -1 )
         $item : Purchase() from $order.items
     then
+        System.out.println("ORDER: " + $order + ", ITEM: " + $item);
         insert( $item );
         drools.getKnowledgeRuntime().getAgenda().getAgendaGroup( "show items" ).setFocus();
         drools.getKnowledgeRuntime().getAgenda().getAgendaGroup( "evaluate" ).setFocus();
