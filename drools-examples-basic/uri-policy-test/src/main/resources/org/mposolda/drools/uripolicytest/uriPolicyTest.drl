@@ -1,14 +1,48 @@
 import org.mposolda.drools.uripolicytest.Result;
 import org.mposolda.drools.uripolicytest.Decision;
 import org.mposolda.drools.uripolicytest.UriPolicyInput;
+import org.mposolda.drools.uripolicytest.Token;
+import org.mposolda.drools.uripolicytest.MatcherInfo;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 dialect "mvel"
 
 rule "policy 1"
 when
-  result: Result()
-  upi: UriPolicyInput(uri == "/kokos/mlok" && (reqParams.get("param1") == "value1" && reqParams.get("param2") == "value2"))
+  $result: Result()
+  token: Token()
+  $upi: UriPolicyInput(uri == ("/kokos/" + token.username) && (reqParams.get("param1") == "value1" && reqParams.get("param2") == "value2"))
 then
-  System.out.println("URI matches!");
-  result.mergeDecision(Decision.ACCEPT);
+  System.out.println("policy1 matches!");
+  $result.mergeDecision(Decision.ACCEPT);
 end
+
+rule "policy 2"
+when
+  $result: Result()
+  token: Token()
+  $upi: UriPolicyInput(($m: matches("/kokos/mlok", uri)).matched())
+then
+  System.out.println("policy2 matches!");
+  $result.mergeDecision(Decision.ACCEPT);
+end
+
+function boolean matches(String regex, String textToMatch) {
+  System.out.println("pattern: " + pattern + ", matcher: " + matcher);
+  Pattern p = Pattern.compile(pattern);
+  Matcher m = p.matcher();
+
+  MatcherInfo mi;
+  if (m.find()) {
+    mi = new MatcherInfo(true);
+    for (int i=0 ; i<m.groupCount() ; i++) {
+      mi.addGroup(m.group(i));
+    }
+  } else {
+    mi = new MatcherInfo(false);
+  }
+
+  System.out.println("Going to return mi: " + mi);
+  return mi;
+}

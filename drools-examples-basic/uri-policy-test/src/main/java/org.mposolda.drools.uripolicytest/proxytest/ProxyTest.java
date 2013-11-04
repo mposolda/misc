@@ -8,7 +8,7 @@ import java.lang.reflect.Proxy;
 public class ProxyTest {
 
     public static void main(String[] args) {
-        Object proxy = Proxy.newProxyInstance(ProxyTest.class.getClassLoader(), new Class[] { MyInterface.class, Kokos.class }, new InvHandler(new Object()));
+        Object proxy = Proxy.newProxyInstance(ProxyTest.class.getClassLoader(), new Class[] { MyInterface.class }, new InvHandler(new Object()));
         MyInterface myProxy = (MyInterface)proxy;
         System.out.println(myProxy.getBar());
         System.out.println(myProxy.getFoo());

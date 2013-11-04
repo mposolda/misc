@@ -29,11 +29,14 @@ public class UriPolicyTrigger {
         Result result = new Result();
         workingMemory.insert(result);
 
-        Map<String, String> reqParams = new HashMap<>();
+        Map<String, String> reqParams = new HashMap<String, String>();
         reqParams.put("param1", "value1");
         reqParams.put("param2", "value2");
         UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok", reqParams);
         workingMemory.insert(uriInput);
+
+        Token token = new Token("mlok", null);
+        workingMemory.insert(token);
 
         int numberOfFiredPolicies = workingMemory.fireAllRules();
         System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + result.getDecision());
