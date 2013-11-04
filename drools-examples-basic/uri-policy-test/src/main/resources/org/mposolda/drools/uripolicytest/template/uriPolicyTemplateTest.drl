@@ -1,3 +1,10 @@
+template header
+PRIORITY
+URI_PATTERN
+QUERY_PARAMS_CONDITIONS
+
+package org.mposolda.drools.uripolicytest;
+
 import org.drools.WorkingMemory;
 import org.mposolda.drools.uripolicytest.Result;
 import org.mposolda.drools.uripolicytest.Decision;
@@ -10,49 +17,25 @@ import java.util.regex.Matcher;
 
 dialect "mvel"
 
-rule "policy 1"
-when
-  $result: Result()
-  token: Token()
-  $upi: UriPolicyInput(uri == ("/kokos/" + token.username) && (reqParams.get("param1") == "value1" && reqParams.get("param2") == "value2"))
-then
-  System.out.println("policy1 matches!");
-  $result.mergeDecision(Decision.ACCEPT);
-end
-
-rule "policy 2"
-dialect "mvel"
+template "Uri policy"
+rule "uri_policy_@{row.rowNumber}"
+salience @{PRIORITY}
 when
   $result: Result()
   $token: Token()
   $uriGroup: MatcherInfo()
-  $upi: UriPolicyInput(matchess("^/kokos/(" + $token.username + ")$", uri, $uriGroup))
+  $upi: UriPolicyInput(matches(@{URI_PATTERN}, uri, $uriGroup) && (@{QUERY_PARAMS_CONDITIONS}))
 then
-  System.out.println("policy2 matches!");
-  System.out.println("Group 0: " + $uriGroup.get(0));
-  System.out.println("Group 1: " + $uriGroup.get(1));
-  $result.mergeDecision(Decision.ACCEPT);
-  $uriGroup.reset();
-end
-
-rule "policy 3"
-dialect "mvel"
-when
-  $result: Result()
-  $token: Token()
-  $uriGroup: MatcherInfo()
-  $upi: UriPolicyInput(matchess("^/kokos/(" + any($token.realmRoles) + ")$", uri, $uriGroup))
-then
-  System.out.println("policy3 matches!");
+  System.out.println("uri_policy_@{row.rowNumber}");
   System.out.println("Group 0: " + $uriGroup.get(0));
   System.out.println("Group 1: " + $uriGroup.get(1));
   System.out.println("Realm role 1: " + $token.realmRoles.get(0));
   $result.mergeDecision(Decision.ACCEPT);
   $uriGroup.reset();
 end
+end template
 
-
-function boolean matchess(String regex, String textToMatch, MatcherInfo mi) {
+function boolean matches(String regex, String textToMatch, MatcherInfo mi) {
   System.out.println("regex: " + regex + ", textToMatch: " + textToMatch);
   Pattern p = Pattern.compile(regex);
   Matcher m = p.matcher(textToMatch);

@@ -47,3 +47,8 @@ rule "Log Event @{row.rowNumber}"
         logger.addLogging($activity);
 end
 end template
+
+
+function boolean any() {
+  return true;
+}
