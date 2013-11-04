@@ -11,9 +11,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>hello-world</module>
+        <module>uri-policy-test</module>
     </modules>
 
-    <artifactId>drools-examples</artifactId>
+    <artifactId>drools-examples-basic</artifactId>
 
 
 </project>

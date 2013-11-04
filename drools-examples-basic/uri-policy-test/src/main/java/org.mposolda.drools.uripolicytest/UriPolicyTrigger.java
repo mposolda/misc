@@ -38,6 +38,9 @@ public class UriPolicyTrigger {
         Token token = new Token("mlok", null);
         workingMemory.insert(token);
 
+        MatcherInfo mi = new MatcherInfo();
+        workingMemory.insert(mi);
+
         int numberOfFiredPolicies = workingMemory.fireAllRules();
         System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + result.getDecision());
     }

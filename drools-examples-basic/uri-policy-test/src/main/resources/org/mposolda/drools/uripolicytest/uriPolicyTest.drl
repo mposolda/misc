@@ -1,3 +1,4 @@
+import org.drools.WorkingMemory;
 import org.mposolda.drools.uripolicytest.Result;
 import org.mposolda.drools.uripolicytest.Decision;
 import org.mposolda.drools.uripolicytest.UriPolicyInput;
@@ -19,30 +20,34 @@ then
 end
 
 rule "policy 2"
+dialect "mvel"
 when
   $result: Result()
-  token: Token()
-  $upi: UriPolicyInput(($m: matches("/kokos/mlok", uri)).matched())
+  $token: Token()
+  $mi: MatcherInfo()
+  $upi: UriPolicyInput(matchess("^/kokos/(" + $token.username + ")$", uri, $mi))
 then
   System.out.println("policy2 matches!");
+  System.out.println("Group 0: " + $mi.get(0));
+  System.out.println("Group 1: " + $mi.get(1));
   $result.mergeDecision(Decision.ACCEPT);
+  $mi.reset();
 end
 
-function boolean matches(String regex, String textToMatch) {
-  System.out.println("pattern: " + pattern + ", matcher: " + matcher);
-  Pattern p = Pattern.compile(pattern);
-  Matcher m = p.matcher();
+function boolean matchess(String regex, String textToMatch, MatcherInfo mi) {
+  System.out.println("regex: " + regex + ", textToMatch: " + textToMatch);
+  Pattern p = Pattern.compile(regex);
+  Matcher m = p.matcher(textToMatch);
 
-  MatcherInfo mi;
   if (m.find()) {
-    mi = new MatcherInfo(true);
-    for (int i=0 ; i<m.groupCount() ; i++) {
+    mi.setMatched(true);
+    for (int i=0 ; i<=m.groupCount() ; i++) {
       mi.addGroup(m.group(i));
     }
   } else {
-    mi = new MatcherInfo(false);
+    mi.setMatched(false);
   }
 
   System.out.println("Going to return mi: " + mi);
-  return mi;
+  return mi.getMatched();
 }

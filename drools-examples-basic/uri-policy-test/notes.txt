@@ -1,0 +1,52 @@
+/something/kokos
+/something/*
+/something1/*/kokos/*            --- Musi to podporovat URI jako /something1/kijo/kokos/foo ale aji /something1/kijo1/kijo2/kokos/foo
+/something1/$([abc].*)           --- Podpora pro regex 
+/something1/{$token.username}/neco    --- Podpora pro /something1/john/neco
+/something1/{ any($token.realmRoles)}/neco --- any(token.realmRoles) muze byt kterakoliv z realmRoles v tokenu. Takze pokud token obsahuje "foo", "bar" tak nam vyhovuje /something1/foo/neco aji /something1/bar/neco
+
+/something1/${ any(token.applicationRoles)}/neco --- To stejne akorat pro applicationRoles
+
+
+QUERY PARAMS
+
+Muze obsahovat jakykoliv podminky. Takze treba: param1==10 && param2==param1
+
+
+PRIORITY (SALIENCE)
+
+priorita tohoto pravidla
+
+
+
+ALLOWED REALM ROLES
+role1, role2, $token.username, $uriGroup(1), $uriGroup(2), $uri, $requestParams  ---- Podpora pro $token.username (Ale neco jako any(...) tady uz asi zavolany byt nemuze... , $1, $2 jsou regexy z URI patternu
+
+
+
+ALLOWED APPLICATION ROLES
+
+DENIED REALM ROLES
+
+DENIED APPLICATION ROLES
+
+ALLOWED USERS
+
+DENIED USERS
+
+
+
+VSECHNY POVOLENE PROMENNE JSOU:
+$token,        (ODKAZ NA $token.username, $token.audience, $token.realmRoles.get(neco)
+$request
+$uri           
+$uriGroup(X)   (NECO JAKO $uriGroup(1), $uriGroup(2) ATD)
+$requestParams (ODKAZ NA $requestParams.get('param1'))
+
+
+"/something/kokos"
+"/something1/(.*)"
+"/something1/(.*)/kokos/(.*)"
+"/something1/(" + $token.username + ")/neco"
+"/something1/(" + any($token.realmRoles) + ")/neco"
+
