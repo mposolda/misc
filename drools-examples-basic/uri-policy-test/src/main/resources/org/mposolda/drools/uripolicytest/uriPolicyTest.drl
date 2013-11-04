@@ -7,7 +7,7 @@ dialect "mvel"
 rule "policy 1"
 when
   result: Result()
-  upi: UriPolicyInput(uri == "/kokos/mlok")
+  upi: UriPolicyInput(uri == "/kokos/mlok" && (reqParams.get("param1") == "value1" && reqParams.get("param2") == "value2"))
 then
   System.out.println("URI matches!");
   result.mergeDecision(Decision.ACCEPT);

@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Hello world!
@@ -27,7 +29,10 @@ public class UriPolicyTrigger {
         Result result = new Result();
         workingMemory.insert(result);
 
-        UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok");
+        Map<String, String> reqParams = new HashMap<>();
+        reqParams.put("param1", "value1");
+        reqParams.put("param2", "value2");
+        UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok", reqParams);
         workingMemory.insert(uriInput);
 
         int numberOfFiredPolicies = workingMemory.fireAllRules();
