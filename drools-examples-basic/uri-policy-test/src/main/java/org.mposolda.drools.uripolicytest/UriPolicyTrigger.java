@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Hello world!
@@ -35,7 +34,8 @@ public class UriPolicyTrigger {
         UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok", reqParams);
         workingMemory.insert(uriInput);
 
-        Token token = new Token("mlok", null);
+        List<String> roles =  Arrays.asList(new String[] {"mlok", "kolok", "bar"});
+        Token token = new Token("mlok", roles);
         workingMemory.insert(token);
 
         MatcherInfo mi = new MatcherInfo();

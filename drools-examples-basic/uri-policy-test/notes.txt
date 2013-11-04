@@ -1,7 +1,7 @@
 /something/kokos
 /something/*
 /something1/*/kokos/*            --- Musi to podporovat URI jako /something1/kijo/kokos/foo ale aji /something1/kijo1/kijo2/kokos/foo
-/something1/$([abc].*)           --- Podpora pro regex 
+/something1/([abc].*)           --- Podpora pro regex
 /something1/{$token.username}/neco    --- Podpora pro /something1/john/neco
 /something1/{ any($token.realmRoles)}/neco --- any(token.realmRoles) muze byt kterakoliv z realmRoles v tokenu. Takze pokud token obsahuje "foo", "bar" tak nam vyhovuje /something1/foo/neco aji /something1/bar/neco
 

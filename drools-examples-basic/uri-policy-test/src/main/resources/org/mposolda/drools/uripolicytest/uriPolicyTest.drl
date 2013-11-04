@@ -4,6 +4,7 @@ import org.mposolda.drools.uripolicytest.Decision;
 import org.mposolda.drools.uripolicytest.UriPolicyInput;
 import org.mposolda.drools.uripolicytest.Token;
 import org.mposolda.drools.uripolicytest.MatcherInfo;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -24,15 +25,31 @@ dialect "mvel"
 when
   $result: Result()
   $token: Token()
-  $mi: MatcherInfo()
-  $upi: UriPolicyInput(matchess("^/kokos/(" + $token.username + ")$", uri, $mi))
+  $uriGroup: MatcherInfo()
+  $upi: UriPolicyInput(matchess("^/kokos/(" + $token.username + ")$", uri, $uriGroup))
 then
   System.out.println("policy2 matches!");
-  System.out.println("Group 0: " + $mi.get(0));
-  System.out.println("Group 1: " + $mi.get(1));
+  System.out.println("Group 0: " + $uriGroup.get(0));
+  System.out.println("Group 1: " + $uriGroup.get(1));
   $result.mergeDecision(Decision.ACCEPT);
-  $mi.reset();
+  $uriGroup.reset();
 end
+
+rule "policy 3"
+dialect "mvel"
+when
+  $result: Result()
+  $token: Token()
+  $uriGroup: MatcherInfo()
+  $upi: UriPolicyInput(matchess("^/kokos/(" + any($token.realmRoles) + ")$", uri, $uriGroup))
+then
+  System.out.println("policy3 matches!");
+  System.out.println("Group 0: " + $uriGroup.get(0));
+  System.out.println("Group 1: " + $uriGroup.get(1));
+  $result.mergeDecision(Decision.ACCEPT);
+  $uriGroup.reset();
+end
+
 
 function boolean matchess(String regex, String textToMatch, MatcherInfo mi) {
   System.out.println("regex: " + regex + ", textToMatch: " + textToMatch);
@@ -50,4 +67,17 @@ function boolean matchess(String regex, String textToMatch, MatcherInfo mi) {
 
   System.out.println("Going to return mi: " + mi);
   return mi.getMatched();
+}
+
+
+function String any(List items) {
+  String result = "";
+  for (int i=0 ; i<items.size() ; i++) {
+    String item = (String)items.get(i);
+    if (i > 0) {
+        result = result + "|";
+    }
+    result = result + item;
+  }
+  return result;
 }
