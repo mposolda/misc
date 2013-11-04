@@ -1,11 +1,14 @@
 import org.mposolda.drools.uripolicytest.Result;
 import org.mposolda.drools.uripolicytest.Decision;
+import org.mposolda.drools.uripolicytest.UriPolicyInput;
 
-rule "Hello World"
+dialect "mvel"
+
+rule "policy 1"
 when
   result: Result()
-  eval (1 == 1)
+  upi: UriPolicyInput(uri == "/kokos/mlok")
 then
-  System.out.println("Hello 1");
+  System.out.println("URI matches!");
   result.mergeDecision(Decision.ACCEPT);
 end

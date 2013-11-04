@@ -7,8 +7,6 @@ import org.drools.compiler.DroolsError;
 import org.drools.compiler.DroolsParserException;
 import org.drools.compiler.PackageBuilder;
 import org.drools.compiler.PackageBuilderErrors;
-import org.drools.rule.*;
-import org.mposolda.drools.uripolicytest.Result;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +23,12 @@ public class UriPolicyTrigger {
         RuleBase ruleBase = initDrools();
 
         WorkingMemory workingMemory = ruleBase.newStatefulSession();
+
         Result result = new Result();
         workingMemory.insert(result);
+
+        UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok");
+        workingMemory.insert(uriInput);
 
         int numberOfFiredPolicies = workingMemory.fireAllRules();
         System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + result.getDecision());
