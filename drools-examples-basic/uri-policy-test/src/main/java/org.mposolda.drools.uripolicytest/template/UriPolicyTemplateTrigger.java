@@ -20,7 +20,7 @@ import java.util.*;
 public class UriPolicyTemplateTrigger {
 
     public static void main(String[] args) throws Exception {
-        UriTemplate template1 = new UriTemplate(10, "\"^/something/amos$\"", "reqParams.get(\"param1\") == \"value1\"");
+        UriTemplate template1 = new UriTemplate(8, "\"^/something/amos$\"", "reqParams.get(\"param1\") == \"value1\"");
         UriTemplate template2 = new UriTemplate(10, "\"^/something/([abc].*)$\"", "reqParams.get(\"param1\") == \"value1\"");
         List<UriTemplate> uriTemplates = new ArrayList<UriTemplate>();
         uriTemplates.add(template1);
@@ -70,7 +70,13 @@ public class UriPolicyTemplateTrigger {
     private static RuleBase initDrools(String templateString) throws IOException, DroolsParserException {
         PackageBuilder packageBuilder = new PackageBuilder();
 
-        Reader reader = new StringReader(templateString);
+        // Add DRL with functions
+        InputStream resourceAsStream = UriPolicyTemplateTrigger.class.getResourceAsStream("uriPolicyFunctions.drl");
+        Reader reader = new InputStreamReader(resourceAsStream);
+        packageBuilder.addPackageFromDrl(reader);
+
+        // Add DRL based on template
+        reader = new StringReader(templateString);
         packageBuilder.addPackageFromDrl(reader);
 
         PackageBuilderErrors errors = packageBuilder.getErrors();

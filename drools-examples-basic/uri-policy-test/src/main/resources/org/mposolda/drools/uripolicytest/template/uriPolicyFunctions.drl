@@ -1,0 +1,46 @@
+package org.mposolda.drools.uripolicytest;
+
+import org.drools.WorkingMemory;
+import org.mposolda.drools.uripolicytest.Result;
+import org.mposolda.drools.uripolicytest.Decision;
+import org.mposolda.drools.uripolicytest.UriPolicyInput;
+import org.mposolda.drools.uripolicytest.Token;
+import org.mposolda.drools.uripolicytest.MatcherInfo;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+dialect "mvel"
+
+function boolean matches(String regex, String textToMatch, MatcherInfo mi) {
+  System.out.println("regex: " + regex + ", textToMatch: " + textToMatch);
+  mi.reset();
+  Pattern p = Pattern.compile(regex);
+  Matcher m = p.matcher(textToMatch);
+
+  if (m.find()) {
+    mi.setMatched(true);
+    mi.addGroup(m.group());
+    for (int i=1 ; i<=m.groupCount() ; i++) {
+      mi.addGroup(m.group(i));
+    }
+  } else {
+    mi.setMatched(false);
+  }
+
+  System.out.println("Going to return mi: " + mi);
+  return mi.getMatched();
+}
+
+
+function String any(List items) {
+  String result = "";
+  for (int i=0 ; i<items.size() ; i++) {
+    String item = (String)items.get(i);
+    if (i > 0) {
+        result = result + "|";
+    }
+    result = result + item;
+  }
+  return result;
+}
