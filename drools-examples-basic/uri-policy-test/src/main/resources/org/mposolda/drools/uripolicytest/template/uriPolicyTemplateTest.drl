@@ -25,7 +25,7 @@ when
   $result: Result( isAlreadyProcessedRule("uri_policy_@{row.rowNumber}") == false )
   $endChecker: EndChecker( finished == false )
   $token: Token()
-  $uriGroup: MatcherInfo()
+  MatcherCache($uriGroup: matcherInfo("uri_policy_@{row.rowNumber}"));
   $upi: UriPolicyInput(matches(@{URI_PATTERN}, uri, $uriGroup) && (@{QUERY_PARAMS_CONDITIONS}))
 then
   System.out.println("uri_policy_@{row.rowNumber}");

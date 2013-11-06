@@ -13,23 +13,28 @@ import java.util.regex.Matcher;
 dialect "mvel"
 
 function boolean matches(String regex, String textToMatch, MatcherInfo mi) {
-  System.out.println("regex: " + regex + ", textToMatch: " + textToMatch);
-  mi.reset();
+  if (mi.isProcessed()) {
+    System.out.println("regex: " + regex + ", textToMatch: " + textToMatch + " already processed with result: " + mi);
+    return mi.isMatched();
+  }
+
+  System.out.println("regex: " + regex + ", textToMatch: " + textToMatch + " - start processing");
   Pattern p = Pattern.compile(regex);
   Matcher m = p.matcher(textToMatch);
 
   if (m.find()) {
     mi.setMatched(true);
-    mi.addGroup(m.group());
-    for (int i=1 ; i<=m.groupCount() ; i++) {
+
+    for (int i=0 ; i<=m.groupCount() ; i++) {
       mi.addGroup(m.group(i));
     }
   } else {
     mi.setMatched(false);
   }
 
+  mi.setProcessed(true);
   System.out.println("Going to return mi: " + mi);
-  return mi.getMatched();
+  return mi.isMatched();
 }
 
 

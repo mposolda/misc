@@ -20,7 +20,7 @@ import java.util.*;
 public class UriPolicyTemplateTrigger {
 
     public static void main(String[] args) throws Exception {
-        UriTemplate template1 = new UriTemplate(8, "\"^/something/amos$\"", "reqParams.get(\"param1\") == \"value1\"");
+        UriTemplate template1 = new UriTemplate(10, "\"^/something/amos$\"", "reqParams.get(\"param1\") == \"value1\"");
         UriTemplate template2 = new UriTemplate(10, "\"^/something/([abc].*)$\"", "reqParams.get(\"param1\") == \"value1\"");
         List<UriTemplate> uriTemplates = new ArrayList<UriTemplate>();
         uriTemplates.add(template1);
@@ -50,8 +50,8 @@ public class UriPolicyTemplateTrigger {
         Token token = new Token("mlok", roles);
         workingMemory.insert(token);
 
-        MatcherInfo mi = new MatcherInfo();
-        workingMemory.insert(mi);
+        MatcherCache cache = new MatcherCache();
+        workingMemory.insert(cache);
 
         int numberOfFiredPolicies = workingMemory.fireAllRules();
         System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + result.getDecision());

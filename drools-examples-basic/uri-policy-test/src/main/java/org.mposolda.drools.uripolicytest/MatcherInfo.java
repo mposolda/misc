@@ -9,10 +9,19 @@ import java.util.regex.Matcher;
  */
 public class MatcherInfo {
 
+    private boolean processed;
     private boolean matched;
     private List<String> groups = new ArrayList<String>();
 
-    public boolean getMatched() {
+    public boolean isProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
+    }
+
+    public boolean isMatched() {
         return matched;
     }
 
@@ -33,13 +42,10 @@ public class MatcherInfo {
         }
     }
 
-    public void reset() {
-        groups.clear();
-        matched = false;
-    }
-
     public String toString() {
-        return new StringBuilder("MatcherInfo [matched=")
+        return new StringBuilder("MatcherInfo [processed=")
+                .append(processed)
+                .append(", matched=")
                 .append(matched)
                 .append(", groups=")
                 .append(groups)
