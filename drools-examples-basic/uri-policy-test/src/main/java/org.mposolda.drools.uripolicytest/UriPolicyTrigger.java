@@ -34,7 +34,7 @@ public class UriPolicyTrigger {
         workingMemory.insert(uriInput);
 
         List<String> roles =  Arrays.asList(new String[] {"mlok", "kolok", "bar"});
-        Token token = new Token("mlok", roles);
+        Token token = new Token("mlok", roles, null);
         workingMemory.insert(token);
 
         MatcherInfo mi = new MatcherInfo();

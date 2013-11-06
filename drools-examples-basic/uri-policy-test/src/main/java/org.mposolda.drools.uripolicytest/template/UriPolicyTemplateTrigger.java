@@ -20,8 +20,12 @@ import java.util.*;
 public class UriPolicyTemplateTrigger {
 
     public static void main(String[] args) throws Exception {
-        UriTemplate template1 = new UriTemplate(10, "\"^/something/amos$\"", "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10");
-        UriTemplate template2 = new UriTemplate(8, "\"^/something/([abc].*)$\"", "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10");
+        UriTemplate template1 = new UriTemplate(10, "\"^/something/amos$\"",
+                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
+                "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
+        UriTemplate template2 = new UriTemplate(8, "\"^/something/([abc].*)$\"",
+                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
+                "\"role1\", $uriGroup.group(1)", null, null, null, "\"joohn\"", null);
         List<UriTemplate> uriTemplates = new ArrayList<UriTemplate>();
         uriTemplates.add(template1);
         uriTemplates.add(template2);
@@ -45,8 +49,9 @@ public class UriPolicyTemplateTrigger {
         uriInput.addRequestParam("param2", "10");
         workingMemory.insert(uriInput);
 
-        List<String> roles =  Arrays.asList(new String[]{"mlok", "kolok", "bar"});
-        Token token = new Token("mlok", roles);
+        List<String> realmRoles =  Arrays.asList(new String[]{"amos", "kolok", "bar"});
+        List<String> appRoles =  Arrays.asList(new String[]{"appr1", "appr2", "appr3"});
+        Token token = new Token("john", realmRoles, appRoles);
         workingMemory.insert(token);
 
         MatcherCache cache = new MatcherCache();

@@ -9,10 +9,25 @@ public class UriTemplate {
     private final String uriPattern;
     private final String queryParamsCondition;
 
-    public UriTemplate(int priority, String uriPattern, String queryParamsCondition) {
+    private final String allowedRealmRoles;
+    private final String deniedRealmRoles;
+    private final String allowedApplicationRoles;
+    private final String deniedApplicationRoles;
+    private final String allowedUsers;
+    private final String deniedUsers;
+
+    public UriTemplate(int priority, String uriPattern, String queryParamsCondition, String allowedRealmRoles, String deniedRealmRoles,
+                       String allowedApplicationRoles, String deniedApplicationRoles, String allowedUsers, String deniedUsers) {
         this.priority = priority;
         this.uriPattern = uriPattern;
         this.queryParamsCondition = queryParamsCondition;
+
+        this.allowedRealmRoles = allowedRealmRoles;
+        this.allowedApplicationRoles = allowedApplicationRoles;
+        this.allowedUsers = allowedUsers;
+        this.deniedRealmRoles = deniedRealmRoles;
+        this.deniedApplicationRoles = deniedApplicationRoles;
+        this.deniedUsers = deniedUsers;
     }
 
     public int getPriority() {
@@ -25,5 +40,29 @@ public class UriTemplate {
 
     public String getQueryParamsCondition() {
         return queryParamsCondition;
+    }
+
+    public String getAllowedRealmRoles() {
+        return allowedRealmRoles;
+    }
+
+    public String getDeniedRealmRoles() {
+        return deniedRealmRoles;
+    }
+
+    public String getAllowedApplicationRoles() {
+        return allowedApplicationRoles;
+    }
+
+    public String getDeniedApplicationRoles() {
+        return deniedApplicationRoles;
+    }
+
+    public String getAllowedUsers() {
+        return allowedUsers;
+    }
+
+    public String getDeniedUsers() {
+        return deniedUsers;
     }
 }

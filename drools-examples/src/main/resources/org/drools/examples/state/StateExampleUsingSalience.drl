@@ -47,10 +47,14 @@ rule "B to C"
 end
 
 rule "B to D"
+    dialect "mvel"
     when
         State(name == "B", state == State.FINISHED )
         d : State(name == "D", state == State.NOTRUN )
     then
         System.out.println(d.getName() + " finished" );
+        State s = new State();
+        s.setState(1);
+        System.out.println("SS: " + s.getState());
         d.setState( State.FINISHED );
 end

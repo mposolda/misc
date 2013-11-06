@@ -15,14 +15,8 @@ public class Result {
     private int lastProcessedPriority;
 
     public void mergeDecision(Decision newDecision) {
-        Decision old = current;
-        if (newDecision == Decision.REJECT) {
-            current = Decision.REJECT;
-        } else if (newDecision == Decision.ACCEPT && current == Decision.IGNORE) {
-            current = Decision.ACCEPT;
-        }
-
-        System.out.println("Merging decision: old=" + old + ", new=" + current);
+        System.out.println("Merging decision: old=" + current + ", new=" + newDecision);
+        current = current.mergeDecision(newDecision);
     }
 
     public Decision getDecision() {

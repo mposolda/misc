@@ -34,7 +34,7 @@ public class MatcherInfo {
     }
 
     // Starting from 1
-    public String get(int i) {
+    public String group(int i) {
         if (groups.size() > i) {
             return groups.get(i);
         } else {

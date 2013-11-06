@@ -27,7 +27,13 @@ public class UriTemplateDataProvider implements DataProvider {
                 String.valueOf(next.getPriority()),
                 String.valueOf(next.getPriority() - 1),
                 next.getUriPattern(),
-                next.getQueryParamsCondition()
+                next.getQueryParamsCondition(),
+                next.getAllowedRealmRoles(),
+                next.getDeniedRealmRoles(),
+                next.getAllowedApplicationRoles(),
+                next.getDeniedApplicationRoles(),
+                next.getAllowedUsers(),
+                next.getDeniedUsers()
         };
     }
 }
