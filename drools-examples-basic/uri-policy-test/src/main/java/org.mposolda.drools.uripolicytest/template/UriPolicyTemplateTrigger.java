@@ -26,9 +26,12 @@ public class UriPolicyTemplateTrigger {
         UriTemplate template2 = new UriTemplate(8, "\"^/something/([abc].*)$\"",
                 "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
                 "\"role1\", $uriGroup.group(1)", null, null, null, "\"joohn\"", null);
+        UriTemplate template3 = new UriTemplate(8, "\"^/something/\" + $token.username + \"$\"",
+                "requestParam(\"param1\").toString() == $uriGroup.group(0)", null, null, null, null, "$token.username", null);
         List<UriTemplate> uriTemplates = new ArrayList<UriTemplate>();
         uriTemplates.add(template1);
         uriTemplates.add(template2);
+        uriTemplates.add(template3);
 
         String template = buildTemplate(uriTemplates);
         System.out.println(template);
@@ -44,8 +47,8 @@ public class UriPolicyTemplateTrigger {
         EndChecker endChecker = new EndChecker();
         workingMemory.insert(endChecker);
 
-        UriPolicyInput uriInput = new UriPolicyInput("/something/amos");
-        uriInput.addRequestParam("param1", "value1");
+        UriPolicyInput uriInput = new UriPolicyInput("/something/john");
+        uriInput.addRequestParam("param1", "/something/john");
         uriInput.addRequestParam("param2", "10");
         workingMemory.insert(uriInput);
 
