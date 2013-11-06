@@ -36,7 +36,7 @@ when
   $endSemaphore: EndSemaphore( finished == false )
   $token: Token()
   URIMatcherCache($uriMatcher: getURIMatcher("URI_Policy_@{row.rowNumber}"));
-  $request: RequestInfo( matches(@{URI_PATTERN}, uri, $uriMatcher) && ( @{QUERY_PARAMS_CONDITIONS} ) )
+  $request: RequestInfo( matches(@{URI_PATTERN}, uri, $uriMatcher) && ( requestConditions("URI_Policy_@{row.rowNumber}", (@{QUERY_PARAMS_CONDITIONS}) ) ) )
 then
   System.out.println("URI_Policy_@{row.rowNumber} conditions matched");
   System.out.println("Group 0: " + $uriMatcher.group(0));

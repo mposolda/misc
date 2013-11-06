@@ -19,17 +19,17 @@ import java.util.*;
 public class URIPolicyTestTrigger {
 
     public static void main(String[] args) throws Exception {
-//        URIPolicy policy1 = new URIPolicy(10, "\"^/something/amos$\"",
-//                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
-//                "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
-//        URIPolicy policy2 = new URIPolicy(8, "\"^/something/([abc].*)$\"",
-//                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
-//                "\"role1\", $uriMatcher.group(1)", null, null, null, "\"joohn\"", null);
-        URIPolicy policy3 = new URIPolicy(8, "\"^/something/\" + $token.username + \"$\"",
-                "requestParam(\"param1\").toString() == $uriMatcher.group(0)", null, null, null, null, "$token.username", null);
+        URIPolicy policy1 = new URIPolicy(10, "\"^/something/amos$\"",
+                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
+                "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
+        URIPolicy policy2 = new URIPolicy(8, "\"^/something/([abc].*)$\"",
+                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
+                "\"role1\", $uriMatcher.group(1)", null, null, null, "\"joohn\"", null);
+        URIPolicy policy3 = new URIPolicy(8, "\"^/something/(\" + $token.username + \")$\"",
+                "requestParam(\"param1\").toString() == $uriMatcher.group(1)", "\"role1\", \"role2\"", null, null, null, "\"john\"", null);
         List<URIPolicy> uriPolicies = new ArrayList<URIPolicy>();
-        // uriPolicies.add(policy1);
-        // uriPolicies.add(policy2);
+        uriPolicies.add(policy1);
+        uriPolicies.add(policy2);
         uriPolicies.add(policy3);
 
         String template = buildTemplate(uriPolicies);
@@ -47,7 +47,7 @@ public class URIPolicyTestTrigger {
         workingMemory.insert(endSemaphore);
 
         RequestInfo uriInput = new RequestInfo("/something/john");
-        uriInput.addRequestParam("param1", "/something/john");
+        uriInput.addRequestParam("param1", "john");
         uriInput.addRequestParam("param2", "10");
         workingMemory.insert(uriInput);
 
@@ -58,6 +58,9 @@ public class URIPolicyTestTrigger {
 
         URIMatcherCache cache = new URIMatcherCache();
         workingMemory.insert(cache);
+
+        //workingMemory.addEventListener(new DebugAgendaEventListener());
+        //workingMemory.addEventListener( new DebugWorkingMemoryEventListener() );
 
         int numberOfFiredPolicies = workingMemory.fireAllRules();
         System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + rulesProcessingResult.getDecision());

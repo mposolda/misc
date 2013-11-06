@@ -37,6 +37,10 @@ function boolean matches(String regex, String textToMatch, URIMatcher uriMatcher
   return uriMatcher.isMatched();
 }
 
+function boolean requestConditions(String ruleName, boolean result) {
+   System.out.println("Params condition for rule: " + ruleName + " ends with: " + result);
+   return result;
+}
 
 function String any(List items) {
   String rulesProcessingResult = "";
