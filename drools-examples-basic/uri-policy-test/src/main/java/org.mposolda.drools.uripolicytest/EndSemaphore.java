@@ -1,9 +1,11 @@
 package org.mposolda.drools.uripolicytest;
 
 /**
+ * Helper class to check if drools rules processing should be finished.
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class EndChecker {
+public class EndSemaphore {
 
     private boolean finished = false;
 

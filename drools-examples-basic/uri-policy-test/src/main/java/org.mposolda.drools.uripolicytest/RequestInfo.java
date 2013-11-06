@@ -7,13 +7,13 @@ import java.util.Map;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class UriPolicyInput {
+public class RequestInfo {
 
     private final String uri;
 
     private final Map<String, ParamValue> reqParams = new HashMap<String, ParamValue>();
 
-    public UriPolicyInput(String uri) {
+    public RequestInfo(String uri) {
         this.uri = uri;
     }
 

@@ -1,25 +1,26 @@
 package org.mposolda.drools.uripolicytest;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
+ * Object bound to Drools engine, which encapsulate info about authorization decision, all processed rules and rule
+ * with last processed priority
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class Result {
+public class RulesProcessingResult {
 
-    private Decision current = Decision.IGNORE;
+    private AuthorizationDecision current = AuthorizationDecision.IGNORE;
     private Set<String> processedRules = new HashSet<String>();
     private int lastProcessedPriority;
 
-    public void mergeDecision(Decision newDecision) {
+    public void mergeDecision(AuthorizationDecision newDecision) {
         System.out.println("Merging decision: old=" + current + ", new=" + newDecision);
         current = current.mergeDecision(newDecision);
     }
 
-    public Decision getDecision() {
+    public AuthorizationDecision getDecision() {
         return current;
     }
 

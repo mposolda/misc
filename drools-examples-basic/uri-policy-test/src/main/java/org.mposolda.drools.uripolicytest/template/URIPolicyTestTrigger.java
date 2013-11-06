@@ -7,7 +7,6 @@ import org.drools.compiler.DroolsError;
 import org.drools.compiler.DroolsParserException;
 import org.drools.compiler.PackageBuilder;
 import org.drools.compiler.PackageBuilderErrors;
-import org.drools.template.DataProvider;
 import org.drools.template.DataProviderCompiler;
 import org.mposolda.drools.uripolicytest.*;
 
@@ -17,23 +16,23 @@ import java.util.*;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class UriPolicyTemplateTrigger {
+public class URIPolicyTestTrigger {
 
     public static void main(String[] args) throws Exception {
-        UriTemplate template1 = new UriTemplate(10, "\"^/something/amos$\"",
-                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
-                "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
-        UriTemplate template2 = new UriTemplate(8, "\"^/something/([abc].*)$\"",
-                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
-                "\"role1\", $uriGroup.group(1)", null, null, null, "\"joohn\"", null);
-        UriTemplate template3 = new UriTemplate(8, "\"^/something/\" + $token.username + \"$\"",
-                "requestParam(\"param1\").toString() == $uriGroup.group(0)", null, null, null, null, "$token.username", null);
-        List<UriTemplate> uriTemplates = new ArrayList<UriTemplate>();
-        uriTemplates.add(template1);
-        uriTemplates.add(template2);
-        uriTemplates.add(template3);
+//        URIPolicy policy1 = new URIPolicy(10, "\"^/something/amos$\"",
+//                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
+//                "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
+//        URIPolicy policy2 = new URIPolicy(8, "\"^/something/([abc].*)$\"",
+//                "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
+//                "\"role1\", $uriMatcher.group(1)", null, null, null, "\"joohn\"", null);
+        URIPolicy policy3 = new URIPolicy(8, "\"^/something/\" + $token.username + \"$\"",
+                "requestParam(\"param1\").toString() == $uriMatcher.group(0)", null, null, null, null, "$token.username", null);
+        List<URIPolicy> uriPolicies = new ArrayList<URIPolicy>();
+        // uriPolicies.add(policy1);
+        // uriPolicies.add(policy2);
+        uriPolicies.add(policy3);
 
-        String template = buildTemplate(uriTemplates);
+        String template = buildTemplate(uriPolicies);
         System.out.println(template);
 
 
@@ -41,13 +40,13 @@ public class UriPolicyTemplateTrigger {
 
         WorkingMemory workingMemory = ruleBase.newStatefulSession();
 
-        Result result = new Result();
-        workingMemory.insert(result);
+        RulesProcessingResult rulesProcessingResult = new RulesProcessingResult();
+        workingMemory.insert(rulesProcessingResult);
 
-        EndChecker endChecker = new EndChecker();
-        workingMemory.insert(endChecker);
+        EndSemaphore endSemaphore = new EndSemaphore();
+        workingMemory.insert(endSemaphore);
 
-        UriPolicyInput uriInput = new UriPolicyInput("/something/john");
+        RequestInfo uriInput = new RequestInfo("/something/john");
         uriInput.addRequestParam("param1", "/something/john");
         uriInput.addRequestParam("param2", "10");
         workingMemory.insert(uriInput);
@@ -57,19 +56,19 @@ public class UriPolicyTemplateTrigger {
         Token token = new Token("john", realmRoles, appRoles);
         workingMemory.insert(token);
 
-        MatcherCache cache = new MatcherCache();
+        URIMatcherCache cache = new URIMatcherCache();
         workingMemory.insert(cache);
 
         int numberOfFiredPolicies = workingMemory.fireAllRules();
-        System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + result.getDecision());
+        System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + rulesProcessingResult.getDecision());
 
     }
 
-    private static String buildTemplate(List<UriTemplate> uriTemplates) {
-        InputStream templateStream = UriPolicyTemplateTrigger.class.getResourceAsStream("uriPolicyTemplateTest.drl");
-        UriTemplateDataProvider tdp = new UriTemplateDataProvider(uriTemplates.iterator());
+    private static String buildTemplate(List<URIPolicy> uriPolicies) {
+        InputStream templateStream = URIPolicyTestTrigger.class.getResourceAsStream("URIPolicyTemplate.drl");
+        URIPolicyTemplateDataProvider tdp = new URIPolicyTemplateDataProvider(uriPolicies.iterator());
         DataProviderCompiler converter = new DataProviderCompiler();
-        final String drl = converter.compile(tdp, templateStream);
+        String drl = converter.compile(tdp, templateStream);
         return drl;
     }
 
@@ -78,7 +77,7 @@ public class UriPolicyTemplateTrigger {
         PackageBuilder packageBuilder = new PackageBuilder();
 
         // Add DRL with functions
-        InputStream resourceAsStream = UriPolicyTemplateTrigger.class.getResourceAsStream("uriPolicyFunctions.drl");
+        InputStream resourceAsStream = URIPolicyTestTrigger.class.getResourceAsStream("URIPolicyFunctions.drl");
         Reader reader = new InputStreamReader(resourceAsStream);
         packageBuilder.addPackageFromDrl(reader);
 

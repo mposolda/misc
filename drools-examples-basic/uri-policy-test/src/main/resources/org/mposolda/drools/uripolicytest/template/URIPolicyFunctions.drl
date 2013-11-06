@@ -1,0 +1,51 @@
+package org.mposolda.drools.uripolicytest;
+
+import org.drools.WorkingMemory;
+import org.mposolda.drools.uripolicytest.RulesProcessingResult;
+import org.mposolda.drools.uripolicytest.AuthorizationDecision;
+import org.mposolda.drools.uripolicytest.RequestInfo;
+import org.mposolda.drools.uripolicytest.Token;
+import org.mposolda.drools.uripolicytest.URIMatcher;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+dialect "mvel"
+
+function boolean matches(String regex, String textToMatch, URIMatcher uriMatcher) {
+  if (uriMatcher.isProcessed()) {
+    System.out.println("regex: " + regex + ", textToMatch: " + textToMatch + " already processed with result: " + uriMatcher.isMatched());
+    return uriMatcher.isMatched();
+  }
+
+  System.out.println("regex: " + regex + ", textToMatch: " + textToMatch + " - start processing");
+  Pattern p = Pattern.compile(regex);
+  Matcher m = p.matcher(textToMatch);
+
+  if (m.find()) {
+    uriMatcher.setMatched(true);
+
+    for (int i=0 ; i<=m.groupCount() ; i++) {
+      uriMatcher.addGroup(m.group(i));
+    }
+  } else {
+    uriMatcher.setMatched(false);
+  }
+
+  uriMatcher.setProcessed(true);
+  System.out.println("Processing finished. Result info: " + uriMatcher);
+  return uriMatcher.isMatched();
+}
+
+
+function String any(List items) {
+  String rulesProcessingResult = "";
+  for (int i=0 ; i<items.size() ; i++) {
+    String item = (String)items.get(i);
+    if (i > 0) {
+        rulesProcessingResult = rulesProcessingResult + "|";
+    }
+    rulesProcessingResult = rulesProcessingResult + item;
+  }
+  return rulesProcessingResult;
+}

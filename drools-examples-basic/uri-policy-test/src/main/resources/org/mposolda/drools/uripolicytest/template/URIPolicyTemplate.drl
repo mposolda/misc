@@ -1,0 +1,80 @@
+template header
+PRIORITY
+CHECK_PRIORITY
+URI_PATTERN
+QUERY_PARAMS_CONDITIONS
+ALLOWED_REALM_ROLES
+DENIED_REALM_ROLES
+ALLOWED_APPLICATION_ROLES
+DENIED_APPLICATION_ROLES
+ALLOWED_USERS
+DENIED_USERS
+
+package org.mposolda.drools.uripolicytest;
+
+import org.drools.WorkingMemory;
+import org.mposolda.drools.uripolicytest.RulesProcessingResult;
+import org.mposolda.drools.uripolicytest.AuthorizationDecision;
+import org.mposolda.drools.uripolicytest.RequestInfo;
+import org.mposolda.drools.uripolicytest.Token;
+import org.mposolda.drools.uripolicytest.URIMatcher;
+import org.mposolda.drools.uripolicytest.URIMatcherCache;
+import org.mposolda.drools.uripolicytest.RolesContainer
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+dialect "mvel"
+
+template "URI Policy template"
+rule "URI_Policy_@{row.rowNumber}"
+salience @{PRIORITY}
+when
+  $rulesProcessingResult: RulesProcessingResult( isAlreadyProcessedRule("URI_Policy_@{row.rowNumber}") == false )
+  $endSemaphore: EndSemaphore( finished == false )
+  $token: Token()
+  URIMatcherCache($uriMatcher: getURIMatcher("URI_Policy_@{row.rowNumber}"));
+  $request: RequestInfo( matches(@{URI_PATTERN}, uri, $uriMatcher) && ( @{QUERY_PARAMS_CONDITIONS} ) )
+then
+  System.out.println("URI_Policy_@{row.rowNumber} conditions matched");
+  System.out.println("Group 0: " + $uriMatcher.group(0));
+  System.out.println("Group 1: " + $uriMatcher.group(1));
+  System.out.println("Token: " + $token);
+
+  RolesContainer container = new RolesContainer();
+  container.addAllAllowedRealmRoles( Arrays.asList(new String[] { @{ALLOWED_REALM_ROLES} }) );
+  container.addAllDeniedRealmRoles( Arrays.asList(new String[] { @{DENIED_REALM_ROLES} }) );
+  container.addAllAllowedApplicationRoles( Arrays.asList(new String[] { @{ALLOWED_APPLICATION_ROLES} }) );
+  container.addAllDeniedApplicationRoles( Arrays.asList(new String[] { @{DENIED_APPLICATION_ROLES} }) );
+  container.addAllAllowedUsers( Arrays.asList(new String[] { @{ALLOWED_USERS} }) );
+  container.addAllDeniedUsers( Arrays.asList(new String[] { @{DENIED_USERS} }) );
+
+  AuthorizationDecision decision = container.isTokenAllowed($token);
+
+  modify ($rulesProcessingResult) {
+    mergeDecision(decision);
+  }
+  modify ($rulesProcessingResult) {
+    addProcessedRule("URI_Policy_@{row.rowNumber}");
+  }
+  modify ($rulesProcessingResult) {
+      lastProcessedPriority = @{PRIORITY}
+  }
+end
+end template
+
+template "Check finished"
+rule "Check_finished_@{row.rowNumber}"
+salience @{CHECK_PRIORITY}
+when
+  RulesProcessingResult(decision == AuthorizationDecision.ACCEPT || == AuthorizationDecision.REJECT, lastProcessedPriority > @{CHECK_PRIORITY})
+  $endSemaphore: EndSemaphore( finished == false )
+then
+  System.out.println("Check_finished_@{row.rowNumber}, priority: " + @{CHECK_PRIORITY});
+  modify ($endSemaphore) {
+    finished = true;
+  }
+end
+end template

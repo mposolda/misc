@@ -6,48 +6,52 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Utility to format URI strings from "user-friendly" form to "drools" form, which will be used in drools templates.
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class PatternUtils {
+public class DroolsFormattingUtils {
 
     private static Pattern droolsNormalizationPattern = Pattern.compile("\\{[^{]*\\}");
     private static Pattern wildcardNormalizationPattern = Pattern.compile("\\([^(]*\\)");
+    private static Pattern wildcardReplacePattern = Pattern.compile("\\*");
 
 
+    // TODO: Move to unit test
     public static void main(String[] args) {
-        assertEquals(normalizeString("/something/foo"), "\"/something/foo\"");
-        assertEquals(normalizeString("/something/*"), "\"/something/(.*)\"");
-        assertEquals(normalizeString("/something1/*/kokos/*"), "\"/something1/(.*)/kokos/(.*)\"");
-        assertEquals(normalizeString("/something1/([abc].*)/part2/*"), "\"/something1/([abc].*)/part2/(.*)\"");
-        assertEquals(normalizeString("*/something1/([abc].*)/part2/(.*)"), "\"(.*)/something1/([abc].*)/part2/(.*)\"");
-        assertEquals(normalizeString("(.*)/something1/([abc].*)/part2/(.*)"), "\"(.*)/something1/([abc].*)/part2/(.*)\"");
-        assertEquals(normalizeString("/something1/{$token.username}/foo"), "\"/something1/\" + $token.username + \"/foo\"");
-        assertEquals(normalizeString("/something1/{$token.username}"), "\"/something1/\" + $token.username");
-        assertEquals(normalizeString("{$token.app}/something1/{$token.username}"), "$token.app + \"/something1/\" + $token.username");
-        assertEquals(normalizeString("{$token.app}/something1"), "$token.app + \"/something1\"");
-        assertEquals(normalizeString("{$token.app}"), "$token.app");
-        assertEquals(normalizeString("/something1/{ any($token.realmRoles)}/foo"), "\"/something1/\" +  any($token.realmRoles) + \"/foo\"");
-        assertEquals(normalizeString("/something1/{ any($token.applicationRoles)}"), "\"/something1/\" +  any($token.applicationRoles)");
-        assertEquals(normalizeString("/something1/{$token.username}/foo/*/bar/(.*)"), "\"/something1/\" + $token.username + \"/foo/(.*)/bar/(.*)\"");
+        assertEquals(formatStringToDrools("/something/foo"), "\"/something/foo\"");
+        assertEquals(formatStringToDrools("/something/*"), "\"/something/(.*)\"");
+        assertEquals(formatStringToDrools("/something1/*/kokos/*"), "\"/something1/(.*)/kokos/(.*)\"");
+        assertEquals(formatStringToDrools("/something1/([abc].*)/part2/*"), "\"/something1/([abc].*)/part2/(.*)\"");
+        assertEquals(formatStringToDrools("*/something1/([abc].*)/part2/(.*)"), "\"(.*)/something1/([abc].*)/part2/(.*)\"");
+        assertEquals(formatStringToDrools("(.*)/something1/([abc].*)/part2/(.*)"), "\"(.*)/something1/([abc].*)/part2/(.*)\"");
+        assertEquals(formatStringToDrools("/something1/{$token.username}/foo"), "\"/something1/\" + $token.username + \"/foo\"");
+        assertEquals(formatStringToDrools("/something1/{$token.username}"), "\"/something1/\" + $token.username");
+        assertEquals(formatStringToDrools("{$token.app}/something1/{$token.username}"), "$token.app + \"/something1/\" + $token.username");
+        assertEquals(formatStringToDrools("{$token.app}/something1"), "$token.app + \"/something1\"");
+        assertEquals(formatStringToDrools("{$token.app}"), "$token.app");
+        assertEquals(formatStringToDrools("/something1/{ any($token.realmRoles)}/foo"), "\"/something1/\" +  any($token.realmRoles) + \"/foo\"");
+        assertEquals(formatStringToDrools("/something1/{ any($token.applicationRoles)}"), "\"/something1/\" +  any($token.applicationRoles)");
+        assertEquals(formatStringToDrools("/something1/{$token.username}/foo/*/bar/(.*)"), "\"/something1/\" + $token.username + \"/foo/(.*)/bar/(.*)\"");
 
         System.out.println("Everything correct!!!");
     }
 
     /**
-     * Normalize pattern. so that it can be used in Drools.
-     * Examples: see testsuite.
+     * Format pattern from "user-friendly" form to Drools-friendly form. See testsuite for examples
      * NOTE: Maybe it's not the best way to do it, but sufficient for now as this code is not critical for performance...
      *
      * @param input
      * @return
      */
-    public static String normalizeString(String input) {
-        String result = normalizeForDrools(input);
-        result = normalizeWildcards(result);
+    public static String formatStringToDrools(String input) {
+        String result = formatForDrools(input);
+        result = formatWildcards(result);
         return result;
     }
 
-    private static String normalizeForDrools(String input) {
+    // Replace string like 'foo/${bar}/baz' with something like '"foo" + $bar + "baz"'
+    private static String formatForDrools(String input) {
         String[] innerAr = droolsNormalizationPattern.split(input);
         List<String> outer = new ArrayList<String>();
 
@@ -60,6 +64,7 @@ public class PatternUtils {
             outer.add(m.group().replace("{", "").replace("}", ""));
         }
 
+        // Move items from Array to List. Remove very first String if it is ""
         List<String> inner = new ArrayList<String>();
         for (int i=0 ; i<innerAr.length ; i++) {
             if (i > 0 || !startWith) {
@@ -67,6 +72,7 @@ public class PatternUtils {
             }
         }
 
+        // Case when whole input starts with {foo-like} prefix
         StringBuilder result = new StringBuilder();
         if (startWith) {
             result.append(outer.get(0));
@@ -76,6 +82,7 @@ public class PatternUtils {
             outer.remove(0);
         }
 
+        // Main algorithm
         for (int i=0 ; i<inner.size() ; i++) {
             String currentInner = inner.get(i);
             String currentOuter = null;
@@ -96,7 +103,9 @@ public class PatternUtils {
         return result.toString();
     }
 
-    private static String normalizeWildcards(String input) {
+    // Replace string like "foo/*/bar/(.*)" with something like "foo/(.*)/bar/(.*)" (IE: * is replaced with (.*) but
+    // only if it's not already part of regex.)
+    private static String formatWildcards(String input) {
 
         String[] inner = wildcardNormalizationPattern.split(input);
 
@@ -115,7 +124,7 @@ public class PatternUtils {
                 currentOuter = outer.get(i);
             }
 
-            result.append(currentInner.replaceAll("\\*", "(.*)"));
+            result.append(wildcardReplacePattern.matcher(currentInner).replaceAll("(.*)"));
             if (currentOuter != null) {
                 result.append(currentOuter);
             }
@@ -124,6 +133,7 @@ public class PatternUtils {
         return result.toString();
     }
 
+    // TODO: remove and use unit test
     private static void assertEquals(String actual, String expected) {
         if (!actual.equals(expected)) {
             throw new IllegalArgumentException("actual: " + actual + ", expected: " + expected);

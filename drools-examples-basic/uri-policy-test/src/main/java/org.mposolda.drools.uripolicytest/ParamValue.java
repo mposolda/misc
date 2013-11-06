@@ -1,6 +1,8 @@
 package org.mposolda.drools.uripolicytest;
 
 /**
+ * Value of request parameter
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public final class ParamValue {
@@ -8,6 +10,9 @@ public final class ParamValue {
     private final String value;
 
     public ParamValue(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Null value of parameter");
+        }
         this.value = value;
     }
 
@@ -37,9 +42,7 @@ public final class ParamValue {
     @Override
     public boolean equals(Object o) {
         if (o instanceof ParamValue) {
-            return ((ParamValue)o).value == this.value;
-        } else if (o instanceof String) {
-            return o.equals(value);
+            return ((ParamValue)o).value.equals(this.value);
         } else {
             return false;
         }

@@ -3,7 +3,7 @@ package org.mposolda.drools.uripolicytest.template;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class UriTemplate {
+public class URIPolicy {
 
     private final int priority;
     private final String uriPattern;
@@ -16,8 +16,8 @@ public class UriTemplate {
     private final String allowedUsers;
     private final String deniedUsers;
 
-    public UriTemplate(int priority, String uriPattern, String queryParamsCondition, String allowedRealmRoles, String deniedRealmRoles,
-                       String allowedApplicationRoles, String deniedApplicationRoles, String allowedUsers, String deniedUsers) {
+    public URIPolicy(int priority, String uriPattern, String queryParamsCondition, String allowedRealmRoles, String deniedRealmRoles,
+                     String allowedApplicationRoles, String deniedApplicationRoles, String allowedUsers, String deniedUsers) {
         this.priority = priority;
         this.uriPattern = uriPattern;
         this.queryParamsCondition = queryParamsCondition;

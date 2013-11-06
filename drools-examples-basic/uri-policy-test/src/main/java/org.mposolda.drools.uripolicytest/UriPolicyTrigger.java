@@ -25,10 +25,10 @@ public class UriPolicyTrigger {
 
         WorkingMemory workingMemory = ruleBase.newStatefulSession();
 
-        Result result = new Result();
-        workingMemory.insert(result);
+        RulesProcessingResult rulesProcessingResult = new RulesProcessingResult();
+        workingMemory.insert(rulesProcessingResult);
 
-        UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok");
+        RequestInfo uriInput = new RequestInfo("/kokos/mlok");
         uriInput.addRequestParam("param1", "value1");
         uriInput.addRequestParam("param2", "value2");
         workingMemory.insert(uriInput);
@@ -37,11 +37,11 @@ public class UriPolicyTrigger {
         Token token = new Token("mlok", roles, null);
         workingMemory.insert(token);
 
-        MatcherInfo mi = new MatcherInfo();
+        URIMatcher mi = new URIMatcher();
         workingMemory.insert(mi);
 
         int numberOfFiredPolicies = workingMemory.fireAllRules();
-        System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + result.getDecision());
+        System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + rulesProcessingResult.getDecision());
     }
 
     private static RuleBase initDrools() throws IOException, DroolsParserException {

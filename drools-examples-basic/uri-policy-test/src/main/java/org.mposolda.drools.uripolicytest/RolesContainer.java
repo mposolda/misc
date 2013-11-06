@@ -130,7 +130,7 @@ public class RolesContainer {
     }
 
     public Set<String> getDeniedApplicationRoles() {
-        return Collections.unmodifiableSet(deniedRealmRoles);
+        return Collections.unmodifiableSet(deniedApplicationRoles);
     }
 
     public Set<String> getAllowedUsers() {
@@ -143,71 +143,71 @@ public class RolesContainer {
 
     // CHECKS
 
-    public Decision isRealmRoleAllowed(String roleName) {
+    public AuthorizationDecision isRealmRoleAllowed(String roleName) {
         if (deniedRealmRoles != null && deniedRealmRoles.contains(roleName)) {
-            return Decision.REJECT;
+            return AuthorizationDecision.REJECT;
         } else if (allowedRealmRoles != null && (allowedRealmRoles.contains(roleName) || allowedRealmRoles.contains("*"))) {
-            return Decision.ACCEPT;
+            return AuthorizationDecision.ACCEPT;
         }
 
-        return Decision.IGNORE;
+        return AuthorizationDecision.IGNORE;
     }
 
-    public Decision isApplicationRoleAllowed(String roleName) {
+    public AuthorizationDecision isApplicationRoleAllowed(String roleName) {
         if (deniedApplicationRoles != null && deniedApplicationRoles.contains(roleName)) {
-            return Decision.REJECT;
+            return AuthorizationDecision.REJECT;
         } else if (allowedApplicationRoles != null && (allowedApplicationRoles.contains(roleName) || allowedApplicationRoles.contains("*"))) {
-            return Decision.ACCEPT;
+            return AuthorizationDecision.ACCEPT;
         }
 
-        return Decision.IGNORE;
+        return AuthorizationDecision.IGNORE;
     }
 
-    public Decision isRealmRolesAllowed(Collection<String> roles) {
+    public AuthorizationDecision isRealmRolesAllowed(Collection<String> roles) {
         boolean anyAllowed = false;
         for (String role : roles) {
-            Decision authDecision = isRealmRoleAllowed(role);
-            if (authDecision == Decision.REJECT) {
+            AuthorizationDecision authDecision = isRealmRoleAllowed(role);
+            if (authDecision == AuthorizationDecision.REJECT) {
                 // REJECT always wins
-                return Decision.REJECT;
-            } else if (authDecision == Decision.ACCEPT) {
+                return AuthorizationDecision.REJECT;
+            } else if (authDecision == AuthorizationDecision.ACCEPT) {
                 anyAllowed = true;
             }
         }
 
-        return anyAllowed ? Decision.ACCEPT : Decision.IGNORE;
+        return anyAllowed ? AuthorizationDecision.ACCEPT : AuthorizationDecision.IGNORE;
     }
 
-    public Decision isApplicationRolesAllowed(Collection<String> roles) {
+    public AuthorizationDecision isApplicationRolesAllowed(Collection<String> roles) {
         boolean anyAllowed = false;
         for (String role : roles) {
-            Decision authDecision = isApplicationRoleAllowed(role);
-            if (authDecision == Decision.REJECT) {
+            AuthorizationDecision authDecision = isApplicationRoleAllowed(role);
+            if (authDecision == AuthorizationDecision.REJECT) {
                 // REJECT always wins
-                return Decision.REJECT;
-            } else if (authDecision == Decision.ACCEPT) {
+                return AuthorizationDecision.REJECT;
+            } else if (authDecision == AuthorizationDecision.ACCEPT) {
                 anyAllowed = true;
             }
         }
 
-        return anyAllowed ? Decision.ACCEPT : Decision.IGNORE;
+        return anyAllowed ? AuthorizationDecision.ACCEPT : AuthorizationDecision.IGNORE;
     }
 
-    public Decision isTokenAllowed(Token token) {
-        Decision realmDecision = isRealmRolesAllowed(token.getRealmRoles());
-        Decision appRolesDecision = isApplicationRolesAllowed(token.getApplicationRoles());
-        Decision usernameDecision = isUserAllowed(token.getUsername());
+    public AuthorizationDecision isTokenAllowed(Token token) {
+        AuthorizationDecision realmDecision = isRealmRolesAllowed(token.getRealmRoles());
+        AuthorizationDecision appRolesDecision = isApplicationRolesAllowed(token.getApplicationRoles());
+        AuthorizationDecision usernameDecision = isUserAllowed(token.getUsername());
         return realmDecision.mergeDecision(appRolesDecision).mergeDecision(usernameDecision);
     }
 
-    public Decision isUserAllowed(String username) {
+    public AuthorizationDecision isUserAllowed(String username) {
         if (deniedUsers != null && deniedUsers.contains(username)) {
-            return Decision.REJECT;
+            return AuthorizationDecision.REJECT;
         } else if (allowedUsers != null && (allowedUsers.contains(username))) {
-            return Decision.ACCEPT;
+            return AuthorizationDecision.ACCEPT;
         }
 
-        return Decision.IGNORE;
+        return AuthorizationDecision.IGNORE;
     }
 
     // HELPER METHODS

@@ -1,9 +1,9 @@
 import org.drools.WorkingMemory;
-import org.mposolda.drools.uripolicytest.Result;
-import org.mposolda.drools.uripolicytest.Decision;
-import org.mposolda.drools.uripolicytest.UriPolicyInput;
+import org.mposolda.drools.uripolicytest.RulesProcessingResult;
+import org.mposolda.drools.uripolicytest.AuthorizationDecision;
+import org.mposolda.drools.uripolicytest.RequestInfo;
 import org.mposolda.drools.uripolicytest.Token;
-import org.mposolda.drools.uripolicytest.MatcherInfo;
+import org.mposolda.drools.uripolicytest.URIMatcher;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -12,18 +12,18 @@ dialect "mvel"
 
 rule "policy 1"
 when
-  $result: Result()
+  $rulesProcessingResult: Result()
   token: Token()
   $upi: UriPolicyInput(uri == ("/kokos/" + token.username) && (reqParams.get("param1") == "value1" && reqParams.get("param2") == "value2"))
 then
   System.out.println("policy1 matches!");
-  $result.mergeDecision(Decision.ACCEPT);
+  $rulesProcessingResult.mergeDecision(Decision.ACCEPT);
 end
 
 rule "policy 2"
 dialect "mvel"
 when
-  $result: Result()
+  $rulesProcessingResult: Result()
   $token: Token()
   $uriGroup: MatcherInfo()
   $upi: UriPolicyInput(matchess("^/kokos/(" + $token.username + ")$", uri, $uriGroup))
@@ -31,14 +31,14 @@ then
   System.out.println("policy2 matches!");
   System.out.println("Group 0: " + $uriGroup.get(0));
   System.out.println("Group 1: " + $uriGroup.get(1));
-  $result.mergeDecision(Decision.ACCEPT);
+  $rulesProcessingResult.mergeDecision(Decision.ACCEPT);
   $uriGroup.reset();
 end
 
 rule "policy 3"
 dialect "mvel"
 when
-  $result: Result()
+  $rulesProcessingResult: Result()
   $token: Token()
   $uriGroup: MatcherInfo()
   $upi: UriPolicyInput(matchess("^/kokos/(" + any($token.realmRoles) + ")$", uri, $uriGroup))
@@ -47,7 +47,7 @@ then
   System.out.println("Group 0: " + $uriGroup.get(0));
   System.out.println("Group 1: " + $uriGroup.get(1));
   System.out.println("Realm role 1: " + $token.realmRoles.get(0));
-  $result.mergeDecision(Decision.ACCEPT);
+  $rulesProcessingResult.mergeDecision(Decision.ACCEPT);
   $uriGroup.reset();
 end
 
@@ -72,13 +72,13 @@ function boolean matchess(String regex, String textToMatch, MatcherInfo mi) {
 
 
 function String any(List items) {
-  String result = "";
+  String rulesProcessingResult = "";
   for (int i=0 ; i<items.size() ; i++) {
     String item = (String)items.get(i);
     if (i > 0) {
-        result = result + "|";
+        rulesProcessingResult = rulesProcessingResult + "|";
     }
-    result = result + item;
+    rulesProcessingResult = rulesProcessingResult + item;
   }
-  return result;
+  return rulesProcessingResult;
 }

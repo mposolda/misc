@@ -5,13 +5,16 @@ import org.drools.template.DataProvider;
 import java.util.Iterator;
 
 /**
+ * Drools DataProvider for providing data about URI policies configured by user. Data are used to compile Drools template into
+ * real rules for Drools engine
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class UriTemplateDataProvider implements DataProvider {
+public class URIPolicyTemplateDataProvider implements DataProvider {
 
-    private final Iterator<UriTemplate> uriTemplateIterator;
+    private final Iterator<URIPolicy> uriTemplateIterator;
 
-    public UriTemplateDataProvider(Iterator<UriTemplate> uriTemplateIterator) {
+    public URIPolicyTemplateDataProvider(Iterator<URIPolicy> uriTemplateIterator) {
         this.uriTemplateIterator = uriTemplateIterator;
     }
 
@@ -22,7 +25,7 @@ public class UriTemplateDataProvider implements DataProvider {
 
     @Override
     public String[] next() {
-        UriTemplate next = uriTemplateIterator.next();
+        URIPolicy next = uriTemplateIterator.next();
         return new String[] {
                 String.valueOf(next.getPriority()),
                 String.valueOf(next.getPriority() - 1),
