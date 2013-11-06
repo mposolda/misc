@@ -28,10 +28,9 @@ public class UriPolicyTrigger {
         Result result = new Result();
         workingMemory.insert(result);
 
-        Map<String, String> reqParams = new HashMap<String, String>();
-        reqParams.put("param1", "value1");
-        reqParams.put("param2", "value2");
-        UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok", reqParams);
+        UriPolicyInput uriInput = new UriPolicyInput("/kokos/mlok");
+        uriInput.addRequestParam("param1", "value1");
+        uriInput.addRequestParam("param2", "value2");
         workingMemory.insert(uriInput);
 
         List<String> roles =  Arrays.asList(new String[] {"mlok", "kolok", "bar"});

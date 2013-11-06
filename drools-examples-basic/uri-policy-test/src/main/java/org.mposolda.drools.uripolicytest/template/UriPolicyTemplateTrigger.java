@@ -20,8 +20,8 @@ import java.util.*;
 public class UriPolicyTemplateTrigger {
 
     public static void main(String[] args) throws Exception {
-        UriTemplate template1 = new UriTemplate(10, "\"^/something/amos$\"", "reqParams.get(\"param1\") == \"value1\"");
-        UriTemplate template2 = new UriTemplate(10, "\"^/something/([abc].*)$\"", "reqParams.get(\"param1\") == \"value1\"");
+        UriTemplate template1 = new UriTemplate(10, "\"^/something/amos$\"", "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10");
+        UriTemplate template2 = new UriTemplate(8, "\"^/something/([abc].*)$\"", "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10");
         List<UriTemplate> uriTemplates = new ArrayList<UriTemplate>();
         uriTemplates.add(template1);
         uriTemplates.add(template2);
@@ -40,10 +40,9 @@ public class UriPolicyTemplateTrigger {
         EndChecker endChecker = new EndChecker();
         workingMemory.insert(endChecker);
 
-        Map<String, String> reqParams = new HashMap<String, String>();
-        reqParams.put("param1", "value1");
-        reqParams.put("param2", "value2");
-        UriPolicyInput uriInput = new UriPolicyInput("/something/amos", reqParams);
+        UriPolicyInput uriInput = new UriPolicyInput("/something/amos");
+        uriInput.addRequestParam("param1", "value1");
+        uriInput.addRequestParam("param2", "10");
         workingMemory.insert(uriInput);
 
         List<String> roles =  Arrays.asList(new String[]{"mlok", "kolok", "bar"});

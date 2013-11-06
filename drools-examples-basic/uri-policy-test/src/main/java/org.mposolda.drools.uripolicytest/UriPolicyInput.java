@@ -1,5 +1,7 @@
 package org.mposolda.drools.uripolicytest;
 
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -9,18 +11,25 @@ public class UriPolicyInput {
 
     private final String uri;
 
-    private final Map<String, String> reqParams;
+    private final Map<String, ParamValue> reqParams = new HashMap<String, ParamValue>();
 
-    public UriPolicyInput(String uri, Map<String, String> reqParams) {
+    public UriPolicyInput(String uri) {
         this.uri = uri;
-        this.reqParams = reqParams;
     }
 
     public String getUri() {
         return uri;
     }
 
-    public Map<String, String> getReqParams() {
-        return reqParams;
+    public Collection<String> getRequestParamNames() {
+        return reqParams.keySet();
+    }
+
+    public void addRequestParam(String paramName, String paramValue) {
+        reqParams.put(paramName, new ParamValue(paramValue));
+    }
+
+    public ParamValue requestParam(String paramName) {
+        return reqParams.get(paramName);
     }
 }
