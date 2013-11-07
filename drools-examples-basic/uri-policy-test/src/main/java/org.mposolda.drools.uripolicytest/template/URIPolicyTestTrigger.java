@@ -26,7 +26,7 @@ public class URIPolicyTestTrigger {
                 "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
                 "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
 
-        URIPolicyEntry policy2 = URIPolicyEntry.createEntry(8, "/something/([abc].*)",
+        URIPolicyEntry policy2 = URIPolicyEntry.createEntry(9, "/something/([abc].*)",
                 "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
                 "\"role1\", $uriMatcher.group(1)", null, null, null, "\"joohn\"", null);
 

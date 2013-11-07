@@ -43,6 +43,9 @@ public class URIPolicyEntry {
             queryParamsCondition = "1 == 1";
         }
 
+        // Multiply priority by 2 (we will have URIPolicy rules with 'even' salience and checking rules with 'odd' salience)
+        priority = priority * 2;
+
         return new URIPolicyEntry(priority, formattedPattern, queryParamsCondition, allowedRealmRoles, deniedRealmRoles,
                 allowedApplicationRoles, deniedApplicationRoles, allowedUsers, deniedUsers);
     }
