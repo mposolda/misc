@@ -13,8 +13,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -26,11 +24,6 @@ public class DroolsPolicy {
 
     public void init() {
         ruleBase = RuleBaseFactory.newRuleBase();
-
-//        // Add DRL with functions
-//        InputStream functionsFileStream = DroolsPolicy.class.getResourceAsStream("URIPolicyFunctions.drl");
-//        Reader functionsFileReader = new InputStreamReader(functionsFileStream);
-//        addPackageToRuleBase(functionsFileReader);
     }
 
 
@@ -97,7 +90,7 @@ public class DroolsPolicy {
         PackageBuilder packageBuilder = new PackageBuilder();
 
         try {
-            // Add DRL with functions
+            // Always add DRL with functions
             InputStream functionsFileStream = DroolsPolicy.class.getResourceAsStream("URIPolicyFunctions.drl");
             Reader functionsFileReader = new InputStreamReader(functionsFileStream);
 

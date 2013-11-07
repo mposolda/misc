@@ -38,6 +38,11 @@ public class URIPolicyEntry {
         // From uriPattern from "user-friendly" form to "drools-friendly" form
         String formattedPattern = DroolsFormattingUtils.formatStringToDrools(uriPattern);
 
+        // Add placeholder for queryParamsCondition if it's empty
+        if (queryParamsCondition == null || queryParamsCondition.isEmpty()) {
+            queryParamsCondition = "1 == 1";
+        }
+
         return new URIPolicyEntry(priority, formattedPattern, queryParamsCondition, allowedRealmRoles, deniedRealmRoles,
                 allowedApplicationRoles, deniedApplicationRoles, allowedUsers, deniedUsers);
     }

@@ -33,9 +33,14 @@ public class URIPolicyTestTrigger {
         URIPolicyEntry policy3 = URIPolicyEntry.createEntry(8, "/something/{ $token.username }",
                 "requestParam(\"param1\").toString() == $uriMatcher.group(1)", "\"role1\", \"role2\"", null, null, null, "\"john\"", null);
 
+        // Increase priority to 8 will REJECT result!
+        URIPolicyEntry policy4 = URIPolicyEntry.createEntry(7, "/something/john",
+                null, null, "\"bar\"", null, null, "\"john\"", null);
+
         policy.addURIPolicyEntry(policy1);
         policy.addURIPolicyEntry(policy2);
         policy.addURIPolicyEntry(policy3);
+        policy.addURIPolicyEntry(policy4);
 
         RequestInfo request = new RequestInfo("/something/john");
         request.addRequestParam("param1", "john");
