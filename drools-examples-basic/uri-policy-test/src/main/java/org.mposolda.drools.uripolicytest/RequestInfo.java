@@ -30,6 +30,13 @@ public class RequestInfo {
     }
 
     public ParamValue requestParam(String paramName) {
-        return reqParams.get(paramName);
+        ParamValue paramValue = reqParams.get(paramName);
+
+        // TODO: Temporary
+        if (paramValue == null) {
+            return new ParamValue(null);
+        }  else {
+            return paramValue;
+        }
     }
 }

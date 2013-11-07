@@ -144,7 +144,7 @@ public class RolesContainer {
     // CHECKS
 
     public AuthorizationDecision isRealmRoleAllowed(String roleName) {
-        if (deniedRealmRoles != null && deniedRealmRoles.contains(roleName)) {
+        if (deniedRealmRoles != null && (deniedRealmRoles.contains(roleName) || deniedRealmRoles.contains("*"))) {
             return AuthorizationDecision.REJECT;
         } else if (allowedRealmRoles != null && (allowedRealmRoles.contains(roleName) || allowedRealmRoles.contains("*"))) {
             return AuthorizationDecision.ACCEPT;
@@ -154,7 +154,7 @@ public class RolesContainer {
     }
 
     public AuthorizationDecision isApplicationRoleAllowed(String roleName) {
-        if (deniedApplicationRoles != null && deniedApplicationRoles.contains(roleName)) {
+        if (deniedApplicationRoles != null && (deniedApplicationRoles.contains(roleName) || deniedRealmRoles.contains("*"))) {
             return AuthorizationDecision.REJECT;
         } else if (allowedApplicationRoles != null && (allowedApplicationRoles.contains(roleName) || allowedApplicationRoles.contains("*"))) {
             return AuthorizationDecision.ACCEPT;
@@ -201,9 +201,9 @@ public class RolesContainer {
     }
 
     public AuthorizationDecision isUserAllowed(String username) {
-        if (deniedUsers != null && deniedUsers.contains(username)) {
+        if (deniedUsers != null && (deniedUsers.contains(username) || deniedUsers.contains("*"))) {
             return AuthorizationDecision.REJECT;
-        } else if (allowedUsers != null && (allowedUsers.contains(username))) {
+        } else if (allowedUsers != null && ((allowedUsers.contains(username)) || allowedUsers.contains("*"))) {
             return AuthorizationDecision.ACCEPT;
         }
 

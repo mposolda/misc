@@ -1,6 +1,7 @@
 package org.mposolda.drools.uripolicytest;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -8,10 +9,10 @@ import java.util.Collection;
 public class Token {
 
     private final String username;
-    private final Collection<String> applicationRoles;
-    private final Collection<String> realmRoles;
+    private final List<String> applicationRoles;
+    private final List<String> realmRoles;
 
-    public Token(String username, Collection<String> realmRoles, Collection<String> applicationRoles) {
+    public Token(String username, List<String> realmRoles, List<String> applicationRoles) {
         this.username = username;
         this.realmRoles = realmRoles;
         this.applicationRoles = applicationRoles;
@@ -21,11 +22,11 @@ public class Token {
         return username;
     }
 
-    public Collection<String> getRealmRoles() {
+    public List<String> getRealmRoles() {
         return realmRoles;
     }
 
-    public Collection<String> getApplicationRoles() {
+    public List<String> getApplicationRoles() {
         return applicationRoles;
     }
 

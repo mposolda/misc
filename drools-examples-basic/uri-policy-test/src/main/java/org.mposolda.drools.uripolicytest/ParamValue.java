@@ -5,23 +5,34 @@ package org.mposolda.drools.uripolicytest;
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public final class ParamValue {
+public class ParamValue {
 
     private final String value;
 
     public ParamValue(String value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Null value of parameter");
-        }
+        // TODO:
+//        if (value == null) {
+//            throw new IllegalArgumentException("Null value of parameter");
+//        }
         this.value = value;
     }
 
-    public int toInt() {
-        return Integer.parseInt(value);
+    // TODO: Improve existing
+
+    public Integer toInt() {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException nfe) {
+            return null;
+        }
     }
 
-    public boolean toBoolean() {
-        return Boolean.parseBoolean(value);
+    public Boolean toBoolean() {
+        if (value != null) {
+            return Boolean.parseBoolean(value);
+        } else {
+            return null;
+        }
     }
 
     public double toDouble() {
@@ -32,7 +43,7 @@ public final class ParamValue {
 
     @Override
     public String toString() {
-        return value();
+        return value!=null ? value() : "";
     }
 
     public String value() {
