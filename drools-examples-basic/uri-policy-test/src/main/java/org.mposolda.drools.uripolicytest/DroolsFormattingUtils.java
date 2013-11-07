@@ -19,20 +19,20 @@ public class DroolsFormattingUtils {
 
     // TODO: Move to unit test
     public static void main(String[] args) {
-        assertEquals(formatStringToDrools("/something/foo"), "\"/something/foo\"");
-        assertEquals(formatStringToDrools("/something/*"), "\"/something/(.*)\"");
-        assertEquals(formatStringToDrools("/something1/*/kokos/*"), "\"/something1/(.*)/kokos/(.*)\"");
-        assertEquals(formatStringToDrools("/something1/([abc].*)/part2/*"), "\"/something1/([abc].*)/part2/(.*)\"");
-        assertEquals(formatStringToDrools("*/something1/([abc].*)/part2/(.*)"), "\"(.*)/something1/([abc].*)/part2/(.*)\"");
-        assertEquals(formatStringToDrools("(.*)/something1/([abc].*)/part2/(.*)"), "\"(.*)/something1/([abc].*)/part2/(.*)\"");
-        assertEquals(formatStringToDrools("/something1/{$token.username}/foo"), "\"/something1/\" + $token.username + \"/foo\"");
-        assertEquals(formatStringToDrools("/something1/{$token.username}"), "\"/something1/\" + $token.username");
-        assertEquals(formatStringToDrools("{$token.app}/something1/{$token.username}"), "$token.app + \"/something1/\" + $token.username");
-        assertEquals(formatStringToDrools("{$token.app}/something1"), "$token.app + \"/something1\"");
-        assertEquals(formatStringToDrools("{$token.app}"), "$token.app");
-        assertEquals(formatStringToDrools("/something1/{ any($token.realmRoles)}/foo"), "\"/something1/\" +  any($token.realmRoles) + \"/foo\"");
-        assertEquals(formatStringToDrools("/something1/{ any($token.applicationRoles)}"), "\"/something1/\" +  any($token.applicationRoles)");
-        assertEquals(formatStringToDrools("/something1/{$token.username}/foo/*/bar/(.*)"), "\"/something1/\" + $token.username + \"/foo/(.*)/bar/(.*)\"");
+        assertEquals(formatStringToDrools("/something/foo"), "\"^/something/foo$\"");
+        assertEquals(formatStringToDrools("/something/*"), "\"^/something/(.*)$\"");
+        assertEquals(formatStringToDrools("/something1/*/kokos/*"), "\"^/something1/(.*)/kokos/(.*)$\"");
+        assertEquals(formatStringToDrools("/something1/([abc].*)/part2/*"), "\"^/something1/([abc].*)/part2/(.*)$\"");
+        assertEquals(formatStringToDrools("*/something1/([abc].*)/part2/(.*)"), "\"^(.*)/something1/([abc].*)/part2/(.*)$\"");
+        assertEquals(formatStringToDrools("(.*)/something1/([abc].*)/part2/(.*)"), "\"^(.*)/something1/([abc].*)/part2/(.*)$\"");
+        assertEquals(formatStringToDrools("/something1/{$token.username}/foo"), "\"^/something1/\" + $token.username + \"/foo$\"");
+        assertEquals(formatStringToDrools("/something1/{$token.username}"), "\"^/something1/\" + $token.username + \"$\"");
+        assertEquals(formatStringToDrools("{$token.app}/something1/{$token.username}"), "\"^\" + $token.app + \"/something1/\" + $token.username + \"$\"");
+        assertEquals(formatStringToDrools("{$token.app}/something1"), "\"^\" + $token.app + \"/something1$\"");
+        assertEquals(formatStringToDrools("{$token.app}"), "\"^\" + $token.app + \"$\"");
+        assertEquals(formatStringToDrools("/something1/{ any($token.realmRoles)}/foo"), "\"^/something1/\" +  any($token.realmRoles) + \"/foo$\"");
+        assertEquals(formatStringToDrools("/something1/{ any($token.applicationRoles)}"), "\"^/something1/\" +  any($token.applicationRoles) + \"$\"");
+        assertEquals(formatStringToDrools("/something1/{$token.username}/foo/*/bar/(.*)"), "\"^/something1/\" + $token.username + \"/foo/(.*)/bar/(.*)$\"");
 
         System.out.println("Everything correct!!!");
     }
@@ -75,10 +75,18 @@ public class DroolsFormattingUtils {
         // Case when whole input starts with {foo-like} prefix
         StringBuilder result = new StringBuilder();
         if (startWith) {
+            // Add "^" to the beginning
+            result.append("\"^\" + ");
+
             result.append(outer.get(0));
+
             if (inner.size() > 0) {
                 result.append(" + ");
+            } else {
+                // Case when whole input is just something like {foo-like}
+                result.append(" + \"$\"");
             }
+
             outer.remove(0);
         }
 
@@ -90,13 +98,33 @@ public class DroolsFormattingUtils {
                 currentOuter = outer.get(i);
             }
 
-            result.append("\"").append(currentInner).append("\"");
+            result.append('"');
+
+            // Add ^ to the beginning of output
+            if (i == 0 && !startWith) {
+                result.append('^');
+            }
+
+            result.append(currentInner);
+
+            // Add $ to the end of output
+            if (i == (inner.size() - 1) && currentOuter == null) {
+                result.append('$');
+            }
+
+            result.append('"');
+
             if (currentOuter != null) {
                 result.append(" + ").append(currentOuter);
             }
 
             if (i != inner.size()-1) {
                 result.append(" + ");
+            }
+
+            // Add "$" to the end of output
+            if (i == (inner.size() - 1) && currentOuter != null) {
+                result.append(" + \"$\"");
             }
         }
 
