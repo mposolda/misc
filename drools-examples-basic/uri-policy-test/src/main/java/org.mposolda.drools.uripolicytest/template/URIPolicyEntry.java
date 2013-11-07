@@ -1,5 +1,7 @@
 package org.mposolda.drools.uripolicytest.template;
 
+import org.mposolda.drools.uripolicytest.DroolsFormattingUtils;
+
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
@@ -16,7 +18,7 @@ public class URIPolicyEntry {
     private final String allowedUsers;
     private final String deniedUsers;
 
-    public URIPolicyEntry(int priority, String uriPattern, String queryParamsCondition, String allowedRealmRoles, String deniedRealmRoles,
+    private URIPolicyEntry(int priority, String uriPattern, String queryParamsCondition, String allowedRealmRoles, String deniedRealmRoles,
                           String allowedApplicationRoles, String deniedApplicationRoles, String allowedUsers, String deniedUsers) {
         this.priority = priority;
         this.uriPattern = uriPattern;
@@ -28,6 +30,16 @@ public class URIPolicyEntry {
         this.deniedRealmRoles = deniedRealmRoles;
         this.deniedApplicationRoles = deniedApplicationRoles;
         this.deniedUsers = deniedUsers;
+    }
+
+    public static URIPolicyEntry createEntry(int priority, String uriPattern, String queryParamsCondition, String allowedRealmRoles, String deniedRealmRoles,
+                                             String allowedApplicationRoles, String deniedApplicationRoles, String allowedUsers, String deniedUsers) {
+
+        // From uriPattern from "user-friendly" form to "drools-friendly" form
+        String formattedPattern = DroolsFormattingUtils.formatStringToDrools(uriPattern);
+
+        return new URIPolicyEntry(priority, formattedPattern, queryParamsCondition, allowedRealmRoles, deniedRealmRoles,
+                allowedApplicationRoles, deniedApplicationRoles, allowedUsers, deniedUsers);
     }
 
     public int getPriority() {

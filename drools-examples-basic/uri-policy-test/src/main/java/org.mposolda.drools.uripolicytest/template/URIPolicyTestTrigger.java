@@ -19,92 +19,38 @@ import java.util.*;
 public class URIPolicyTestTrigger {
 
     public static void main(String[] args) throws Exception {
-        URIPolicyEntry policy1 = new URIPolicyEntry(10, "\"^/something/amos$\"",
+        DroolsPolicy policy = new DroolsPolicy();
+        policy.init();
+
+        URIPolicyEntry policy1 = URIPolicyEntry.createEntry(10, "/something/amos",
                 "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
                 "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
-        URIPolicyEntry policy2 = new URIPolicyEntry(8, "\"^/something/([abc].*)$\"",
+
+        URIPolicyEntry policy2 = URIPolicyEntry.createEntry(8, "/something/([abc].*)",
                 "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
                 "\"role1\", $uriMatcher.group(1)", null, null, null, "\"joohn\"", null);
-        URIPolicyEntry policy3 = new URIPolicyEntry(8, "\"^/something/(\" + $token.username + \")$\"",
+
+        URIPolicyEntry policy3 = URIPolicyEntry.createEntry(8, "/something/{ $token.username }",
                 "requestParam(\"param1\").toString() == $uriMatcher.group(1)", "\"role1\", \"role2\"", null, null, null, "\"john\"", null);
+
         List<URIPolicyEntry> uriPolicies = new ArrayList<URIPolicyEntry>();
         uriPolicies.add(policy1);
         uriPolicies.add(policy2);
         uriPolicies.add(policy3);
 
-        String template = buildTemplate(uriPolicies);
-        System.out.println(template);
+        policy.addURIPolicyEntries(uriPolicies);
 
 
-        RuleBase ruleBase = initDrools(template);
-
-        WorkingMemory workingMemory = ruleBase.newStatefulSession();
-
-        RulesProcessingResult rulesProcessingResult = new RulesProcessingResult();
-        workingMemory.insert(rulesProcessingResult);
-
-        EndSemaphore endSemaphore = new EndSemaphore();
-        workingMemory.insert(endSemaphore);
-
-        RequestInfo uriInput = new RequestInfo("/something/john");
-        uriInput.addRequestParam("param1", "john");
-        uriInput.addRequestParam("param2", "10");
-        workingMemory.insert(uriInput);
+        RequestInfo request = new RequestInfo("/something/john");
+        request.addRequestParam("param1", "john");
+        request.addRequestParam("param2", "10");
 
         List<String> realmRoles =  Arrays.asList(new String[]{"amos", "kolok", "bar"});
         List<String> appRoles =  Arrays.asList(new String[]{"appr1", "appr2", "appr3"});
         Token token = new Token("john", realmRoles, appRoles);
-        workingMemory.insert(token);
 
-        URIMatcherCache cache = new URIMatcherCache();
-        workingMemory.insert(cache);
+        AuthorizationDecision decision = policy.isRequestAuthorized(request, token);
+        System.out.println("DECISION: " + decision);
 
-        //workingMemory.addEventListener(new DebugAgendaEventListener());
-        //workingMemory.addEventListener( new DebugWorkingMemoryEventListener() );
-
-        int numberOfFiredPolicies = workingMemory.fireAllRules();
-        System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", rules=" + rulesProcessingResult.getDecision());
-
-    }
-
-    private static String buildTemplate(List<URIPolicyEntry> uriPolicies) {
-        InputStream templateStream = URIPolicyTestTrigger.class.getResourceAsStream("URIPolicyTemplate.drl");
-        URIPolicyTemplateDataProvider tdp = new URIPolicyTemplateDataProvider(uriPolicies.iterator());
-        DataProviderCompiler converter = new DataProviderCompiler();
-        String drl = converter.compile(tdp, templateStream);
-        return drl;
-    }
-
-
-    private static RuleBase initDrools(String templateString) throws IOException, DroolsParserException {
-        PackageBuilder packageBuilder = new PackageBuilder();
-
-        // Add DRL with functions
-        InputStream resourceAsStream = URIPolicyTestTrigger.class.getResourceAsStream("URIPolicyFunctions.drl");
-        Reader reader = new InputStreamReader(resourceAsStream);
-        packageBuilder.addPackageFromDrl(reader);
-
-        // Add DRL based on template
-        reader = new StringReader(templateString);
-        packageBuilder.addPackageFromDrl(reader);
-
-        PackageBuilderErrors errors = packageBuilder.getErrors();
-        if (errors.getErrors().length > 0) {
-            StringBuilder errorMessages = new StringBuilder();
-            errorMessages.append("Found errors in package builder\n");
-            for (int i = 0; i < errors.getErrors().length; i++) {
-                DroolsError errorMessage = errors.getErrors()[i];
-                errorMessages.append(errorMessage);
-                errorMessages.append("\n");
-            }
-            errorMessages.append("Could not parse knowledge");
-
-            throw new IllegalArgumentException(errorMessages.toString());
-        }
-
-        RuleBase ruleBase = RuleBaseFactory.newRuleBase();
-        org.drools.rule.Package rulesPackage = packageBuilder.getPackage();
-        ruleBase.addPackage(rulesPackage);
-        return ruleBase;
     }
 }
