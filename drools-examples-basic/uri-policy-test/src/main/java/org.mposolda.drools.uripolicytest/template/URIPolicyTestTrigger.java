@@ -33,13 +33,9 @@ public class URIPolicyTestTrigger {
         URIPolicyEntry policy3 = URIPolicyEntry.createEntry(8, "/something/{ $token.username }",
                 "requestParam(\"param1\").toString() == $uriMatcher.group(1)", "\"role1\", \"role2\"", null, null, null, "\"john\"", null);
 
-        List<URIPolicyEntry> uriPolicies = new ArrayList<URIPolicyEntry>();
-        uriPolicies.add(policy1);
-        uriPolicies.add(policy2);
-        uriPolicies.add(policy3);
-
-        policy.addURIPolicyEntries(uriPolicies);
-
+        policy.addURIPolicyEntry(policy1);
+        policy.addURIPolicyEntry(policy2);
+        policy.addURIPolicyEntry(policy3);
 
         RequestInfo request = new RequestInfo("/something/john");
         request.addRequestParam("param1", "john");

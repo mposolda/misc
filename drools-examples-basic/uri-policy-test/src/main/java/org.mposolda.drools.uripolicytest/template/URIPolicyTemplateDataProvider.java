@@ -3,6 +3,7 @@ package org.mposolda.drools.uripolicytest.template;
 import org.drools.template.DataProvider;
 
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Drools DataProvider for providing data about URI policies configured by user. Data are used to compile Drools template into
@@ -12,31 +13,36 @@ import java.util.Iterator;
  */
 public class URIPolicyTemplateDataProvider implements DataProvider {
 
-    private final Iterator<URIPolicyEntry> uriTemplateIterator;
+    private final URIPolicyEntry uriPolicyEntry;
+    private boolean processed = false;
 
-    public URIPolicyTemplateDataProvider(Iterator<URIPolicyEntry> uriTemplateIterator) {
-        this.uriTemplateIterator = uriTemplateIterator;
+    private static AtomicInteger counter = new AtomicInteger(0);
+
+    public URIPolicyTemplateDataProvider(URIPolicyEntry uriPolicyEntry) {
+        this.uriPolicyEntry = uriPolicyEntry;
     }
 
     @Override
     public boolean hasNext() {
-        return uriTemplateIterator.hasNext();
+        return !processed;
     }
 
     @Override
     public String[] next() {
-        URIPolicyEntry next = uriTemplateIterator.next();
+        processed = true;
+
         return new String[] {
-                String.valueOf(next.getPriority()),
-                String.valueOf(next.getPriority() - 1),
-                next.getUriPattern(),
-                next.getQueryParamsCondition(),
-                next.getAllowedRealmRoles(),
-                next.getDeniedRealmRoles(),
-                next.getAllowedApplicationRoles(),
-                next.getDeniedApplicationRoles(),
-                next.getAllowedUsers(),
-                next.getDeniedUsers()
+                String.valueOf(counter.getAndIncrement()),
+                String.valueOf(uriPolicyEntry.getPriority()),
+                String.valueOf(uriPolicyEntry.getPriority() - 1),
+                uriPolicyEntry.getUriPattern(),
+                uriPolicyEntry.getQueryParamsCondition(),
+                uriPolicyEntry.getAllowedRealmRoles(),
+                uriPolicyEntry.getDeniedRealmRoles(),
+                uriPolicyEntry.getAllowedApplicationRoles(),
+                uriPolicyEntry.getDeniedApplicationRoles(),
+                uriPolicyEntry.getAllowedUsers(),
+                uriPolicyEntry.getDeniedUsers()
         };
     }
 }

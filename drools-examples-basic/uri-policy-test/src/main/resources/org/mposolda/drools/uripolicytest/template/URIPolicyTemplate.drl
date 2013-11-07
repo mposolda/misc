@@ -1,4 +1,5 @@
 template header
+POLICY_COUNTER
 PRIORITY
 CHECK_PRIORITY
 URI_PATTERN
@@ -29,16 +30,16 @@ import java.util.regex.Matcher;
 dialect "mvel"
 
 template "URI Policy template"
-rule "URI_Policy_@{row.rowNumber}"
+rule "URI_Policy_@{POLICY_COUNTER}"
 salience @{PRIORITY}
 when
-  $rulesProcessingResult: RulesProcessingResult( isAlreadyProcessedRule("URI_Policy_@{row.rowNumber}") == false )
+  $rulesProcessingResult: RulesProcessingResult( isAlreadyProcessedRule("URI_Policy_@{POLICY_COUNTER}") == false )
   $endSemaphore: EndSemaphore( finished == false )
   $token: Token()
-  URIMatcherCache($uriMatcher: getURIMatcher("URI_Policy_@{row.rowNumber}"));
-  $request: RequestInfo( matches(@{URI_PATTERN}, uri, $uriMatcher) && ( requestConditions("URI_Policy_@{row.rowNumber}", (@{QUERY_PARAMS_CONDITIONS}) ) ) )
+  URIMatcherCache($uriMatcher: getURIMatcher("URI_Policy_@{POLICY_COUNTER}"));
+  $request: RequestInfo( matches(@{URI_PATTERN}, uri, $uriMatcher) && ( requestConditions("URI_Policy_@{POLICY_COUNTER}", (@{QUERY_PARAMS_CONDITIONS}) ) ) )
 then
-  System.out.println("URI_Policy_@{row.rowNumber} conditions matched");
+  System.out.println("URI_Policy_@{POLICY_COUNTER} conditions matched");
   System.out.println("Group 0: " + $uriMatcher.group(0));
   System.out.println("Group 1: " + $uriMatcher.group(1));
   System.out.println("Token: " + $token);
@@ -57,7 +58,7 @@ then
     mergeDecision(decision);
   }
   modify ($rulesProcessingResult) {
-    addProcessedRule("URI_Policy_@{row.rowNumber}");
+    addProcessedRule("URI_Policy_@{POLICY_COUNTER}");
   }
   modify ($rulesProcessingResult) {
       lastProcessedPriority = @{PRIORITY}
@@ -66,13 +67,13 @@ end
 end template
 
 template "Check finished"
-rule "Check_finished_@{row.rowNumber}"
+rule "Check_finished_@{POLICY_COUNTER}"
 salience @{CHECK_PRIORITY}
 when
   RulesProcessingResult(decision == AuthorizationDecision.ACCEPT || == AuthorizationDecision.REJECT, lastProcessedPriority > @{CHECK_PRIORITY})
   $endSemaphore: EndSemaphore( finished == false )
 then
-  System.out.println("Check_finished_@{row.rowNumber}, priority: " + @{CHECK_PRIORITY});
+  System.out.println("Check_finished_@{POLICY_COUNTER}, priority: " + @{CHECK_PRIORITY});
   modify ($endSemaphore) {
     finished = true;
   }

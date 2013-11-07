@@ -35,15 +35,9 @@ public class DroolsPolicy {
 
 
     public void addURIPolicyEntry(URIPolicyEntry uriPolicyEntry) {
-        List<URIPolicyEntry> list = Arrays.asList(new URIPolicyEntry[] { uriPolicyEntry });
-        addURIPolicyEntries(list);
-    }
-
-
-    public void addURIPolicyEntries(List<URIPolicyEntry> uriPolicyEntries) {
         // Create String containing rules for all uriPolicyEntries
         InputStream templateStream = DroolsPolicy.class.getResourceAsStream("URIPolicyTemplate.drl");
-        URIPolicyTemplateDataProvider tdp = new URIPolicyTemplateDataProvider(uriPolicyEntries.iterator());
+        URIPolicyTemplateDataProvider tdp = new URIPolicyTemplateDataProvider(uriPolicyEntry);
         DataProviderCompiler converter = new DataProviderCompiler();
         String drl = converter.compile(tdp, templateStream);
 
@@ -129,7 +123,5 @@ public class DroolsPolicy {
 
         org.drools.rule.Package rulesPackage = packageBuilder.getPackage();
         ruleBase.addPackage(rulesPackage);
-        org.drools.rule.Package[] packages = ruleBase.getPackages();
-        System.out.println(packages.length);
     }
 }
