@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Holds info about all processed URIMatcher by all URIPolicy rules
+ * Holds info about all processed URIMatcher by all URIPolicyEntry rules
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */

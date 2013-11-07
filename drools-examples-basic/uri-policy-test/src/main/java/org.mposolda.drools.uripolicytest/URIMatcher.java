@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
- * Encapsulates info about processing of URI string with one single rule of URIPolicy
+ * Encapsulates info about processing of URI string with one single rule of URIPolicyEntry
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */

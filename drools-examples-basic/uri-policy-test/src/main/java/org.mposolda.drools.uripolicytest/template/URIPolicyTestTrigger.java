@@ -19,15 +19,15 @@ import java.util.*;
 public class URIPolicyTestTrigger {
 
     public static void main(String[] args) throws Exception {
-        URIPolicy policy1 = new URIPolicy(10, "\"^/something/amos$\"",
+        URIPolicyEntry policy1 = new URIPolicyEntry(10, "\"^/something/amos$\"",
                 "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
                 "\"role1\", \"role2\"", "\"molok\"", null, null, "\"joohn\"", null);
-        URIPolicy policy2 = new URIPolicy(8, "\"^/something/([abc].*)$\"",
+        URIPolicyEntry policy2 = new URIPolicyEntry(8, "\"^/something/([abc].*)$\"",
                 "requestParam(\"param1\").toString() == \"value1\" && requestParam(\"param2\").toInt() >= 10",
                 "\"role1\", $uriMatcher.group(1)", null, null, null, "\"joohn\"", null);
-        URIPolicy policy3 = new URIPolicy(8, "\"^/something/(\" + $token.username + \")$\"",
+        URIPolicyEntry policy3 = new URIPolicyEntry(8, "\"^/something/(\" + $token.username + \")$\"",
                 "requestParam(\"param1\").toString() == $uriMatcher.group(1)", "\"role1\", \"role2\"", null, null, null, "\"john\"", null);
-        List<URIPolicy> uriPolicies = new ArrayList<URIPolicy>();
+        List<URIPolicyEntry> uriPolicies = new ArrayList<URIPolicyEntry>();
         uriPolicies.add(policy1);
         uriPolicies.add(policy2);
         uriPolicies.add(policy3);
@@ -67,7 +67,7 @@ public class URIPolicyTestTrigger {
 
     }
 
-    private static String buildTemplate(List<URIPolicy> uriPolicies) {
+    private static String buildTemplate(List<URIPolicyEntry> uriPolicies) {
         InputStream templateStream = URIPolicyTestTrigger.class.getResourceAsStream("URIPolicyTemplate.drl");
         URIPolicyTemplateDataProvider tdp = new URIPolicyTemplateDataProvider(uriPolicies.iterator());
         DataProviderCompiler converter = new DataProviderCompiler();

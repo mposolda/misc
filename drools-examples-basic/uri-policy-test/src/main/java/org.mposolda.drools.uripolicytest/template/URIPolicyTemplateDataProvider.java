@@ -12,9 +12,9 @@ import java.util.Iterator;
  */
 public class URIPolicyTemplateDataProvider implements DataProvider {
 
-    private final Iterator<URIPolicy> uriTemplateIterator;
+    private final Iterator<URIPolicyEntry> uriTemplateIterator;
 
-    public URIPolicyTemplateDataProvider(Iterator<URIPolicy> uriTemplateIterator) {
+    public URIPolicyTemplateDataProvider(Iterator<URIPolicyEntry> uriTemplateIterator) {
         this.uriTemplateIterator = uriTemplateIterator;
     }
 
@@ -25,7 +25,7 @@ public class URIPolicyTemplateDataProvider implements DataProvider {
 
     @Override
     public String[] next() {
-        URIPolicy next = uriTemplateIterator.next();
+        URIPolicyEntry next = uriTemplateIterator.next();
         return new String[] {
                 String.valueOf(next.getPriority()),
                 String.valueOf(next.getPriority() - 1),
