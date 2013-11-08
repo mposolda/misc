@@ -1,0 +1,22 @@
+# NOTE: FIND TOTAL NUMBER OF PEOPLE WHO LIVE IN CITIES, WHICH STARTS WITH DIGIT. TRICK SE "second" (Add same char to the string, which can be used later for grouping)
+db.zips.aggregate([
+    {$project:
+     {
+        city: "$city",
+	    first: {$substr : ["$city",0,1]},
+        second: {$substr : ["$city",0,0]},
+        pop: 1
+     }
+   },
+    {$match:
+     {
+	$or : [{"first": "0"}, {"first": "1"}, {"first": "2"}, {"first": "3"}, {"first": "4"}, {"first": "5"}, {"first": "6"}, {"first": "7"}, {"first": "8"}, {"first": "9"}]
+     }
+   },
+   {$group:
+    {
+     "_id": "$second",
+     "summ": {$sum: "$pop"}
+    }
+   }
+]);
