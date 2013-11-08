@@ -32,11 +32,12 @@ public class URIPolicyTemplateDataProvider implements DataProvider {
         processed = true;
 
         return new String[] {
-                String.valueOf(counter.getAndIncrement()),
+                String.valueOf(counter.incrementAndGet()),
                 String.valueOf(uriPolicyEntry.getPriority()),
                 String.valueOf(uriPolicyEntry.getPriority() - 1),
                 uriPolicyEntry.getUriPattern(),
                 uriPolicyEntry.getQueryParamsCondition(),
+                uriPolicyEntry.getRequestType(),
                 uriPolicyEntry.getAllowedRealmRoles(),
                 uriPolicyEntry.getDeniedRealmRoles(),
                 uriPolicyEntry.getAllowedApplicationRoles(),

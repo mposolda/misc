@@ -4,6 +4,7 @@ import org.drools.WorkingMemory;
 import org.mposolda.drools.uripolicytest.RulesProcessingResult;
 import org.mposolda.drools.uripolicytest.AuthorizationDecision;
 import org.mposolda.drools.uripolicytest.RequestInfo;
+import org.mposolda.drools.uripolicytest.RequestType;
 import org.mposolda.drools.uripolicytest.Token;
 import org.mposolda.drools.uripolicytest.URIMatcher;
 import java.util.List;
@@ -12,13 +13,11 @@ import java.util.regex.Matcher;
 
 dialect "mvel"
 
-function boolean matches(String regex, String textToMatch, URIMatcher uriMatcher) {
+function boolean uriMatches(String ruleName, String regex, String textToMatch, URIMatcher uriMatcher) {
   if (uriMatcher.isProcessed()) {
-    System.out.println("regex: " + regex + ", textToMatch: " + textToMatch + " already processed with result: " + uriMatcher.isMatched());
     return uriMatcher.isMatched();
   }
 
-  System.out.println("regex: " + regex + ", textToMatch: " + textToMatch + " - start processing");
   Pattern p = Pattern.compile(regex);
   Matcher m = p.matcher(textToMatch);
 
@@ -33,13 +32,23 @@ function boolean matches(String regex, String textToMatch, URIMatcher uriMatcher
   }
 
   uriMatcher.setProcessed(true);
-  System.out.println("Processing finished. Result info: " + uriMatcher);
+  System.out.println("Checking URI regex for rule " + ruleName + ". regex: " + regex + ", textToMatch: " + textToMatch
+      + ", result: " + uriMatcher);
+
   return uriMatcher.isMatched();
 }
 
-function boolean requestConditions(String ruleName, boolean result) {
-   System.out.println("Params condition for rule: " + ruleName + " ends with: " + result);
+function boolean requestConditionsMatches(String ruleName, boolean result) {
+   System.out.println("Checking params condition for rule: " + ruleName + ", result: " + result);
    return result;
+}
+
+function boolean requestTypeMatches(String ruleName, RequestType reqType, String allowedTypes) {
+  boolean result = allowedTypes.contains(reqType.name());
+  System.out.println("Checking requestType for rule " + ruleName + ". Incoming requestType: " + reqType
+      + ", allowedTypes: " + allowedTypes + ", result: " + result);
+
+  return result;
 }
 
 function String any(List items) {

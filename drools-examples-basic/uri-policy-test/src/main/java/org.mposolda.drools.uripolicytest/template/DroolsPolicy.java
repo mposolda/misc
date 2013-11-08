@@ -45,6 +45,8 @@ public class DroolsPolicy {
 
 
     public AuthorizationDecision isRequestAuthorized(RequestInfo request, Token token) {
+        System.out.println("Start checking request: " + request + ", token: " + token);
+
         WorkingMemory workingMemory = null;
 
         try {
@@ -59,8 +61,8 @@ public class DroolsPolicy {
             URIMatcherCache cache = new URIMatcherCache();
             workingMemory.insert(cache);
 
+            // TODO: Verify if it's better to first insert request or token (Rules checking is triggered right after inserting, so it could affect performance)
             workingMemory.insert(request);
-
             workingMemory.insert(token);
 
             // Uncomment for drools debugging (TODO: should be somehow configurable...)
@@ -70,7 +72,8 @@ public class DroolsPolicy {
             int numberOfFiredPolicies = workingMemory.fireAllRules();
 
             // TODO: Replace with logging
-            System.out.println("numberOfFiredPolicies=" + numberOfFiredPolicies + ", result=" + rulesProcessingResult.getDecision());
+            System.out.println("Overall result for request: " + request + ". Count of fired policies=" + numberOfFiredPolicies + ", Result=" + rulesProcessingResult.getDecision());
+            System.out.println("\n----------------------------------------------------------------\n");
             return rulesProcessingResult.getDecision();
         } finally {
             if (workingMemory != null) {

@@ -4,6 +4,7 @@ PRIORITY
 CHECK_PRIORITY
 URI_PATTERN
 QUERY_PARAMS_CONDITIONS
+REQUEST_TYPE
 ALLOWED_REALM_ROLES
 DENIED_REALM_ROLES
 ALLOWED_APPLICATION_ROLES
@@ -17,6 +18,7 @@ import org.drools.WorkingMemory;
 import org.mposolda.drools.uripolicytest.RulesProcessingResult;
 import org.mposolda.drools.uripolicytest.AuthorizationDecision;
 import org.mposolda.drools.uripolicytest.RequestInfo;
+import org.mposolda.drools.uripolicytest.RequestType;
 import org.mposolda.drools.uripolicytest.Token;
 import org.mposolda.drools.uripolicytest.URIMatcher;
 import org.mposolda.drools.uripolicytest.URIMatcherCache;
@@ -37,12 +39,12 @@ when
   $endSemaphore: EndSemaphore( finished == false )
   $token: Token()
   URIMatcherCache($uriMatcher: getURIMatcher("URI_Policy_@{POLICY_COUNTER}"));
-  $request: RequestInfo( matches(@{URI_PATTERN}, uri, $uriMatcher) && ( requestConditions("URI_Policy_@{POLICY_COUNTER}", (@{QUERY_PARAMS_CONDITIONS}) ) ) )
+  $request: RequestInfo( uriMatches("URI_Policy_@{POLICY_COUNTER}", @{URI_PATTERN}, uri, $uriMatcher) &&
+                         requestConditionsMatches("URI_Policy_@{POLICY_COUNTER}", (@{QUERY_PARAMS_CONDITIONS}) ) &&
+                         requestTypeMatches("URI_Policy_@{POLICY_COUNTER}", requestType, "@{REQUEST_TYPE}")
+                       )
 then
-  System.out.println("URI_Policy_@{POLICY_COUNTER} conditions matched");
-  System.out.println("Group 0: " + $uriMatcher.group(0));
-  System.out.println("Group 1: " + $uriMatcher.group(1));
-  System.out.println("Token: " + $token);
+  System.out.println("Triggered rule: URI_Policy_@{POLICY_COUNTER} . All conditions matched");
 
   RolesContainer container = new RolesContainer();
   container.addAllAllowedRealmRoles( Arrays.asList(new String[] { @{ALLOWED_REALM_ROLES} }) );
@@ -73,7 +75,7 @@ when
   RulesProcessingResult(decision == AuthorizationDecision.ACCEPT || == AuthorizationDecision.REJECT, lastProcessedPriority > @{CHECK_PRIORITY})
   $endSemaphore: EndSemaphore( finished == false )
 then
-  System.out.println("Check_finished_@{POLICY_COUNTER}, priority: " + @{CHECK_PRIORITY});
+  System.out.println("Triggered rule: Check_finished_@{POLICY_COUNTER}, priority: " + @{CHECK_PRIORITY} + " . Going to stop processing other URI rules");
   modify ($endSemaphore) {
     finished = true;
   }

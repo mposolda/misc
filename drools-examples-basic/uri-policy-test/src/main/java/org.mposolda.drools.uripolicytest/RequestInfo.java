@@ -10,15 +10,21 @@ import java.util.Map;
 public class RequestInfo {
 
     private final String uri;
+    private final RequestType requestType;
 
     private final Map<String, ParamValue> reqParams = new HashMap<String, ParamValue>();
 
-    public RequestInfo(String uri) {
+    public RequestInfo(String uri, RequestType requestType) {
         this.uri = uri;
+        this.requestType = requestType;
     }
 
     public String getUri() {
         return uri;
+    }
+
+    public RequestType getRequestType() {
+        return requestType;
     }
 
     public Collection<String> getRequestParamNames() {
@@ -38,5 +44,10 @@ public class RequestInfo {
         }  else {
             return paramValue;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Request [ uri=" + uri + ", requestType=" + requestType + " ]";
     }
 }
