@@ -1,16 +1,7 @@
 package org.mposolda.drools.uripolicytest.template;
 
-import org.drools.RuleBase;
-import org.drools.RuleBaseFactory;
-import org.drools.WorkingMemory;
-import org.drools.compiler.DroolsError;
-import org.drools.compiler.DroolsParserException;
-import org.drools.compiler.PackageBuilder;
-import org.drools.compiler.PackageBuilderErrors;
-import org.drools.template.DataProviderCompiler;
 import org.mposolda.drools.uripolicytest.*;
 
-import java.io.*;
 import java.util.*;
 
 /**

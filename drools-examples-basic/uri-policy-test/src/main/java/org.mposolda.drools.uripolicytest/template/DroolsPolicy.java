@@ -23,6 +23,9 @@ public class DroolsPolicy {
 
 
     public void init() {
+        // Workaround for https://issues.jboss.org/browse/DROOLS-329 TODO: Remove when not needed or move to better place
+        System.setProperty("drools.dialect.java.compiler", "JANINO");
+
         ruleBase = RuleBaseFactory.newRuleBase();
     }
 

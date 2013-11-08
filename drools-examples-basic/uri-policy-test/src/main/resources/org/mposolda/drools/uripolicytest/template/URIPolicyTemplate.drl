@@ -14,7 +14,6 @@ DENIED_USERS
 
 package org.mposolda.drools.uripolicytest;
 
-import org.drools.WorkingMemory;
 import org.mposolda.drools.uripolicytest.RulesProcessingResult;
 import org.mposolda.drools.uripolicytest.AuthorizationDecision;
 import org.mposolda.drools.uripolicytest.RequestInfo;
