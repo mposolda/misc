@@ -32,19 +32,19 @@ import java.util.regex.Matcher;
 dialect "mvel"
 
 template "URI Policy template"
-rule "URI_Policy_@{POLICY_COUNTER}"
+rule "URIPolicyRule_@{POLICY_COUNTER}"
 salience @{PRIORITY}
 when
-  $rulesProcessingResult: RulesProcessingResult( isAlreadyProcessedRule("URI_Policy_@{POLICY_COUNTER}") == false )
+  $rulesProcessingResult: RulesProcessingResult( isAlreadyProcessedRule("URIPolicyRule_@{POLICY_COUNTER}") == false )
   $endSemaphore: EndSemaphore( finished == false )
   $token: Token()
-  URIMatcherCache($uriMatcher: getURIMatcher("URI_Policy_@{POLICY_COUNTER}"));
-  $request: RequestInfo( uriMatches("URI_Policy_@{POLICY_COUNTER}", @{URI_PATTERN}, uri, $uriMatcher) &&
-                         requestConditionsMatches("URI_Policy_@{POLICY_COUNTER}", (@{QUERY_PARAMS_CONDITIONS}) ) &&
-                         requestTypeMatches("URI_Policy_@{POLICY_COUNTER}", requestType, "@{REQUEST_TYPE}")
+  URIMatcherCache($uriMatcher: getURIMatcher("URIPolicyRule_@{POLICY_COUNTER}"));
+  $request: RequestInfo( uriMatches("URIPolicyRule_@{POLICY_COUNTER}", @{URI_PATTERN}, uri, $uriMatcher) &&
+                         requestConditionsMatches("URIPolicyRule_@{POLICY_COUNTER}", (@{QUERY_PARAMS_CONDITIONS}) ) &&
+                         requestTypeMatches("URIPolicyRule_@{POLICY_COUNTER}", requestType, "@{REQUEST_TYPE}")
                        )
 then
-  System.out.println("Triggered rule: URI_Policy_@{POLICY_COUNTER} . All conditions matched");
+  System.out.println("Triggered rule: URIPolicyRule_@{POLICY_COUNTER} . All conditions matched");
 
   RolesContainer container = new RolesContainer();
   container.addAllAllowedRealmRoles( Arrays.asList(new String[] { @{ALLOWED_REALM_ROLES} }) );
@@ -60,7 +60,7 @@ then
     mergeDecision(decision);
   }
   modify ($rulesProcessingResult) {
-    addProcessedRule("URI_Policy_@{POLICY_COUNTER}");
+    addProcessedRule("URIPolicyRule_@{POLICY_COUNTER}");
   }
   modify ($rulesProcessingResult) {
       lastProcessedPriority = @{PRIORITY}
@@ -69,13 +69,13 @@ end
 end template
 
 template "Check finished"
-rule "Check_finished_@{POLICY_COUNTER}"
+rule "CheckFinished_@{POLICY_COUNTER}"
 salience @{CHECK_PRIORITY}
 when
   RulesProcessingResult(decision == AuthorizationDecision.ACCEPT || == AuthorizationDecision.REJECT, lastProcessedPriority > @{CHECK_PRIORITY})
   $endSemaphore: EndSemaphore( finished == false )
 then
-  System.out.println("Triggered rule: Check_finished_@{POLICY_COUNTER}, priority: " + @{CHECK_PRIORITY} + " . Going to stop processing other URI rules");
+  System.out.println("Triggered rule: CheckFinished_@{POLICY_COUNTER}, priority: " + @{CHECK_PRIORITY} + " . Going to stop processing other URI rules");
   modify ($endSemaphore) {
     finished = true;
   }
