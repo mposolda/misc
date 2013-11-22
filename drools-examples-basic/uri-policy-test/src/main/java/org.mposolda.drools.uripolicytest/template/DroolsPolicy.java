@@ -13,6 +13,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -20,13 +23,38 @@ import java.io.StringReader;
 public class DroolsPolicy {
 
     private RuleBase ruleBase;
+    private long start;
+    private Executor executor = Executors.newSingleThreadExecutor();
+    private CountDownLatch latch = new CountDownLatch(1);
 
 
     public void init() {
+        start = System.currentTimeMillis();
+        Runnable initTask = new Runnable() {
+
+            @Override
+            public void run() {
+                doInit();
+                latch.countDown();
+            }
+
+        };
+        executor.execute(initTask);
+        logTime("init");
+    }
+
+    protected void doInit() {
         // Workaround for https://issues.jboss.org/browse/DROOLS-329 TODO: Remove when not needed or move to better place
         System.setProperty("drools.dialect.java.compiler", "JANINO");
 
         ruleBase = RuleBaseFactory.newRuleBase();
+        logTime("doInit");
+        System.out.println("INIT THREAD: " + Thread.currentThread().getName());
+    }
+
+    public void logTime(String prefix) {
+        long delay = System.currentTimeMillis() - start;
+        System.out.println("DELAY: " + prefix + " " + delay);
     }
 
 
@@ -48,7 +76,15 @@ public class DroolsPolicy {
 
 
     public AuthorizationDecision isRequestAuthorized(RequestInfo request, Token token) {
+        try {
+            latch.await();
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted during initialization");
+        }
+
         System.out.println("Start checking request: " + request + ", token: " + token);
+        System.out.println("THREAD: " + Thread.currentThread().getName());
 
         WorkingMemory workingMemory = null;
 

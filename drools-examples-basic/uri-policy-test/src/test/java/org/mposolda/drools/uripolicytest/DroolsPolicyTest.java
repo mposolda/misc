@@ -52,17 +52,27 @@ public class DroolsPolicyTest {
         URIPolicyEntry rule7 = URIPolicyEntry.createEntry(20, "/droolsTest/*", null,
                 "*", null, "\"evilRole\"", null, null, null, null);
 
+        droolsPolicy.logTime("Before adding");
         droolsPolicy.addURIPolicyEntry(rule1);
+        droolsPolicy.logTime("after rule1");
         droolsPolicy.addURIPolicyEntry(rule2);
+        droolsPolicy.logTime("after rule2");
         droolsPolicy.addURIPolicyEntry(rule3);
+        droolsPolicy.logTime("after rule3");
         droolsPolicy.addURIPolicyEntry(rule4);
+        droolsPolicy.logTime("after rule4");
         droolsPolicy.addURIPolicyEntry(rule5);
+        droolsPolicy.logTime("after rule5");
         droolsPolicy.addURIPolicyEntry(rule6);
+        droolsPolicy.logTime("after rule6");
         droolsPolicy.addURIPolicyEntry(rule7);
+        droolsPolicy.logTime("after rule7");
     }
 
     @Test
     public void testPolicy() {
+        droolsPolicy.logTime("BEFORE TEST");
+
         Token john = new Token("john", Arrays.asList(new String[]{ "role1" }), Collections.EMPTY_LIST);
         Token evil = new Token("someEvilUser", Arrays.asList(new String[]{ "evilRole" }), Collections.EMPTY_LIST);
 
@@ -140,5 +150,6 @@ public class DroolsPolicyTest {
         Assert.assertEquals(AuthorizationDecision.REJECT, droolsPolicy.isRequestAuthorized(request12, john));
         Assert.assertEquals(AuthorizationDecision.REJECT, droolsPolicy.isRequestAuthorized(request12, evil));
 
+        droolsPolicy.logTime("AFTER TEST");
     }
 }
