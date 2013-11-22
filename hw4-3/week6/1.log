@@ -1,0 +1,139 @@
+Fri Nov 15 23:11:42.697 [initandlisten] MongoDB starting : pid=13506 port=27017 dbpath=/home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1 64-bit host=mposolda-ThinkPad-T520
+Fri Nov 15 23:11:42.706 [initandlisten] db version v2.4.6
+Fri Nov 15 23:11:42.706 [initandlisten] git version: b9925db5eac369d77a3a5f5d98a145eaaacd9673
+Fri Nov 15 23:11:42.706 [initandlisten] build info: Linux ip-10-2-29-40 2.6.21.7-2.ec2.v1.2.fc8xen #1 SMP Fri Nov 20 17:48:28 EST 2009 x86_64 BOOST_LIB_VERSION=1_49
+Fri Nov 15 23:11:42.706 [initandlisten] allocator: tcmalloc
+Fri Nov 15 23:11:42.706 [initandlisten] options: { dbpath: "data/rs1", fork: true, logpath: "1.log", oplogSize: 64, port: 27017, replSet: "m101", smallfiles: true }
+Fri Nov 15 23:11:42.816 [initandlisten] journal dir=/home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/journal
+Fri Nov 15 23:11:42.817 [initandlisten] recover : no journal files present, no recovery needed
+Fri Nov 15 23:11:46.112 [initandlisten] preallocateIsFaster=true 31.56
+Fri Nov 15 23:11:49.339 [initandlisten] preallocateIsFaster=true 24.2
+Fri Nov 15 23:11:53.647 [initandlisten] preallocateIsFaster=true 25.1
+Fri Nov 15 23:11:53.648 [initandlisten] preallocateIsFaster check took 10.83 secs
+Fri Nov 15 23:11:53.648 [initandlisten] preallocating a journal file /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/journal/prealloc.0
+Fri Nov 15 23:11:56.255 [initandlisten] preallocating a journal file /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/journal/prealloc.1
+Fri Nov 15 23:11:59.124 [initandlisten] preallocating a journal file /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/journal/prealloc.2
+Fri Nov 15 23:12:01.998 [FileAllocator] allocating new datafile /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/local.ns, filling with zeroes...
+Fri Nov 15 23:12:01.998 [FileAllocator] creating directory /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/_tmp
+Fri Nov 15 23:12:02.151 [FileAllocator] done allocating datafile /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/local.ns, size: 16MB,  took 0.125 secs
+Fri Nov 15 23:12:02.152 [FileAllocator] allocating new datafile /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/local.0, filling with zeroes...
+Fri Nov 15 23:12:02.268 [FileAllocator] done allocating datafile /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/local.0, size: 16MB,  took 0.115 secs
+Fri Nov 15 23:12:02.304 [initandlisten] command local.$cmd command: { create: "startup_log", size: 10485760, capped: true } ntoreturn:1 keyUpdates:0  reslen:37 327ms
+Fri Nov 15 23:12:02.322 [websvr] admin web console waiting for connections on port 28017
+Fri Nov 15 23:12:02.322 [initandlisten] waiting for connections on port 27017
+Fri Nov 15 23:12:02.345 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:12:02.345 [rsStart] replSet info you may need to run replSetInitiate -- rs.initiate() in the shell -- if that is not already done
+Fri Nov 15 23:12:12.346 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:12:22.347 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:12:32.347 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:12:42.348 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:12:52.348 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:13:02.349 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:13:12.350 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:13:22.350 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:13:32.351 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:13:42.351 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:13:52.352 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:14:02.353 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:14:12.353 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:14:14.121 [initandlisten] connection accepted from 127.0.0.1:57059 #1 (1 connection now open)
+Fri Nov 15 23:14:22.354 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:14:32.354 [rsStart] replSet can't get local.system.replset config from self or any seed (EMPTYCONFIG)
+Fri Nov 15 23:14:36.251 [conn1] replSet replSetInitiate admin command received from client
+Fri Nov 15 23:14:36.283 [conn1] replSet replSetInitiate config object parses ok, 3 members specified
+Fri Nov 15 23:14:36.354 [conn1] replSet replSetInitiate all members seem up
+Fri Nov 15 23:14:36.354 [conn1] ******
+Fri Nov 15 23:14:36.354 [conn1] creating replication oplog of size: 64MB...
+Fri Nov 15 23:14:36.355 [FileAllocator] allocating new datafile /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/local.1, filling with zeroes...
+Fri Nov 15 23:14:37.188 [FileAllocator] done allocating datafile /home/mposolda/IdeaProjects/misc/hw4-3/week6/data/rs1/local.1, size: 128MB,  took 0.831 secs
+Fri Nov 15 23:14:39.522 [conn1] ******
+Fri Nov 15 23:14:39.522 [conn1] replSet info saving a newer config version to local.system.replset
+Fri Nov 15 23:14:39.640 [conn1] replSet saveConfigLocally done
+Fri Nov 15 23:14:39.641 [conn1] replSet replSetInitiate config now saved locally.  Should come online in about a minute.
+Fri Nov 15 23:14:39.641 [conn1] command admin.$cmd command: { replSetInitiate: { _id: "m101", members: [ { _id: 0.0, host: "localhost:27017" }, { _id: 1.0, host: "localhost:27018" }, { _id: 2.0, host: "localhost:27019" } ] } } ntoreturn:1 keyUpdates:0 locks(micros) W:3301695 reslen:112 3390ms
+Fri Nov 15 23:14:42.355 [rsStart] replSet I am localhost:27017
+Fri Nov 15 23:14:42.383 [rsStart] replSet STARTUP2
+Fri Nov 15 23:14:43.403 [rsSync] replSet SECONDARY
+Fri Nov 15 23:14:44.371 [rsHealthPoll] replSet member localhost:27018 is up
+Fri Nov 15 23:14:44.371 [rsHealthPoll] replSet member localhost:27019 is up
+Fri Nov 15 23:14:44.372 [rsMgr] replSet not electing self, not all members up and we have been up less than 5 minutes
+Fri Nov 15 23:14:44.373 [rsMgr] replSet not electing self, not all members up and we have been up less than 5 minutes
+Fri Nov 15 23:14:48.432 [initandlisten] connection accepted from 127.0.0.1:57062 #2 (2 connections now open)
+Fri Nov 15 23:14:50.373 [rsHealthPoll] replset info localhost:27018 thinks that we are down
+Fri Nov 15 23:14:50.373 [rsHealthPoll] replSet member localhost:27018 is now in state STARTUP2
+Fri Nov 15 23:14:50.373 [rsMgr] not electing self, localhost:27018 would veto with 'I don't think localhost:27017 is electable'
+Fri Nov 15 23:14:50.374 [rsMgr] not electing self, localhost:27018 would veto with 'I don't think localhost:27017 is electable'
+Fri Nov 15 23:14:53.276 [initandlisten] connection accepted from 127.0.0.1:57065 #3 (3 connections now open)
+Fri Nov 15 23:14:54.374 [rsHealthPoll] replset info localhost:27019 thinks that we are down
+Fri Nov 15 23:14:54.374 [rsHealthPoll] replSet member localhost:27019 is now in state STARTUP2
+Fri Nov 15 23:14:54.375 [rsMgr] not electing self, localhost:27019 would veto with 'I don't think localhost:27017 is electable'
+Fri Nov 15 23:15:00.377 [rsMgr] replSet info electSelf 0
+Fri Nov 15 23:15:00.419 [rsMgr] replSet PRIMARY
+Fri Nov 15 23:15:00.445 [rsHealthPoll] replSet member localhost:27018 is now in state RECOVERING
+Fri Nov 15 23:15:02.377 [rsHealthPoll] replSet member localhost:27019 is now in state RECOVERING
+Fri Nov 15 23:15:04.481 [conn2] end connection 127.0.0.1:57062 (2 connections now open)
+Fri Nov 15 23:15:04.481 [initandlisten] connection accepted from 127.0.0.1:57069 #4 (4 connections now open)
+Fri Nov 15 23:15:07.232 [initandlisten] connection accepted from 127.0.0.1:57070 #5 (4 connections now open)
+Fri Nov 15 23:15:07.358 [conn5] end connection 127.0.0.1:57070 (3 connections now open)
+Fri Nov 15 23:15:07.522 [initandlisten] connection accepted from 127.0.0.1:57071 #6 (4 connections now open)
+Fri Nov 15 23:15:08.369 [initandlisten] connection accepted from 127.0.0.1:57072 #7 (5 connections now open)
+Fri Nov 15 23:15:09.408 [slaveTracking] build index local.slaves { _id: 1 }
+Fri Nov 15 23:15:09.409 [slaveTracking] build index done.  scanned 0 total records. 0.001 secs
+Fri Nov 15 23:15:09.834 [conn3] end connection 127.0.0.1:57065 (4 connections now open)
+Fri Nov 15 23:15:09.835 [initandlisten] connection accepted from 127.0.0.1:57073 #8 (6 connections now open)
+Fri Nov 15 23:15:10.448 [rsHealthPoll] replSet member localhost:27018 is now in state SECONDARY
+Fri Nov 15 23:15:11.900 [initandlisten] connection accepted from 127.0.0.1:57074 #9 (6 connections now open)
+Fri Nov 15 23:15:11.944 [conn9] end connection 127.0.0.1:57074 (5 connections now open)
+Fri Nov 15 23:15:12.286 [initandlisten] connection accepted from 127.0.0.1:57075 #10 (6 connections now open)
+Fri Nov 15 23:15:12.945 [initandlisten] connection accepted from 127.0.0.1:57077 #11 (7 connections now open)
+Fri Nov 15 23:15:14.382 [rsHealthPoll] replSet member localhost:27019 is now in state SECONDARY
+Fri Nov 15 23:15:34.490 [conn4] end connection 127.0.0.1:57069 (6 connections now open)
+Fri Nov 15 23:15:34.490 [initandlisten] connection accepted from 127.0.0.1:57081 #12 (8 connections now open)
+Fri Nov 15 23:15:39.843 [conn8] end connection 127.0.0.1:57073 (6 connections now open)
+Fri Nov 15 23:15:39.843 [initandlisten] connection accepted from 127.0.0.1:57083 #13 (8 connections now open)
+Fri Nov 15 23:16:04.499 [conn12] end connection 127.0.0.1:57081 (6 connections now open)
+Fri Nov 15 23:16:04.499 [initandlisten] connection accepted from 127.0.0.1:57088 #14 (8 connections now open)
+Fri Nov 15 23:16:09.851 [conn13] end connection 127.0.0.1:57083 (6 connections now open)
+Fri Nov 15 23:16:09.852 [initandlisten] connection accepted from 127.0.0.1:57089 #15 (8 connections now open)
+Fri Nov 15 23:16:33.241 [initandlisten] connection accepted from 127.0.0.1:57094 #16 (8 connections now open)
+Fri Nov 15 23:16:33.324 [conn16] end connection 127.0.0.1:57094 (7 connections now open)
+Fri Nov 15 23:16:34.509 [conn14] end connection 127.0.0.1:57088 (6 connections now open)
+Fri Nov 15 23:16:34.509 [initandlisten] connection accepted from 127.0.0.1:57097 #17 (8 connections now open)
+Fri Nov 15 23:16:39.861 [conn15] end connection 127.0.0.1:57089 (6 connections now open)
+Fri Nov 15 23:16:39.862 [initandlisten] connection accepted from 127.0.0.1:57098 #18 (7 connections now open)
+Fri Nov 15 23:17:04.517 [conn17] end connection 127.0.0.1:57097 (6 connections now open)
+Fri Nov 15 23:17:04.518 [initandlisten] connection accepted from 127.0.0.1:57104 #19 (7 connections now open)
+Fri Nov 15 23:17:09.871 [conn18] end connection 127.0.0.1:57098 (6 connections now open)
+Fri Nov 15 23:17:09.871 [initandlisten] connection accepted from 127.0.0.1:57106 #20 (8 connections now open)
+Fri Nov 15 23:17:34.525 [conn19] end connection 127.0.0.1:57104 (6 connections now open)
+Fri Nov 15 23:17:34.526 [initandlisten] connection accepted from 127.0.0.1:57117 #21 (8 connections now open)
+Fri Nov 15 23:17:39.879 [conn20] end connection 127.0.0.1:57106 (6 connections now open)
+Fri Nov 15 23:17:39.879 [initandlisten] connection accepted from 127.0.0.1:57118 #22 (8 connections now open)
+Fri Nov 15 23:18:04.534 [conn21] end connection 127.0.0.1:57117 (6 connections now open)
+Fri Nov 15 23:18:04.534 [initandlisten] connection accepted from 127.0.0.1:57125 #23 (8 connections now open)
+Fri Nov 15 23:18:09.750 [conn1] end connection 127.0.0.1:57059 (6 connections now open)
+Fri Nov 15 23:18:09.887 [initandlisten] connection accepted from 127.0.0.1:57126 #24 (7 connections now open)
+Fri Nov 15 23:18:09.887 [conn22] end connection 127.0.0.1:57118 (5 connections now open)
+Fri Nov 15 23:18:29.778 [signalProcessingThread] got signal 15 (Terminated), will terminate after current cmd ends
+Fri Nov 15 23:18:29.791 [signalProcessingThread] now exiting
+Fri Nov 15 23:18:29.791 dbexit: 
+Fri Nov 15 23:18:29.791 [signalProcessingThread] shutdown: going to close listening sockets...
+Fri Nov 15 23:18:29.792 [signalProcessingThread] closing listening socket: 9
+Fri Nov 15 23:18:29.792 [signalProcessingThread] closing listening socket: 10
+Fri Nov 15 23:18:29.792 [signalProcessingThread] closing listening socket: 11
+Fri Nov 15 23:18:29.792 [signalProcessingThread] removing socket file: /tmp/mongodb-27017.sock
+Fri Nov 15 23:18:29.792 [signalProcessingThread] shutdown: going to flush diaglog...
+Fri Nov 15 23:18:29.792 [signalProcessingThread] shutdown: going to close sockets...
+Fri Nov 15 23:18:29.792 [signalProcessingThread] shutdown: waiting for fs preallocator...
+Fri Nov 15 23:18:29.792 [signalProcessingThread] shutdown: lock for final commit...
+Fri Nov 15 23:18:29.792 [signalProcessingThread] shutdown: final commit...
+Fri Nov 15 23:18:29.792 [conn11] end connection 127.0.0.1:57077 (5 connections now open)
+Fri Nov 15 23:18:29.792 [conn24] end connection 127.0.0.1:57126 (5 connections now open)
+Fri Nov 15 23:18:29.792 [conn23] end connection 127.0.0.1:57125 (4 connections now open)
+Fri Nov 15 23:18:29.792 [conn7] end connection 127.0.0.1:57072 (5 connections now open)
+Fri Nov 15 23:18:29.813 [signalProcessingThread] shutdown: closing all files...
+Fri Nov 15 23:18:29.813 [signalProcessingThread] closeAllFiles() finished
+Fri Nov 15 23:18:29.813 [signalProcessingThread] journalCleanup...
+Fri Nov 15 23:18:29.813 [signalProcessingThread] removeJournalFiles
+Fri Nov 15 23:18:30.030 [signalProcessingThread] shutdown: removing fs lock...
+Fri Nov 15 23:18:30.030 dbexit: really exiting now

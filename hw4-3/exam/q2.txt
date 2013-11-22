@@ -1,0 +1,26 @@
+NEJVIC FROM-TO KOMBINACE
+
+db.messages.aggregate([
+ {$project:
+   {
+     "From": "$headers.From",
+     "To": "$headers.To"
+   }
+ },
+ {$unwind: "$To"
+ },
+ {$group:
+  {
+    "_id": { "Id":"$_id", "From": "$From", "To": "$To" },
+    "summ": {$sum: 1}
+  }
+ },
+ {$group:
+  {
+    "_id": { "From": "$_id.From", "To": "$_id.To" },
+    "summ": {$sum: 1}
+  }
+ },
+ {$sort: {"summ":-1}},
+ {$limit: 3}
+]);
