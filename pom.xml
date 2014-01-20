@@ -23,6 +23,8 @@
       <module>hw4-3</module>
       <module>drools-examples</module>
       <module>drools-examples</module>
+      <module>mess</module>
+      <module>simple-session-portlet</module>
   </modules>
 
 </project>
