@@ -17,9 +17,15 @@
             <version>2.0</version>
             <scope>provided</scope>
         </dependency>
+      <dependency>
+        <groupId>javax.enterprise</groupId>
+        <artifactId>cdi-api</artifactId>
+        <version>1.0-SP4</version>
+        <scope>provided</scope>
+      </dependency>
     </dependencies>
 
     <build>
-        <finalName>simple-session-portlet</finalName>
+        <finalName>simple-portlets</finalName>
     </build>
 </project>

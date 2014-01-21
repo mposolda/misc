@@ -24,7 +24,7 @@
       <module>drools-examples</module>
       <module>drools-examples</module>
       <module>mess</module>
-      <module>simple-session-portlet</module>
+      <module>simple-portlets</module>
   </modules>
 
 </project>

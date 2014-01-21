@@ -8,6 +8,7 @@ import org.drools.compiler.PackageBuilder;
 import org.drools.compiler.PackageBuilderErrors;
 import org.drools.template.DataProviderCompiler;
 import org.mposolda.drools.uripolicytest.*;
+import org.mposolda.drools.uripolicytest.facttemplates.HashMapFactImpl;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -103,6 +104,10 @@ public class DroolsPolicy {
             // TODO: Verify if it's better to first insert request or token (Rules checking is triggered right after inserting, so it could affect performance)
             workingMemory.insert(request);
             workingMemory.insert(token);
+
+            // Just for testing
+            /*HashMapFactImpl someFact = new HashMapFactImpl();
+            workingMemory.insert(someFact);*/
 
             // Uncomment for drools debugging (TODO: should be somehow configurable...)
             //workingMemory.addEventListener(new DebugAgendaEventListener());
