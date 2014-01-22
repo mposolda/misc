@@ -20,7 +20,7 @@ public class GenericCDIPortlet extends GenericPortlet {
      * Java EE Container injects a Request Scoped {@link DataBean} for us here.
      */
     @Inject
-    private DataBean bean;
+    public DataBean bean;
 
     @Override
     protected void doView(RenderRequest request, RenderResponse response) throws PortletException, IOException {

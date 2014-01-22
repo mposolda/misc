@@ -31,6 +31,7 @@
     </portlet-info>
   </portlet>
 
+  <!--
   <portlet>
     <description>A portlet that demonstrates use of CDI</description>
     <portlet-name>CDIGenericPortlet</portlet-name>
@@ -45,6 +46,29 @@
       <title>CDI Generic Portlet</title>
       <keywords>Quickstarts</keywords>
     </portlet-info>
+  </portlet>-->
+
+  <portlet>
+    <portlet-name>PreferencesPortlet</portlet-name>
+    <portlet-class>org.gatein.example.PreferencesPortlet</portlet-class>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <portlet-info>
+      <title>PreferencesPortlet</title>
+    </portlet-info>
+
+    <portlet-preferences>
+      <preference>
+        <name>department</name>
+        <value>something</value>
+      </preference>
+      <preference>
+        <name>counter</name>
+        <value>0</value>
+      </preference>
+    </portlet-preferences>
   </portlet>
 
 </portlet-app>
