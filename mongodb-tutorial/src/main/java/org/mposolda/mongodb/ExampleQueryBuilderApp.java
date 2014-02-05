@@ -1,5 +1,6 @@
 package org.mposolda.mongodb;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import com.mongodb.DB;
@@ -8,6 +9,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.QueryBuilder;
+import org.bson.types.ObjectId;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -18,6 +20,11 @@ public class ExampleQueryBuilderApp {
         MongoClient mongoClient = new MongoClient( "localhost" , 27017 );
         DB keycloakDB = mongoClient.getDB("keycloak");
 
+        test1(keycloakDB);
+        test2(keycloakDB);
+    }
+
+    private static void test1(DB keycloakDB) {
         DBCollection userCollection = keycloakDB.getCollection("userrr");
 
         String s = "joe anthon";
@@ -58,6 +65,19 @@ public class ExampleQueryBuilderApp {
 
 
         DBCursor cursor = userCollection.find(builder.get());
+
+        while (cursor.hasNext()) {
+            System.out.println(cursor.next());
+        }
+    }
+
+    private static void test2(DB keycloakDB) {
+        DBCollection test2Collection = keycloakDB.getCollection("test2");
+
+        QueryBuilder builder = new QueryBuilder()
+               // .and("role").in(Arrays.asList(123, 456));
+                .and("_id").in(Arrays.asList(new ObjectId("52f2009197d0c6db06ac2014")));
+        DBCursor cursor = test2Collection.find(builder.get());
 
         while (cursor.hasNext()) {
             System.out.println(cursor.next());
