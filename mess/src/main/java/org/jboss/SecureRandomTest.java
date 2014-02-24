@@ -1,4 +1,4 @@
-package org.mposolda;
+package org.jboss;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
