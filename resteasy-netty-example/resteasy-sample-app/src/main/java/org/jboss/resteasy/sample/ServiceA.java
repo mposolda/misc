@@ -28,13 +28,14 @@ public class ServiceA {
     public ServiceA() {
     }
 
+    // Could be accessed under something like http://localhost:8383/app/rest/a/kokos/some
     @GET
     @NoCache
     @Produces("text/html")
-    public Response entryPoint() {
+    public Response entryPoint(final @PathParam("param") String param) {
         String response = new StringBuilder("<html><head><title>Cool page</title></head><body>")
                 .append("JSON: <a href='" + uriInfo.getBaseUriBuilder().path(EndpointA.class).path(EndpointA.class, "getServiceA")
-                        .path(ServiceA.class, "jsonEndpoint").build("kokos").toString() + "'>here</a><br>")
+                        .path(ServiceA.class, "jsonEndpoint").build(param).toString() + "'>here</a><br>")
                 .append("</body></html").toString();
 
         return Response.ok(response).build();

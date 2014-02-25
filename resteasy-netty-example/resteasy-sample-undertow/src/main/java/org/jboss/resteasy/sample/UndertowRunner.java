@@ -1,12 +1,15 @@
 package org.jboss.resteasy.sample;
 
+import javax.servlet.DispatcherType;
 import javax.servlet.ServletException;
 
 import io.undertow.Undertow;
 import io.undertow.server.handlers.PathHandler;
+import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DefaultServletConfig;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
+import io.undertow.servlet.api.FilterInfo;
 import io.undertow.servlet.api.ServletContainer;
 import io.undertow.servlet.api.ServletInfo;
 import org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher;
@@ -68,6 +71,10 @@ public class UndertowRunner {
 
         deploymentInfo.addServletContextAttribute(ResteasyDeployment.class.getName(), deployment);
         deploymentInfo.addServlet(resteasyServlet);
+
+        FilterInfo filter = Servlets.filter("InjectorFilter", InjectorFilter.class);
+        deploymentInfo.addFilter(filter);
+        deploymentInfo.addFilterUrlMapping("InjectorFilter", "/rest/*", DispatcherType.REQUEST);
 
         DeploymentManager manager = container.addDeployment(deploymentInfo);
         manager.deploy();

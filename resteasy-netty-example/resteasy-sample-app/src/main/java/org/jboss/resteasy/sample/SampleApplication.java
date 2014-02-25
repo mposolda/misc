@@ -17,7 +17,8 @@ public class SampleApplication extends Application {
         singletons.add(new EndpointA());
         //singletons.add(new EndpointB());
 
-        classes.add(HelloService.class);
+        // Doesn't work and for singletons as well
+        // classes.add(HelloService.class);
     }
 
     @Override
