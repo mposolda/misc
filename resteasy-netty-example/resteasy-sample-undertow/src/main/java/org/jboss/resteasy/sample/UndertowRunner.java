@@ -54,7 +54,8 @@ public class UndertowRunner {
 
     public void deployApp() {
         ResteasyDeployment deployment = new ResteasyDeployment();
-        deployment.setApplicationClass(SampleApplication.class.getName());
+        // deployment.setApplicationClass(SampleApplication.class.getName());
+        deployment.setApplicationClass(SampleServletApplication.class.getName());
 
         DeploymentInfo deploymentInfo = new DeploymentInfo();
         deploymentInfo.setClassLoader(getClass().getClassLoader());
