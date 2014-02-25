@@ -25,6 +25,7 @@
       <module>drools-examples</module>
       <module>mess</module>
       <module>simple-portlets</module>
+      <module>resteasy-netty-example</module>
   </modules>
 
 </project>
