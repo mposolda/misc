@@ -12,12 +12,14 @@
     <modules>
         <module>resteasy-sample-app</module>
         <module>resteasy-sample-undertow</module>
+        <module>resteasy-netty</module>
     </modules>
     <artifactId>resteasy-netty-example</artifactId>
 
     <properties>
         <version.resteasy>3.0.6.Final</version.resteasy>
         <undertow.version>1.0.0.Beta30</undertow.version>
+        <netty.version>4.0.2.Final</netty.version>
     </properties>
 
     <dependencyManagement>
@@ -37,6 +39,18 @@
                 <artifactId>resteasy-jackson-provider</artifactId>
                 <version>${version.resteasy}</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-netty4</artifactId>
+                <version>${version.resteasy}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-all</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>async-http-servlet-3.0</artifactId>
