@@ -12,7 +12,8 @@ import java.net.Socket;
 public class SimpleSocketClient {
 
     public static void main(String[] args) throws IOException {
-        final Socket socket = new Socket("localhost", 8675);
+        // final Socket socket = new Socket("localhost", 8675);
+        final Socket socket = new Socket("localhost", 8080);
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
         final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
