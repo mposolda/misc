@@ -1,5 +1,8 @@
 package org.jboss.resteasy.sample;
 
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.URI;
 
 import javax.xml.stream.XMLEventFactory;
@@ -28,6 +31,13 @@ public class NettySampleHandler extends SimpleChannelInboundHandler<DefaultHttpR
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultHttpRequest msg) throws Exception {
         URI uri = new URI( msg.getUri() );
+
+        // Forward to resteasy handlers
+        if (uri.getRawPath().startsWith(NettyRunner.REST_PATH)) {
+            ctx.fireChannelRead(msg);
+            return;
+        }
+
         String headerNames = msg.headers().names().toString();
 
         String query = uri.getRawQuery();
@@ -42,6 +52,10 @@ public class NettySampleHandler extends SimpleChannelInboundHandler<DefaultHttpR
 
         ByteBuf content = createResponse(headerNames, paramNames);
 
+        writeResponse(ctx, content, uri);
+    }
+
+    private void writeResponse(ChannelHandlerContext ctx, ByteBuf content, URI uri) {
         DefaultHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK, content);
         response.headers().add(HttpHeaders.Names.CONTENT_LENGTH, content.readableBytes());
         response.headers().add(HttpHeaders.Names.LOCATION, uri.toString());
