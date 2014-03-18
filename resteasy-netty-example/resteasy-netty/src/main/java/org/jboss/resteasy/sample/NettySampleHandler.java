@@ -28,12 +28,18 @@ import io.netty.handler.codec.http.QueryStringDecoder;
  */
 public class NettySampleHandler extends SimpleChannelInboundHandler<DefaultHttpRequest> {
 
+    private final String excludedPath;
+
+    public NettySampleHandler(String excludedPath) {
+        this.excludedPath = excludedPath;
+    }
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DefaultHttpRequest msg) throws Exception {
         URI uri = new URI( msg.getUri() );
 
         // Forward to resteasy handlers
-        if (uri.getRawPath().startsWith(NettyRunner.REST_PATH)) {
+        if (uri.getRawPath().startsWith(excludedPath)) {
             ctx.fireChannelRead(msg);
             return;
         }

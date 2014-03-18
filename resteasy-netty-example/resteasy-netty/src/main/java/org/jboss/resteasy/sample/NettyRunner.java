@@ -58,7 +58,7 @@ public class NettyRunner {
                 .group(eventLoopGroup)
                 .localAddress(new InetSocketAddress("localhost", 8383))
                         //.handler( new DebugHandler( "server-handler" ) )
-                .childHandler(createChildHandler(eventExecutor, dispatcher, REST_PATH))
+                .childHandler(createChildHandler(eventExecutor, dispatcher, getRootPath(), deployment))
                 .option(ChannelOption.SO_BACKLOG, backlog)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
         ChannelFuture future = serverBootstrap.bind();
@@ -83,36 +83,44 @@ public class NettyRunner {
         });
     }
 
-    protected ChannelHandler createChildHandler(final EventLoopGroup eventExecutor, final RequestDispatcher dispatcher, final String rootPath) {
+    protected ChannelHandler createChildHandler(final EventLoopGroup eventExecutor, final RequestDispatcher dispatcher, final String rootPath, final ResteasyDeployment deployment) {
 
         return new ChannelInitializer<NioSocketChannel>() {
 
             protected void initChannel(NioSocketChannel ch) throws Exception {
-                ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast(new HttpRequestDecoder());
-                pipeline.addLast(new HttpObjectAggregator(maxRequestSize));
-                pipeline.addLast(new HttpResponseEncoder());
-
-                // My simple handler
-                pipeline.addLast(new NettySampleHandler());
-
-                // Resteasy decoder/encoder
-                ch.pipeline().addLast(new RestEasyHttpRequestDecoder(dispatcher.getDispatcher(), rootPath, RestEasyHttpRequestDecoder.Protocol.HTTP));
-                ch.pipeline().addLast(new RestEasyHttpResponseEncoder(dispatcher));
-
-                // ServicesInjector, which push some objects
-                ch.pipeline().addLast(eventExecutor, new ServicesInjector());
-
-                // Process resteasy request now
-                ch.pipeline().addLast(eventExecutor, new RequestHandler(dispatcher));
+                NettyRunner.this.initChannel(eventExecutor, dispatcher, rootPath, deployment, ch);
             }
         };
     }
 
-    private ResteasyDeployment createDeployment() {
+    protected ResteasyDeployment createDeployment() {
         ResteasyDeployment deployment = new ResteasyDeployment();
         deployment.setApplicationClass(SampleApplication.class.getName());
         deployment.setSecurityEnabled(true);
         return deployment;
+    }
+
+    protected void initChannel(final EventLoopGroup eventExecutor, final RequestDispatcher dispatcher, final String rootPath, ResteasyDeployment deployment, NioSocketChannel ch) throws Exception {
+        ChannelPipeline pipeline = ch.pipeline();
+        pipeline.addLast(new HttpRequestDecoder());
+        pipeline.addLast(new HttpObjectAggregator(maxRequestSize));
+        pipeline.addLast(new HttpResponseEncoder());
+
+        // My simple handler
+        pipeline.addLast(new NettySampleHandler(rootPath));
+
+        // Resteasy decoder/encoder
+        ch.pipeline().addLast(new RestEasyHttpRequestDecoder(dispatcher.getDispatcher(), rootPath, RestEasyHttpRequestDecoder.Protocol.HTTP));
+        ch.pipeline().addLast(new RestEasyHttpResponseEncoder(dispatcher));
+
+        // ServicesInjector, which push some objects
+        ch.pipeline().addLast(eventExecutor, new ServicesInjector());
+
+        // Process resteasy request now
+        ch.pipeline().addLast(eventExecutor, new RequestHandler(dispatcher));
+    }
+
+    protected String getRootPath() {
+        return REST_PATH;
     }
 }
