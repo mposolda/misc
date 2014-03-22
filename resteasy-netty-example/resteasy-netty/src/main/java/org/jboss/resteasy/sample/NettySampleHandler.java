@@ -18,6 +18,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.DefaultHttpResponse;
+import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
@@ -40,6 +41,14 @@ public class NettySampleHandler extends SimpleChannelInboundHandler<DefaultHttpR
 
         // Forward to resteasy handlers
         if (uri.getRawPath().startsWith(excludedPath)) {
+
+            // TODO: Is it fine to do it this way?
+            if (msg instanceof HttpContent)
+            {
+                HttpContent content = (HttpContent) msg;
+                ByteBuf buf = content.content().retain();
+            }
+
             ctx.fireChannelRead(msg);
             return;
         }

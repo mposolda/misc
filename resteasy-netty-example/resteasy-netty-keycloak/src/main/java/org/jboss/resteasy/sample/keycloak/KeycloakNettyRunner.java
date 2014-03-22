@@ -10,11 +10,17 @@ import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.services.resources.KeycloakApplication;
 
 /**
+ * Go to http://localhost:8383/auth/rest/realms/keycloak-admin/account
+ *
+ * http://localhost:8383/auth/admin/login -- for login into admin console
+ * http://localhost:8383/auth/admin/realms/keycloak-admin
+ * http://localhost:8383/auth/admin/realms/keycloak-admin/users etc. (RealmAdminResource)
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class KeycloakNettyRunner extends NettyRunner {
 
-    public static final String KEYCLOAK_PATH = "/auth/rest";
+    public static final String KEYCLOAK_PATH = "/auth";
 
     @Override
     protected String getRootPath() {
