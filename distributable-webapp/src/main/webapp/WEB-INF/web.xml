@@ -15,4 +15,13 @@
     <url-pattern>/session</url-pattern>
   </servlet-mapping>
 
+    <servlet>
+        <servlet-name>TransactionTestServlet</servlet-name>
+        <servlet-class>org.jboss.sample.TransactionTestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TransactionTestServlet</servlet-name>
+        <url-pattern>/transaction</url-pattern>
+    </servlet-mapping>
+
 </web-app>
