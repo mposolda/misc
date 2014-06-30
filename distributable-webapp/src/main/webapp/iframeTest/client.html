@@ -1,0 +1,31 @@
+<html>
+  <head><title>IFrame client</title></head>
+  <body>
+    <iframe src="http://localhost:8080/distributable-webapp/session" id="iframe1" onload="onloadIFrame()"></iframe>
+
+    <script>
+        function onloadIFrame() {
+          console.log("IFrame loaded!");
+          var window = document.getElementById("iframe1").contentWindow;
+          window.postMessage("Message1", "http://localhost:8080");
+        }
+
+        var serverListener = function(event) {
+          console.log("Event received on client side. Origin: " + event.origin + ", data: " + event.data);
+          if (event.origin === "http://localhost:8080") {
+             document.getElementById("receiver").innerHTML = event.data;
+          } else {
+            alert("Bad origin: " + event.origin);
+          }
+        }
+
+        if (window.addEventListener){
+          window.addEventListener("message", serverListener, false)
+        } else {
+          attachEvent("onmessage", serverListener)
+        }
+    </script>
+
+    Cookie JSESSIONID from server: <div id="receiver"></div>
+  </body>
+</html>

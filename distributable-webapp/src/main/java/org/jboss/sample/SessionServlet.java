@@ -23,6 +23,8 @@ public class SessionServlet extends HttpServlet {
         some = String.valueOf(increased);
         req.getSession().setAttribute("some", some);
 
-        resp.getWriter().println("SessionServlet triggered: " + some);
+        resp.setContentType("text/html");
+        resp.getWriter().println("SessionServlet triggered: " + some + "<br>");
+        req.getRequestDispatcher("iframeTest/server.html").include(req, resp);
     }
 }
