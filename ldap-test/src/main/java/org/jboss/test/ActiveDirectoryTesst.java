@@ -29,31 +29,32 @@ public class ActiveDirectoryTesst {
         System.setProperty("com.sun.jndi.ldap.connect.pool.maxsize", "5");
         System.setProperty("com.sun.jndi.ldap.connect.pool.protocol", "plain ssl");
 
-        LdapContext ldapContext = getLdapContext();
-        System.err.println("Context obtained");
-
-        //Reset request controls
-        ldapContext.setRequestControls(null);
-
-        SearchControls searchControls = new SearchControls();
-        searchControls.setReturningObjFlag(false);
-        searchControls.setTimeLimit(10000);
-        searchControls.setReturningAttributes(new String[] { "objectGUID", "createTimeStamp", "objectclass", "givenName", "sn", "cn", "mail"});
-
-        Name jndiName = new CompositeName().add("ou=People,o=keycloak,dc=jboss,dc=test1");
-        //Name jndiName = new CompositeName().add("ou=People,o=portal,o=gatein,dc=example,dc=com");
-
-        String filter = "(&((whenChanged>=20130723153344.0Z)(objectClass=person)(objectClass=organizationalPerson)(objectClass=user)))";
-        //String filter = "(&((objectClass=person)(objectClass=organizationalPerson)))";
-
 
         // Activate paged results
         int pageSize = 5; // 5 entries per page
         byte[] cookie = new byte[0];
+        byte[] crookie = null;
         int total = 0;
 
         while (cookie != null)
         {
+            LdapContext ldapContext = getLdapContext();
+            System.err.println("Context obtained");
+
+            //Reset request controls
+            ldapContext.setRequestControls(null);
+
+            SearchControls searchControls = new SearchControls();
+            searchControls.setReturningObjFlag(false);
+            searchControls.setTimeLimit(10000);
+            searchControls.setReturningAttributes(new String[] { "objectGUID", "createTimeStamp", "objectclass", "givenName", "sn", "cn", "mail"});
+
+            Name jndiName = new CompositeName().add("ou=People,o=keycloak,dc=jboss,dc=test1");
+            //Name jndiName = new CompositeName().add("ou=People,o=portal,o=gatein,dc=example,dc=com");
+
+            String filter = "(&((whenChanged>=20130723153344.0Z)(objectClass=person)(objectClass=organizationalPerson)(objectClass=user)))";
+            //String filter = "(&((objectClass=person)(objectClass=organizationalPerson)))";
+
             ldapContext.setRequestControls(new Control[] {
                     new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
             NamingEnumeration resultsEnumeration = ldapContext.search(jndiName, filter, searchControls);
@@ -94,9 +95,8 @@ public class ActiveDirectoryTesst {
 
             // Can close enumeration now
             resultsEnumeration.close();
+            ldapContext.close();
         }
-
-        ldapContext.close();
 
         System.err.println("Context was closed");
     }
