@@ -1,7 +1,10 @@
 package org.jboss.test;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Hashtable;
+import java.util.TimeZone;
 
 import javax.naming.CompositeName;
 import javax.naming.Context;
@@ -22,24 +25,47 @@ import javax.naming.ldap.PagedResultsResponseControl;
  */
 public class ActiveDirectoryTesst {
 
+    private static final Config ACTIVE_DIRECTORY = new Config()
+            .setProviderURL("ldaps://dev101.mw.lab.eng.bos.redhat.com/")
+            .setUserDN("ou=People,o=keycloak,dc=jboss,dc=test1")
+            .setSecurityPrincipal("JBOSS1\\jbossqa")
+            .setSecurityCredentials("jboss42");
+
+    private static final Config OPENDS = new Config()
+            .setProviderURL("ldap://localhost:1389")
+            .setUserDN("ou=People,o=portal,o=gatein,dc=example,dc=com")
+            .setSecurityPrincipal("cn=Directory Manager")
+            .setSecurityCredentials("password");
+
+    private static final Config OPENLDAP = new Config()
+            .setProviderURL("ldap://localhost:389")
+            .setUserDN("ou=People,dc=example,dc=com")
+            .setSecurityPrincipal("cn=admin,dc=example,dc=com")
+            .setSecurityCredentials("password");
+
     public static void main(String[] args) throws NamingException, IOException {
-        System.out.println("Start test");
+        Config cfg = ACTIVE_DIRECTORY;
+        // Config cfg = OPENDS;
+        // Config cfg = OPENLDAP;
 
         // System.setProperty("com.sun.jndi.ldap.connect.pool.debug", "all");
         System.setProperty("com.sun.jndi.ldap.connect.pool.maxsize", "5");
         System.setProperty("com.sun.jndi.ldap.connect.pool.protocol", "plain ssl");
 
+        paginationTest(cfg);
 
+        addUpdateRemoveUser(cfg);
+    }
+
+    private static void paginationTest(Config cfg) throws NamingException, IOException {
         // Activate paged results
         int pageSize = 5; // 5 entries per page
         byte[] cookie = new byte[0];
-        byte[] crookie = null;
         int total = 0;
 
         while (cookie != null)
         {
-            LdapContext ldapContext = getLdapContext();
-            System.err.println("Context obtained");
+            LdapContext ldapContext = getLdapContext(cfg);
 
             //Reset request controls
             ldapContext.setRequestControls(null);
@@ -47,13 +73,12 @@ public class ActiveDirectoryTesst {
             SearchControls searchControls = new SearchControls();
             searchControls.setReturningObjFlag(false);
             searchControls.setTimeLimit(10000);
-            searchControls.setReturningAttributes(new String[] { "objectGUID", "createTimeStamp", "objectclass", "givenName", "sn", "cn", "mail"});
+            searchControls.setReturningAttributes(new String[] { "objectGUID", "uid", "objectclass", "givenName", "sn", "cn", "mail", "createTimeStamp", "modifyTimeStamp", "whenCreated", "whenChanged"});
 
-            Name jndiName = new CompositeName().add("ou=People,o=keycloak,dc=jboss,dc=test1");
-            //Name jndiName = new CompositeName().add("ou=People,o=portal,o=gatein,dc=example,dc=com");
+            Name jndiName = new CompositeName().add(cfg.userDN);
 
-            String filter = "(&((whenChanged>=20130723153344.0Z)(objectClass=person)(objectClass=organizationalPerson)(objectClass=user)))";
-            //String filter = "(&((objectClass=person)(objectClass=organizationalPerson)))";
+            String filter = "(&((whenChanged>=20140622134652.0Z)(objectClass=person)(objectClass=organizationalPerson)(objectClass=user)))";
+            // String filter = "(&((modifyTimestamp>=20130529132901.0Z)(objectClass=person)(objectClass=organizationalPerson)))";
 
             ldapContext.setRequestControls(new Control[] {
                     new PagedResultsControl(pageSize, cookie, Control.CRITICAL) });
@@ -97,23 +122,49 @@ public class ActiveDirectoryTesst {
             resultsEnumeration.close();
             ldapContext.close();
         }
-
-        System.err.println("Context was closed");
     }
 
-    private static LdapContext getLdapContext() throws NamingException {
+    private static void addUpdateRemoveUser(Config cfg) throws NamingException, IOException {
+
+    }
+
+    private static LdapContext getLdapContext(Config cfg) throws NamingException {
         Hashtable<String,String> env = new Hashtable<String,String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
-        env.put(Context.PROVIDER_URL, "ldaps://dev101.mw.lab.eng.bos.redhat.com/");
-        env.put(Context.SECURITY_PRINCIPAL, "JBOSS1\\jbossqa");
-        env.put(Context.SECURITY_CREDENTIALS, "jboss42");
 
-//        env.put(Context.PROVIDER_URL, "ldap://localhost:1389");
-//        env.put(Context.SECURITY_PRINCIPAL, "cn=Directory Manager");
-//        env.put(Context.SECURITY_CREDENTIALS, "password");
+        env.put(Context.PROVIDER_URL, cfg.providerURL);
+        env.put(Context.SECURITY_PRINCIPAL, cfg.securityPrincipal);
+        env.put(Context.SECURITY_CREDENTIALS, cfg.securityCredentials);
 
         env.put("com.sun.jndi.ldap.connect.pool", "true");
         return new InitialLdapContext(env, null);
+    }
+
+    private static class Config {
+        private String providerURL;
+        private String securityPrincipal;
+        private String securityCredentials;
+        private String userDN;
+
+        public Config setProviderURL(String providerURL) {
+            this.providerURL = providerURL;
+            return this;
+        }
+
+        public Config setSecurityPrincipal(String securityPrincipal) {
+            this.securityPrincipal = securityPrincipal;
+            return this;
+        }
+
+        public Config setSecurityCredentials(String securityCredentials) {
+            this.securityCredentials = securityCredentials;
+            return this;
+        }
+
+        public Config setUserDN(String userDN) {
+            this.userDN = userDN;
+            return this;
+        }
     }
 }
