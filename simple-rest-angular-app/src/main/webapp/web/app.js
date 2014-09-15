@@ -9,6 +9,20 @@ module.factory('SimpleUser', function($resource) {
     return $resource('/simple-rest-angular/rest/base?sleep=:sleep');
 });
 
+module.factory('SimpleUserLoader', function(SimpleUser, $q) {
+    return function() {
+        var def = $q.defer();
+        var user = SimpleUser.get( { sleep: 5000 }, function() {
+             console.log("User loaded successfully! Fulfilling promise");
+             def.resolve(user);
+        }, function(error) {
+             console.log("User not loaded. Promise rejected");
+             def.reject("User not loaded. Promise rejected");
+        });
+        return def.promise;
+    }
+});
+
 module.config([ '$routeProvider', function($routeProvider) {
 
     $routeProvider
@@ -19,10 +33,25 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'SimpleUserController1'
         })
+        // The way used by our loaders
         .when('/base2', {
             templateUrl : 'user.html',
             resolve : {
-
+                loadedUser : function(SimpleUserLoader) {
+                    return SimpleUserLoader();
+                },
+            },
+            controller : 'SimpleUserController2'
+        })
+        // The way used by AngularJS (builtin $promise object)
+        .when('/base3', {
+            templateUrl : 'user.html',
+            resolve : {
+                loadedUser : function(SimpleUser) {
+                    var user = SimpleUser.get({ sleep:3000 });
+                    console.log("Base3 - SimpleUser.get() invoked");
+                    return user.$promise;
+                },
             },
             controller : 'SimpleUserController2'
         })

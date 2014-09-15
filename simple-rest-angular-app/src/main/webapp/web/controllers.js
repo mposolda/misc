@@ -10,7 +10,9 @@ module.controller('SimpleUserController1', function($scope, SimpleUser) {
   });
 });
 
-module.controller('SimpleUserController2', function($scope, SimpleUser) {
+module.controller('SimpleUserController2', function($scope, loadedUser) {
   console.log('SimpleUserController2 invoked ');
+
+  $scope.user = loadedUser;
 });
 
