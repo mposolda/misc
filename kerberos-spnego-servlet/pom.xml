@@ -13,6 +13,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <base64.version>2.3.8</base64.version>
     </properties>
 
     <dependencies>
@@ -21,6 +22,11 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.iharder</groupId>
+            <artifactId>base64</artifactId>
+            <version>${base64.version}</version>
         </dependency>
     </dependencies>
 
