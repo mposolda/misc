@@ -1,11 +1,9 @@
 package org.mposolda;
 
-import java.security.PrivilegedAction;
 import java.security.PrivilegedExceptionAction;
+import java.util.Date;
 
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
 
 import net.iharder.Base64;
 import org.ietf.jgss.GSSContext;
@@ -31,26 +29,17 @@ public class SPNEGOAuthenticator {
     }
 
     public void authenticate(String token) {
-        System.out.println("SPNEGO Login with token: " + token);
+        System.out.println(new Date() + " SPNEGO Login with token: " + token);
 
-        LoginContext lc = null;
+        KerberosServerSubjectAuthenticator serverAuthenticator = new KerberosServerSubjectAuthenticator();
         try {
-            lc = new LoginContext("kerberos-server");
-            lc.login();
-            Subject serverSubject = lc.getSubject();
-
+            Subject serverSubject = serverAuthenticator.authenticateServerSubject();
             authenticated = Subject.doAs(serverSubject, new AcceptSecContext());
         } catch (Exception e) {
-            System.err.println("SPNEGO login failed");
+            System.err.println(new Date() + " SPNEGO login failed");
             e.printStackTrace();
         } finally {
-            if (lc != null) {
-                try {
-                    lc.logout();
-                } catch (LoginException le) {
-                    le.printStackTrace();
-                }
-            }
+            serverAuthenticator.logoutServerSubject();
         }
     }
 
@@ -72,6 +61,7 @@ public class SPNEGOAuthenticator {
         public Boolean run() throws Exception {
             GSSContext gssContext = null;
             try {
+                System.out.println(new Date() + " GOING TO ESTABLISH SECURITY CONTEXT NOW");
                 gssContext = getEstablishedContext();
 
                 // Some logging

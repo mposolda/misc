@@ -1,29 +1,14 @@
 Have example working on Tomcat
 ==============================
 
-1) Add file $TOMCAT_HOME/conf/jaas.conf with the content like this:
-
-kerberos-server {
-        com.sun.security.auth.module.Krb5LoginModule required
-        storeKey=true
-        doNotPrompt=true
-        useKeyTab=true
-        keyTab="/etc/krb5.keytab"
-        principal="HTTP/server.local.network@LOCAL.NETWORK"
-        useFirstPass=true
-        debug=true
-        isInitiator=false;
-};
-
-2) Add this to $TOMCAT_HOME/bin/catalina.sh
+1) Add this to $TOMCAT_HOME/bin/catalina.sh
 
 # TODO
-export CATALINA_OPTS="$CATALINA_OPTS -Djava.security.auth.login.config=/home/mposolda/work/keycloak/spnego/apache-tomcat-7.0.41/conf/jaas.conf"
-export CATALINA_OPTS="$CATALINA_OPTS -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n"
+export CATALINA_OPTS="$CATALINA_OPTS -Dsun.security.krb5.debug=true -Dsun.security.spnego.debug=true -agentlib:jdwp=transport=dt_socket,address=5005,server=y,suspend=n"
 
-3) Run "mvn clean install" and deploy servlet to tomcat
+2) Run "mvn clean install" and deploy servlet to tomcat
  
-4) Chrome needs to be executed with command like:
+3) Chrome needs to be executed with command like:
 
 ```
 /usr/bin/google-chrome-stable --auth-server-whitelist="server.local.network"
