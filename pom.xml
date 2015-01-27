@@ -26,6 +26,9 @@
       <module>simple-portlets</module>
       <module>resteasy-netty-example</module>
       <module>simple-rest-angular-app</module>
+      <module>hawtio-test</module>
+    <module>jmxtest</module>
+      <module>kerberos-spnego-servlet</module>
   </modules>
 
 </project>

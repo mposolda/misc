@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class SessionServlet extends HttpServlet {
+public class SessionServlet2 extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String some = (String)req.getSession().getAttribute("some");
+        String some = (String) req.getSession().getAttribute("some");
         if (some == null) {
             some = "12345679";
         }
@@ -25,8 +25,5 @@ public class SessionServlet extends HttpServlet {
 
         resp.setContentType("text/html");
         resp.getWriter().println("SessionServlet triggered: " + some + "<br>");
-
-        // This is problematic (at least on karaf dispatching doesn't work probably because resp.getWriter().println() was already called)
-        req.getRequestDispatcher("iframeTest/server.html").include(req, resp);
     }
 }
