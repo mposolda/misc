@@ -30,6 +30,7 @@ public class SpnegoFilter implements Filter {
         HttpSession session = req.getSession();
 
         if (session.getAttribute("principal") == null) {
+
             // Try if there is username/password login
             String username = req.getParameter("username");
             String password = req.getParameter("password");
@@ -46,18 +47,18 @@ public class SpnegoFilter implements Filter {
 
             String authHeader = req.getHeader("Authorization");
             if (authHeader == null) {
-                resp.setHeader("WWW-Authenticate", "Negotiate");
-                resp.setStatus(401);
-                renderLoginForm(req, resp, loginFormFailed);
+                sendResponse(req, resp, "Negotiate", loginFormFailed);
                 return;
             } else {
                 String[] tokens = authHeader.split(" ");
                 if (tokens.length != 2) {
-                    renderError(resp, "Invalid length of tokens: " + tokens.length);
+                    System.err.println("Invalid length of tokens: " + tokens.length);
+                    sendResponse(req, resp, "Negotiate", false);
                 } else if (!"Negotiate".equalsIgnoreCase(tokens[0])) {
-                    renderError(resp, "Invalid scheme " + tokens[0]);
+                    System.err.println("Invalid scheme " + tokens[0]);
+                    sendResponse(req, resp, "Negotiate", false);
                 } else {
-                    boolean spnegoLoginSuccess = spnegoLogin(tokens[1], session, resp);
+                    boolean spnegoLoginSuccess = spnegoLogin(tokens[1], session, req, resp);
                     if (spnegoLoginSuccess) {
                         resp.sendRedirect("");
                     }
@@ -79,6 +80,16 @@ public class SpnegoFilter implements Filter {
         }
     }
 
+    private void sendResponse(HttpServletRequest req, HttpServletResponse resp, String negotiateHeader, boolean loginFormFailed) throws IOException {
+        // In case of previous failure of FORM login, we won't send SPNEGO headers anymore!!!
+        if (!loginFormFailed) {
+            resp.setHeader("WWW-Authenticate", negotiateHeader);
+            resp.setStatus(401);
+        }
+
+        renderLoginForm(req, resp, loginFormFailed);
+    }
+
     private void renderLoginForm(HttpServletRequest req, HttpServletResponse resp, boolean loginFormFailed) throws IOException {
         resp.setContentType("text/html");
         PrintWriter writer = resp.getWriter();
@@ -91,7 +102,7 @@ public class SpnegoFilter implements Filter {
         writer.close();
     }
 
-    private boolean spnegoLogin(String token, HttpSession session, HttpServletResponse resp) throws IOException {
+    private boolean spnegoLogin(String token, HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         SPNEGOAuthenticator spnegoAuthenticator = new SPNEGOAuthenticator(token);
         spnegoAuthenticator.authenticate(token);
 
@@ -100,22 +111,10 @@ public class SpnegoFilter implements Filter {
             session.setAttribute("auth", "spnego");
             return true;
         }  else {
-            if (spnegoAuthenticator.getResponseToken() != null) {
-                resp.setHeader("WWW-Authenticate", "Negotiate " + spnegoAuthenticator.getResponseToken());
-                resp.setStatus(401);
-            } else {
-                renderError(resp, "SPNEGO Login failed. See server.log for more details");
-            }
+            String spnegoHeader = spnegoAuthenticator.getResponseToken() != null ? "Negotiate " + spnegoAuthenticator.getResponseToken() : "Negotiate";
+            sendResponse(req, resp, spnegoHeader, false);
             return false;
         }
-    }
-
-    private void renderError(HttpServletResponse response, String error) throws IOException {
-        response.setContentType("text/html");
-        PrintWriter writer = response.getWriter();
-        writer.println("Error occured. Details: " + error);
-        writer.flush();
-        writer.close();
     }
 
     @Override
