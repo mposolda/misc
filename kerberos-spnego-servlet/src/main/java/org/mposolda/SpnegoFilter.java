@@ -104,7 +104,7 @@ public class SpnegoFilter implements Filter {
 
     private boolean spnegoLogin(String token, HttpSession session, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         SPNEGOAuthenticator spnegoAuthenticator = new SPNEGOAuthenticator(token);
-        spnegoAuthenticator.authenticate(token);
+        spnegoAuthenticator.authenticate();
 
         if (spnegoAuthenticator.isAuthenticated()) {
             session.setAttribute("principal", spnegoAuthenticator.getPrincipal());

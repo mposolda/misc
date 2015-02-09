@@ -28,8 +28,8 @@ public class SPNEGOAuthenticator {
         this.spnegoToken = spnegoToken;
     }
 
-    public void authenticate(String token) {
-        System.out.println(new Date() + " SPNEGO Login with token: " + token);
+    public void authenticate() {
+        System.out.println(new Date() + " SPNEGO Login with token: " + spnegoToken);
 
         KerberosServerSubjectAuthenticator serverAuthenticator = new KerberosServerSubjectAuthenticator();
         try {
