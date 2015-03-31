@@ -29,6 +29,7 @@
       <module>hawtio-test</module>
     <module>jmxtest</module>
       <module>kerberos-spnego-servlet</module>
+      <module>kc-secured-post-app</module>
   </modules>
 
 </project>
