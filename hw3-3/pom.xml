@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.mongodb</groupId>
-    <artifactId>M101J</artifactId>
+    <artifactId>M101J33</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -16,9 +16,9 @@
         </dependency>
 
         <dependency>
-            <groupId>spark</groupId>
-            <artifactId>spark</artifactId>
-            <version>0.9.9.4-SNAPSHOT</version>
+            <groupId>com.sparkjava</groupId>
+            <artifactId>spark-core</artifactId>
+            <version>1.0</version>
         </dependency>
 
         <dependency>
@@ -40,13 +40,6 @@
         </dependency>
 
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>Spark repository</id>
-            <url>http://www.sparkjava.com/nexus/content/repositories/spark/</url>
-        </repository>
-    </repositories>
 
     <!-- Configure maven-compiler-plugin version. -->
     <build>

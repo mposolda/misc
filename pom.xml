@@ -21,13 +21,13 @@
       <module>hw3-3</module>
       <module>java8</module>
       <module>hw4-3</module>
-      <module>drools-examples</module>
+      <!--<module>drools-examples</module>-->
       <module>mess</module>
       <module>simple-portlets</module>
-      <module>resteasy-netty-example</module>
+      <!--<module>resteasy-netty-example</module>-->
       <module>simple-rest-angular-app</module>
       <module>hawtio-test</module>
-    <module>jmxtest</module>
+      <module>jmxtest</module>
       <module>kerberos-spnego-servlet</module>
       <module>kc-secured-post-app</module>
   </modules>
