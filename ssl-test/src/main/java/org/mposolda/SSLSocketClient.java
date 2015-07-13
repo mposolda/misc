@@ -28,6 +28,9 @@ import javax.net.ssl.TrustManagerFactory;
 import org.apache.http.conn.ssl.SSLInitializationException;
 
 /**
+ * COMMANDS TO CREATE KEYSTORE WITH PRIVATE KEY ENTRY
+ * keytool -genkey -alias localhost -keyalg RSA -keystore keycloak.jks -validity 10950
+ *
  * COMMANDS TO IMPORT CERTIFICATE FROM THE FILE keycloak.jks WITH PRIVATE KEY
  * keytool -exportcert -keystore keycloak.jks -alias localhost -file foo.crt
  * keytool -importcert -keystore keycloak-client.jks -alias localhost -file foo.crt
@@ -36,10 +39,9 @@ import org.apache.http.conn.ssl.SSLInitializationException;
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class SSLSocketTest {
+public class SSLSocketClient {
 
-    // public static final String TRUSTSTORE_PATH = "/tmp/keycloak-demo-1.3.1.Final/keycloak/standalone/configuration/keycloak.jks";
-    public static final String TRUSTSTORE_PATH = "/tmp/keycloak-demo-1.3.1.Final/keycloak/standalone/configuration/keycloak-client.jks";
+    public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/keycloak-client.jks";
 
     public static void main(String[] args) throws Exception {
         // Enable to remove details
@@ -47,7 +49,7 @@ public class SSLSocketTest {
 
 
         // readSeznam();
-        readKeycloak();
+        readSecuredServer();
     }
 
     // Doesn't require anything
@@ -56,7 +58,7 @@ public class SSLSocketTest {
     }
 
     // Requires keycloak running on http://localhost:8443
-    public static void readKeycloak() throws Exception {
+    public static void readSecuredServer() throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream(TRUSTSTORE_PATH), "secret".toCharArray());
 
@@ -65,7 +67,7 @@ public class SSLSocketTest {
         tmf.init(ks);
         TrustManager[] trustManagers = tmf.getTrustManagers();
 
-        readHost(trustManagers, "localhost", 8443);
+        readHost(trustManagers, "localhost", 8543);
     }
 
     public static void readHost(TrustManager[] trustManagers, String host, int port) throws Exception {
@@ -104,7 +106,7 @@ public class SSLSocketTest {
             line = line.trim();
             System.out.println(line);
 
-            // Specific to seznam probably
+            // 0 is specific to seznam
             if (line.equals("0") || line.equals("</html>")) {
                 break;
             }
