@@ -30,6 +30,7 @@
       <module>jmxtest</module>
       <module>kerberos-spnego-servlet</module>
       <module>kc-secured-post-app</module>
+    <module>ssl-test</module>
   </modules>
 
 </project>
