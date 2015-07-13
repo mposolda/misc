@@ -2,6 +2,7 @@ package org.mposolda;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,6 +13,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -20,37 +22,73 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.http.conn.ssl.SSLInitializationException;
 
 /**
+ * COMMANDS TO IMPORT CERTIFICATE FROM THE FILE keycloak.jks WITH PRIVATE KEY
+ * keytool -exportcert -keystore keycloak.jks -alias localhost -file foo.crt
+ * keytool -importcert -keystore keycloak-client.jks -alias localhost -file foo.crt
+ * rm foo.crt
+ * keytool -list -keystore keycloak-client.jks
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class SSLSocketTest {
 
-    public static final String SEZNAM_HOST = "www.seznam.cz";
-    public static final Integer SEZNAM_PORT = 443;
+    // public static final String TRUSTSTORE_PATH = "/tmp/keycloak-demo-1.3.1.Final/keycloak/standalone/configuration/keycloak.jks";
+    public static final String TRUSTSTORE_PATH = "/tmp/keycloak-demo-1.3.1.Final/keycloak/standalone/configuration/keycloak-client.jks";
 
     public static void main(String[] args) throws Exception {
-        readSeznam();
+        // Enable to remove details
+        //System.setProperty("javax.net.debug", "ssl.trustmanager");
+
+
+        // readSeznam();
+        readKeycloak();
     }
 
+    // Doesn't require anything
     public static void readSeznam() throws Exception {
-        SSLContext sslContext = createDefault();
+        readHost(null, "www.seznam.cz", 443);
+    }
+
+    // Requires keycloak running on http://localhost:8443
+    public static void readKeycloak() throws Exception {
+        KeyStore ks = KeyStore.getInstance("JKS");
+        ks.load(new FileInputStream(TRUSTSTORE_PATH), "secret".toCharArray());
+
+        TrustManagerFactory tmf =
+                TrustManagerFactory.getInstance("SunX509");
+        tmf.init(ks);
+        TrustManager[] trustManagers = tmf.getTrustManagers();
+
+        readHost(trustManagers, "localhost", 8443);
+    }
+
+    public static void readHost(TrustManager[] trustManagers, String host, int port) throws Exception {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagers, null);
+
         SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
         SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket();
 
-        InetSocketAddress seznamAddress = new InetSocketAddress(SEZNAM_HOST, SEZNAM_PORT);
+        InetSocketAddress seznamAddress = new InetSocketAddress(host, port);
         sslSocket.connect(seznamAddress, 0);
 
         sslSocket.startHandshake();
 
         SSLSession session = sslSocket.getSession();
         final Certificate[] certs = session.getPeerCertificates();
-        final X509Certificate x509Cert = (X509Certificate) certs[0];
-        String subjectPrincipal = x509Cert.getSubjectX500Principal().toString();
-        System.out.println("Certificate principal: " + subjectPrincipal);
-        readSocket(sslSocket, SEZNAM_HOST);
+        for (Certificate cert : certs) {
+            X509Certificate x509Cert = (X509Certificate) certs[0];
+            String subjectPrincipal = x509Cert.getSubjectX500Principal().toString();
+            System.out.println("Certificate principal: " + subjectPrincipal);
+        }
+
+        readSocket(sslSocket, host);
     }
 
     protected static void readSocket(Socket socket, String host) throws Exception {
@@ -63,37 +101,19 @@ public class SSLSocketTest {
         writer.println("");
         String line;
         while ((line = reader.readLine()) != null) {
+            line = line.trim();
             System.out.println(line);
 
             // Specific to seznam probably
-            if (line.equals("0")) {
+            if (line.equals("0") || line.equals("</html>")) {
                 break;
             }
         }
 
-        System.out.println("Going to exit");
+        System.out.println("SOCKET READ SUCCESSFULLY");
 
         is.close();
         os.close();
         socket.close();
-    }
-
-    /**
-     * Creates default factory based on the standard JSSE trust material
-     * (<code>cacerts</code> file in the security properties directory). System properties
-     * are not taken into consideration.
-     *
-     * @return the default SSL socket factory
-     */
-    public static SSLContext createDefault() throws SSLInitializationException {
-        try {
-            final SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, null, null);
-            return sslcontext;
-        } catch (final NoSuchAlgorithmException ex) {
-            throw new SSLInitializationException(ex.getMessage(), ex);
-        } catch (final KeyManagementException ex) {
-            throw new SSLInitializationException(ex.getMessage(), ex);
-        }
     }
 }
