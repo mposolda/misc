@@ -15,10 +15,9 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.TrustManager;
+import javax.net.ssl.SSLSocket;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -78,8 +77,19 @@ public class SSLSocketServer {
         SSLServerSocket ss = (SSLServerSocket) ssf.createServerSocket(8543);
 
         while (true) {
-            System.out.println("Socket created. Accepting connections on 8543");
-            Socket socket = ss.accept();
+            System.out.println("Accepting connections on 8543");
+            SSLSocket socket = (SSLSocket) ss.accept();
+            //socket.setSoTimeout(10000);
+
+            try {
+                socket.startHandshake();
+            } catch (SSLException sslhe) {
+                System.out.println("Handshake failed, maybe because browser doesn't trust us at this moment");
+                sslhe.printStackTrace();
+                socket.close();
+                continue;
+            }
+
             InputStream is = socket.getInputStream();
             OutputStream os = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(os, true);
@@ -87,14 +97,7 @@ public class SSLSocketServer {
 
             try {
                 while (!socket.isClosed()) {
-                    String line = null;
-                    try {
-                        line = reader.readLine();
-                    } catch (SSLException sslhe) {
-                        System.err.println("Handshake failed, maybe because browser doesn't trust us at this moment");
-                        sslhe.printStackTrace();
-                        writer.close();
-                    }
+                    String line = reader.readLine();
 
                     if (line != null) {
                         line = line.trim();
@@ -110,10 +113,13 @@ public class SSLSocketServer {
                             writer.flush();
                             writer.close();
                         }
+                    } else {
+                        System.out.println("Line is null. Closing");
+                        writer.close();
                     }
                 }
             } catch (SocketException se) {
-                System.err.println("Socket exception! Maybe connection closed already");
+                System.out.println("Socket exception! Maybe connection closed already");
             }
         }
     }
