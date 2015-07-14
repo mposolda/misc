@@ -90,6 +90,8 @@ public class SSLSocketServer {
                 continue;
             }
 
+            new SessionDump().dumpSSLSession(socket.getSession());
+
             InputStream is = socket.getInputStream();
             OutputStream os = socket.getOutputStream();
             PrintWriter writer = new PrintWriter(os, true);

@@ -82,13 +82,7 @@ public class SSLSocketClient {
 
         sslSocket.startHandshake();
 
-        SSLSession session = sslSocket.getSession();
-        final Certificate[] certs = session.getPeerCertificates();
-        for (Certificate cert : certs) {
-            X509Certificate x509Cert = (X509Certificate) certs[0];
-            String subjectPrincipal = x509Cert.getSubjectX500Principal().toString();
-            System.out.println("Certificate principal: " + subjectPrincipal);
-        }
+        new SessionDump().dumpSSLSession(sslSocket.getSession());
 
         readSocket(sslSocket, host);
     }
