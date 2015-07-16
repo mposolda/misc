@@ -26,7 +26,7 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class SSLSocketServer {
 
-    public static final String KEYSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/keycloak-server.jks";
+    public static final String KEYSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/certs/keycloak-server.jks";
 
     public static void main(String[] args) throws Exception {
         // plainServer();

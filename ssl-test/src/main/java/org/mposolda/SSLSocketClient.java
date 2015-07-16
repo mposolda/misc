@@ -20,14 +20,6 @@ import javax.net.ssl.TrustManagerFactory;
 
 
 /**
- * COMMANDS TO CREATE KEYSTORE WITH PRIVATE KEY ENTRY
- * keytool -genkey -alias localhost -keyalg RSA -keystore keycloak-server.jks -validity 10950
- *
- * COMMANDS TO IMPORT CERTIFICATE FROM THE FILE keycloak.jks WITH PRIVATE KEY
- * keytool -exportcert -keystore keycloak.jks -alias localhost -file foo.crt
- * keytool -importcert -keystore keycloak-client.jks -alias localhost -file foo.crt
- * rm foo.crt
- * keytool -list -keystore keycloak-client.jks
  *
  * COMMAND TO IMPORT CLIENT CERTIFICATE FROM THE FILE keycloak.jks TO PKCS12, WHICH CAN BE IMPORTED TO BROWSER
  * keytool -importkeystore -srckeystore keycloak-client.jks -destkeystore keycloak-client.p12 -srcstoretype JKS -deststoretype PKCS12
@@ -37,7 +29,8 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class SSLSocketClient {
 
-    public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/keycloak-client.jks";
+    public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/certs/keycloak-jbrown.jks";
+    // public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/certs/keycloak-bwilson.jks";
 
     public static void main(String[] args) throws Exception {
         // Enable to remove details
