@@ -1,41 +1,37 @@
 package org.mposolda;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketAddress;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.http.conn.ssl.SSLInitializationException;
 
 /**
  * COMMANDS TO CREATE KEYSTORE WITH PRIVATE KEY ENTRY
- * keytool -genkey -alias localhost -keyalg RSA -keystore keycloak.jks -validity 10950
+ * keytool -genkey -alias localhost -keyalg RSA -keystore keycloak-server.jks -validity 10950
  *
  * COMMANDS TO IMPORT CERTIFICATE FROM THE FILE keycloak.jks WITH PRIVATE KEY
  * keytool -exportcert -keystore keycloak.jks -alias localhost -file foo.crt
  * keytool -importcert -keystore keycloak-client.jks -alias localhost -file foo.crt
  * rm foo.crt
  * keytool -list -keystore keycloak-client.jks
+ *
+ * COMMAND TO IMPORT CLIENT CERTIFICATE FROM THE FILE keycloak.jks TO PKCS12, WHICH CAN BE IMPORTED TO BROWSER
+ * keytool -importkeystore -srckeystore keycloak-client.jks -destkeystore keycloak-client.p12 -srcstoretype JKS -deststoretype PKCS12
+ * -srcstorepass secret -deststorepass secret -srcalias foo -destalias foo -srckeypass secret -destkeypass secret -noprompt
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
@@ -49,16 +45,16 @@ public class SSLSocketClient {
 
 
         // readSeznam();
-        readSecuredServer();
+        readSecuredServer(true);
     }
 
     // Doesn't require anything
     public static void readSeznam() throws Exception {
-        readHost(null, "www.seznam.cz", 443);
+        readHost(null, null, "www.seznam.cz", 443);
     }
 
     // Requires keycloak running on http://localhost:8443
-    public static void readSecuredServer() throws Exception {
+    public static void readSecuredServer(boolean addClientCertificate) throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
         ks.load(new FileInputStream(TRUSTSTORE_PATH), "secret".toCharArray());
 
@@ -67,12 +63,19 @@ public class SSLSocketClient {
         tmf.init(ks);
         TrustManager[] trustManagers = tmf.getTrustManagers();
 
-        readHost(trustManagers, "localhost", 8543);
+        KeyManager[] keyManagers = null;
+        if (addClientCertificate) {
+            KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+            kmf.init(ks, "secret".toCharArray());
+            keyManagers = kmf.getKeyManagers();
+        }
+
+        readHost(keyManagers, trustManagers, "localhost", 8543);
     }
 
-    public static void readHost(TrustManager[] trustManagers, String host, int port) throws Exception {
+    public static void readHost(KeyManager[] keyManagers, TrustManager[] trustManagers, String host, int port) throws Exception {
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, trustManagers, null);
+        sslContext.init(keyManagers, trustManagers, null);
 
         SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
         SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket();

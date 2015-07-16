@@ -18,13 +18,15 @@ import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class SSLSocketServer {
 
-    public static final String KEYSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/keycloak.jks";
+    public static final String KEYSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/keycloak-server.jks";
 
     public static void main(String[] args) throws Exception {
         // plainServer();
@@ -70,11 +72,19 @@ public class SSLSocketServer {
         kfm.init(ks, "secret".toCharArray());
         KeyManager[] keyManagers = kfm.getKeyManagers();
 
+        TrustManagerFactory tmf =
+                TrustManagerFactory.getInstance("SunX509");
+        tmf.init(ks);
+        TrustManager[] trustManagers = tmf.getTrustManagers();
+
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(keyManagers, null, null);
+        sslContext.init(keyManagers, trustManagers, null);
         SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
 
         SSLServerSocket ss = (SSLServerSocket) ssf.createServerSocket(8543);
+
+        // Requesting client auth here
+        ss.setWantClientAuth(true);
 
         while (true) {
             System.out.println("Accepting connections on 8543");
