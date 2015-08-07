@@ -63,7 +63,7 @@ public class SSLSocketClient {
             keyManagers = kmf.getKeyManagers();
         }
 
-        readHost(keyManagers, trustManagers, "localhost", 8543);
+        readHost(keyManagers, trustManagers, "localhost", 8443);
     }
 
     public static void readHost(KeyManager[] keyManagers, TrustManager[] trustManagers, String host, int port) throws Exception {
@@ -88,7 +88,7 @@ public class SSLSocketClient {
         OutputStream os = socket.getOutputStream();
         PrintWriter writer = new PrintWriter(os, true);
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        writer.println("GET / HTTP/1.1");
+        writer.println("GET /auth/version HTTP/1.1");
         writer.println("Host: " + host);
         writer.println("");
         String line;
