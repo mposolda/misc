@@ -32,6 +32,7 @@
       <module>kc-secured-post-app</module>
     <module>ssl-test</module>
     <module>service-account-google-test</module>
+    <module>jpa-lock-example</module>
   </modules>
 
 </project>
