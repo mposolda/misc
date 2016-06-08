@@ -33,6 +33,7 @@
     <module>ssl-test</module>
     <module>service-account-google-test</module>
     <module>jpa-lock-example</module>
+    <module>jgit-playground</module>
   </modules>
 
 </project>
