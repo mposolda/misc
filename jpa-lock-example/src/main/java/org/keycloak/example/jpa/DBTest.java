@@ -10,6 +10,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.spi.PersistenceUnitTransactionType;
 
+import org.hibernate.LockMode;
 import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
 import org.hibernate.ejb.AvailableSettings;
 import org.hibernate.jpa.boot.internal.ParsedPersistenceXmlDescriptor;
@@ -24,7 +25,7 @@ public class DBTest {
 
     private static final Logger logger = Logger.getLogger(DBTest.class);
 
-    private static final int THREAD_COUNT = 10;
+    private static final int THREAD_COUNT = 2;
     private static final long SLEEP_MILLIS = 1000;
 
     public static void main(String[] args) throws Exception {
@@ -38,7 +39,7 @@ public class DBTest {
         properties.put(AvailableSettings.JDBC_USER, System.getProperty("keycloak.connectionsJpa.user", "sa"));
         properties.put(AvailableSettings.JDBC_PASSWORD, System.getProperty("keycloak.connectionsJpa.password", ""));
 
-        properties.put("hibernate.show_sql", false);
+        properties.put("hibernate.show_sql", true);
         properties.put("hibernate.format_sql", true);
 
         properties.put("hibernate.hbm2ddl.auto", "update");
@@ -119,7 +120,7 @@ public class DBTest {
             logger.info("Going to rollback");
             em.getTransaction().rollback();
             logger.info("Rollbacked");
-            logger.error(e);
+            logger.error("Error when running task", e);
         } finally {
             em.close();
         }
@@ -145,6 +146,8 @@ public class DBTest {
                 }
 
                 em.lock(lock, LockModeType.PESSIMISTIC_WRITE);
+                //((org.hibernate.Session)em.getDelegate()).lock(lock, LockMode.UPGRADE_NOWAIT);
+
                 logger.info("Locked successfully");
                 sleep(SLEEP_MILLIS);
             }
