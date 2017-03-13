@@ -34,6 +34,7 @@
     <module>service-account-google-test</module>
     <module>jpa-lock-example</module>
     <module>jgit-playground</module>
+    <module>session-nocache-servlet</module>
   </modules>
 
 </project>

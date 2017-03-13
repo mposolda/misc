@@ -29,8 +29,8 @@ import javax.net.ssl.TrustManagerFactory;
  */
 public class SSLSocketClient {
 
-    public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/certs/keycloak-jbrown.jks";
-    // public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/certs/keycloak-bwilson.jks";
+    //public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/certs/keycloak-jbrown.jks";
+    public static final String TRUSTSTORE_PATH = "/home/mposolda/IdeaProjects/misc/ssl-test/certs/keycloak-bwilson.jks";
 
     public static void main(String[] args) throws Exception {
         // Enable to remove details
@@ -49,7 +49,7 @@ public class SSLSocketClient {
     // Requires keycloak running on http://localhost:8443
     public static void readSecuredServer(boolean addClientCertificate) throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(TRUSTSTORE_PATH), "secret".toCharArray());
+        ks.load(new FileInputStream(TRUSTSTORE_PATH), "password".toCharArray());
 
         TrustManagerFactory tmf =
                 TrustManagerFactory.getInstance("SunX509");
@@ -59,11 +59,11 @@ public class SSLSocketClient {
         KeyManager[] keyManagers = null;
         if (addClientCertificate) {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-            kmf.init(ks, "secret".toCharArray());
+            kmf.init(ks, "password".toCharArray());
             keyManagers = kmf.getKeyManagers();
         }
 
-        readHost(keyManagers, trustManagers, "localhost", 8443);
+        readHost(keyManagers, trustManagers, "localhost", 8543);
     }
 
     public static void readHost(KeyManager[] keyManagers, TrustManager[] trustManagers, String host, int port) throws Exception {

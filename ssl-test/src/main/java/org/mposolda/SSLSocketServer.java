@@ -66,10 +66,10 @@ public class SSLSocketServer {
 
     public static void securedServer() throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(KEYSTORE_PATH), "secret".toCharArray());
+        ks.load(new FileInputStream(KEYSTORE_PATH), "password".toCharArray());
 
         KeyManagerFactory kfm = KeyManagerFactory.getInstance("SunX509");
-        kfm.init(ks, "secret".toCharArray());
+        kfm.init(ks, "password".toCharArray());
         KeyManager[] keyManagers = kfm.getKeyManagers();
 
         TrustManagerFactory tmf =
