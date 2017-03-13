@@ -6,13 +6,23 @@
   <display-name>Archetype Created Web Application</display-name>
 
     <servlet>
+        <servlet-name>app</servlet-name>
+        <servlet-class>org.mposolda.AppServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>session</servlet-name>
         <servlet-class>org.mposolda.SessionNoCacheServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
+        <servlet-name>app</servlet-name>
+        <url-pattern>/app/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>session</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/s/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

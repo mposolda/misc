@@ -24,7 +24,8 @@ public class SessionNoCacheServlet extends HttpServlet {
         HttpSession session = req.getSession();
         session.setAttribute("username", username);
 
-        render(req, resp);
+        //render(req, resp);
+        resp.sendRedirect(req.getRequestURL().toString());
     }
 
 
