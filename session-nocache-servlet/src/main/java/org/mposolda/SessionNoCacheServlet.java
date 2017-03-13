@@ -33,7 +33,7 @@ public class SessionNoCacheServlet extends HttpServlet {
             return;
         } else if (codeCheck == CodeCheck.EXPIRED) {
             System.out.println("Code expired. Just redirecting to get");
-            String getUri = req.getScheme() + "://localhost:" + req.getLocalPort() + "/session-nocache-servlet/s";
+            String getUri = req.getScheme() + "://localhost:" + req.getLocalPort() + "/session-nocache-servlet/s?expired=true";
             resp.sendRedirect(getUri);
             return;
         }
@@ -44,16 +44,17 @@ public class SessionNoCacheServlet extends HttpServlet {
         HttpSession session = req.getSession();
         session.setAttribute("username", username);
 
-        render(req, resp);
+        render(req, resp, false);
         //resp.sendRedirect(req.getRequestURL().toString());
     }
 
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        System.out.println("GET received!");
+        boolean expired = req.getParameter("expired") != null;
+        System.out.println("GET received! expired=" + expired);
         computeNewCode(req.getSession());
-        render(req, resp);
+        render(req, resp, expired);
     }
 
 
@@ -81,12 +82,12 @@ public class SessionNoCacheServlet extends HttpServlet {
     }
 
 
-    private void render(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void render(HttpServletRequest req, HttpServletResponse resp, boolean expired) throws ServletException, IOException {
         HttpSession session = req.getSession();
         System.out.println("SESSIONID: " + session.getId());
 
         String username = (String) session.getAttribute("username");
-        String actionURI = req.getRequestURL().toString();
+        String actionURI = req.getScheme() + "://localhost:" + req.getLocalPort() + "/session-nocache-servlet/s";
 
         Integer newCode = computeNewCode(session);
         actionURI = actionURI + "?code=" + newCode;
@@ -96,15 +97,18 @@ public class SessionNoCacheServlet extends HttpServlet {
         // no back-button
         //resp.setHeader("Cache-Control", "no-store, must-revalidate, max-age=0");
 
-        String responseString = renderForm(actionURI, username);
+        String responseString = renderForm(actionURI, username, expired);
         resp.getWriter().println(responseString);
         resp.getWriter().flush();
     }
 
 
-    private String renderForm(String actionURI, String username) {
+    private String renderForm(String actionURI, String username, boolean expired) {
         StringBuilder builder = new StringBuilder();
         builder.append("<HTML><HEAD><TITLE>Hello</TITLE></HEAD><BODY>");
+        if (expired) {
+            builder.append("<FONT color='red'>Expired page. Submitted form was ignored</FONT><BR>");
+        }
         builder.append("Current username: " +username + "<br><hr>");
         builder.append("<FORM action='" + actionURI + "' method='POST'>");
         builder.append("Username: <INPUT name='username' value='" + username + "' />");
