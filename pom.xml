@@ -35,6 +35,7 @@
     <module>jpa-lock-example</module>
     <module>jgit-playground</module>
     <module>session-nocache-servlet</module>
+    <module>jfreechart-test</module>
   </modules>
 
 </project>

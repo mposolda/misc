@@ -1,0 +1,3 @@
+time:1 total:10 memory:20 cpu:10
+time:2 total:20 memory:60 cpu:20
+time:3 total:30 memory:80 cpu:50
