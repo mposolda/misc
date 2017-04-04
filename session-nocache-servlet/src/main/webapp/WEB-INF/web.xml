@@ -15,6 +15,11 @@
         <servlet-class>org.mposolda.SessionNoCacheServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>javascript</servlet-name>
+        <servlet-class>org.mposolda.JavascriptHistoryTestServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>app</servlet-name>
         <url-pattern>/app/*</url-pattern>
@@ -23,6 +28,11 @@
     <servlet-mapping>
         <servlet-name>session</servlet-name>
         <url-pattern>/s/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>javascript</servlet-name>
+        <url-pattern>/j/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

@@ -36,6 +36,7 @@
     <module>jgit-playground</module>
     <module>session-nocache-servlet</module>
     <module>jfreechart-test</module>
+    <module>undertow-sample</module>
   </modules>
 
 </project>

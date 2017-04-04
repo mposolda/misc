@@ -44,8 +44,8 @@ public class SessionNoCacheServlet extends HttpServlet {
         HttpSession session = req.getSession();
         session.setAttribute("username", username);
 
-        render(req, resp, false);
-        //resp.sendRedirect(req.getRequestURL().toString());
+        //render(req, resp, false);
+        resp.sendRedirect(req.getRequestURL().toString());
     }
 
 
@@ -96,6 +96,8 @@ public class SessionNoCacheServlet extends HttpServlet {
 
         // no back-button
         //resp.setHeader("Cache-Control", "no-store, must-revalidate, max-age=0");
+        //resp.setHeader("Pragma", "no-cache");
+        //resp.setHeader("Expires", "0");
 
         String responseString = renderForm(actionURI, username, expired);
         resp.getWriter().println(responseString);
