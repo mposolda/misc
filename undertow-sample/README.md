@@ -1,0 +1,2 @@
+* Run the SamleServer application (it will run 2 undertow servers on 8080 and 8081).
+* Go to index.html (like `file:///home/mposolda/IdeaProjects/misc/undertow-sample/index.html` ). REquests to both iframes will be sent in parallel.

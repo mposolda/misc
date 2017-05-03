@@ -1,0 +1,16 @@
+<html>
+    <body>
+
+        <div id="frame2-div">
+            <iframe name="frame2" src="http://localhost:8080?SAMLRequest=foo" style="height: 180px; width: 100%; border: none;"></iframe>
+        </div><!-- close div#frame2 -->
+
+        <!-- Send POST automatically. See frame-script.js -->
+        <div id="frame1-div">
+            <iframe id="frame1" name="frame1" src="about:blank" style="height: 100%; width: 100%; border: none;"></iframe>
+        </div>
+
+        <script type="application/javascript" src="frame-script.js"></script>
+
+    </body>
+</html>

@@ -32,6 +32,7 @@ public class JavascriptHistoryTestServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         System.out.println("JS: GET received!");
+        System.out.println("User-Agent: " + req.getHeader("User-Agent"));
         render(req, resp, false);
     }
 
@@ -41,7 +42,7 @@ public class JavascriptHistoryTestServlet extends HttpServlet {
 
         String username = (String) session.getAttribute("username");
         System.out.println("SESSIONID: " + session.getId() + ", username: " + username);
-        String actionURI = req.getScheme() + "://localhost:" + req.getLocalPort() + "/session-nocache-servlet/j";
+        String actionURI = req.getScheme() + "://" + req.getLocalAddr() + ":" + req.getLocalPort() + "/session-nocache-servlet/j";
 
 //        Integer newCode = computeNewCode(session);
 //        actionURI = actionURI + "?code=" + newCode;
@@ -63,13 +64,14 @@ public class JavascriptHistoryTestServlet extends HttpServlet {
         builder.append("<HTML><HEAD><TITLE>Hello</TITLE>");
 
         if (pushState) {
-            builder.append("<SCRIPT>history.replaceState({}, \"page 3\", \"j?foo=" + new Random().nextInt() + "\");</SCRIPT>");
+            builder.append("<SCRIPT>" + getJavascriptText() + "</SCRIPT>");
         }
 
         builder.append("</HEAD><BODY><SCRIPT>document.write(typeof history.replaceState);  document.write(\" NEXT: \"); document.write(typeof history.brekeke);</SCRIPT>");
         builder.append("Current username: " + username + "<br><hr>");
         builder.append("<FORM action='" + actionURI + "' method='POST'>");
-        builder.append("Username: <INPUT name='username' value='" + username + "' />");
+        builder.append("Username: <INPUT id='username' name='username' value='" + username + "' />");
+        builder.append("Username: <INPUT id='submitme' type='submit' value='submit' />");
         builder.append("</FORM>");
 
         builder.append("</BODY></HTML>");
@@ -77,9 +79,11 @@ public class JavascriptHistoryTestServlet extends HttpServlet {
     }
 
     private String getJavascriptText() {
+        int number = new Random().nextInt();
         return new StringBuilder()
                 .append("if (typeof history.replaceState === 'function') {")
-                        .append("history.replaceState({}, \"page 3\", \"j?foo=" + new Random().nextInt() + "\");")
+                        //.append("history.replaceState({}, \"page " + number + "\", \"j?foo=" + number + "\");")
+                .append("history.replaceState({}, \"execution 123\", \"j?execution=123\");")
                         .append(" }")
                 .toString();
     }

@@ -28,12 +28,12 @@ public class SessionNoCacheServlet extends HttpServlet {
         if (codeCheck == CodeCheck.INVALID) {
             System.out.println("Code invalid. Restarting from Scratch!");
             req.getSession().invalidate();
-            String appUri = req.getScheme() + "://localhost:" + req.getLocalPort() + "/session-nocache-servlet/app";
+            String appUri = req.getScheme() + "://" + req.getLocalAddr() + ":" + req.getLocalPort() + "/session-nocache-servlet/app";
             resp.sendRedirect(appUri);
             return;
         } else if (codeCheck == CodeCheck.EXPIRED) {
             System.out.println("Code expired. Just redirecting to get");
-            String getUri = req.getScheme() + "://localhost:" + req.getLocalPort() + "/session-nocache-servlet/s?expired=true";
+            String getUri = req.getScheme() + "://" + req.getLocalAddr() + ":" + req.getLocalPort() + "/session-nocache-servlet/s?expired=true";
             resp.sendRedirect(getUri);
             return;
         }
@@ -44,8 +44,8 @@ public class SessionNoCacheServlet extends HttpServlet {
         HttpSession session = req.getSession();
         session.setAttribute("username", username);
 
-        //render(req, resp, false);
-        resp.sendRedirect(req.getRequestURL().toString());
+        render(req, resp, false);
+        //resp.sendRedirect(req.getRequestURL().toString());
     }
 
 
@@ -87,7 +87,7 @@ public class SessionNoCacheServlet extends HttpServlet {
         System.out.println("SESSIONID: " + session.getId());
 
         String username = (String) session.getAttribute("username");
-        String actionURI = req.getScheme() + "://localhost:" + req.getLocalPort() + "/session-nocache-servlet/s";
+        String actionURI = req.getScheme() + "://" + req.getLocalAddr() + ":" + req.getLocalPort() + "/session-nocache-servlet/s";
 
         Integer newCode = computeNewCode(session);
         actionURI = actionURI + "?code=" + newCode;
@@ -95,9 +95,9 @@ public class SessionNoCacheServlet extends HttpServlet {
         resp.setHeader("Content-Type", "text/html");
 
         // no back-button
-        //resp.setHeader("Cache-Control", "no-store, must-revalidate, max-age=0");
-        //resp.setHeader("Pragma", "no-cache");
-        //resp.setHeader("Expires", "0");
+        resp.setHeader("Cache-Control", "no-store, must-revalidate, max-age=0");
+        resp.setHeader("Pragma", "no-cache");
+        resp.setHeader("Expires", "0");
 
         String responseString = renderForm(actionURI, username, expired);
         resp.getWriter().println(responseString);
