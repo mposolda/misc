@@ -31,7 +31,11 @@ public class UndertowIFrameFrontChannelLogoutSampleServer {
                     public void handleRequest(final HttpServerExchange exchange) throws Exception {
                         System.out.println("Handled request: " + Thread.currentThread().getName());
                         HttpString reqMethod = exchange.getRequestMethod();
+
                         exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, "text/html");
+
+                        // IFrame will be blocked in browser if it is used!
+                        //exchange.getResponseHeaders().put(HttpString.tryFromString("X-Frame-Options"), "SAMEORIGIN");
 
                         if (reqMethod.toString().equals("GET")) {
                             exchange.getResponseSender().send("<h1>Hello World!</h1>Method: GET<br>Body: "
