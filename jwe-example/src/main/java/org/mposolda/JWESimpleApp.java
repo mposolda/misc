@@ -1,17 +1,35 @@
 package org.mposolda;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.security.Security;
+import java.security.spec.AlgorithmParameterSpec;
+import java.util.Arrays;
+
+import javax.crypto.Cipher;
+import javax.crypto.Mac;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.crypto.Wrapper;
 import org.bouncycastle.crypto.engines.AESWrapEngine;
 import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.keycloak.common.util.Base64Url;
 import org.keycloak.jose.jws.JWSHeader;
 
 /**
+ * Encodes JWE payload with AES128KeyWrap and AES-CBC-HMAC-SHA-256
+ *
+ * See JWE specification and it's attachements for details.
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class JWESimpleApp {
+
+    static {
+        if (Security.getProvider("BC") == null) Security.addProvider(new BouncyCastleProvider());
+    }
 
     public static void main(String[] args) throws Exception {
         // JWE specs - example A.3
@@ -64,8 +82,56 @@ public class JWESimpleApp {
         System.out.println(aadBytes);
 
         // A.3.6
-        
 
+        // B.1
+        byte[] cekMacKey = Arrays.copyOf(cekBytes, 16);
+        byte[] cekAesKey = Arrays.copyOfRange(cekBytes, 16, 32);
+
+        // B.2
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
+        SecretKeySpec secretKeySpec = new SecretKeySpec(cekAesKey, "AES");
+        AlgorithmParameterSpec ivParamSpec = new IvParameterSpec(initializationVector);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec, ivParamSpec);
+        byte[] encryptedBytes = cipher.doFinal(payloadBytes);
+
+        // B.3
+        ByteBuffer b = ByteBuffer.allocate(4);
+        b.order(ByteOrder.BIG_ENDIAN); // optional, the initial order of a byte buffer is always BIG_ENDIAN.
+        int aadLengthInBits = aadBytes.length * 8;
+        b.putInt(aadLengthInBits);
+        byte[] result1 = b.array();
+        byte[] aadBigEndian = new byte[8];
+        System.arraycopy(result1, 0, aadBigEndian, 4, 4);
+
+        // B.5
+        byte[] concatenatedHmacInput = new byte[aadBytes.length + initializationVector.length + encryptedBytes.length + aadBigEndian.length];
+        System.arraycopy(aadBytes, 0, concatenatedHmacInput, 0, aadBytes.length);
+        System.arraycopy(initializationVector, 0, concatenatedHmacInput, aadBytes.length, initializationVector.length);
+        System.arraycopy(encryptedBytes, 0, concatenatedHmacInput, aadBytes.length + initializationVector.length, encryptedBytes.length);
+        System.arraycopy(aadBigEndian, 0, concatenatedHmacInput, aadBytes.length + initializationVector.length + encryptedBytes.length, aadBigEndian.length);
+
+        // B.6
+        Mac macImpl = Mac.getInstance("HMACSHA256");
+        macImpl.init(new SecretKeySpec(cekMacKey, macImpl.getAlgorithm()));
+        macImpl.update(concatenatedHmacInput);
+        byte[] macEncoded =  macImpl.doFinal();
+
+        byte[] aadOutput = Arrays.copyOf(macEncoded, 16);
+
+        // A.3.6 - continue
+        String cipherText = Base64Url.encode(encryptedBytes);
+        System.out.println("cipherText: " + cipherText);
+
+        String aadOutputText= Base64Url.encode(aadOutput);
+        System.out.println("aadOutputText: " + aadOutputText);
+
+        String jwe = encodedHeader + "."
+                + base64EncryptedCEK + "."
+                + initializationVectorEncoded + "."
+                + cipherText + "."
+                + aadOutputText;
+
+        System.out.println("JWE: " + jwe);
 
     }
 }
