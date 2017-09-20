@@ -38,6 +38,7 @@
     <module>jfreechart-test</module>
     <module>undertow-sample</module>
     <module>jwe-example</module>
+    <module>jwe-encryption-nimbus</module>
   </modules>
 
   <repositories>
