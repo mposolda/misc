@@ -36,6 +36,16 @@
             <artifactId>infinispan-server-hotrod</artifactId>
             <version>8.2.8.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-server-core</artifactId>
+            <version>8.2.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan.server</groupId>
+            <artifactId>infinispan-server-endpoints</artifactId>
+            <version>8.2.8.Final</version>
+        </dependency>
 
 
         <dependency>

@@ -6,6 +6,20 @@
 
   <distributable />
 
+    <servlet>
+        <servlet-name>BackupCacheInitiator</servlet-name>
+        <servlet-class>org.jboss.sample.BackupCacheInitiator</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BackupCacheInitiator</servlet-name>
+        <url-pattern>/backup</url-pattern>
+    </servlet-mapping>
+    
+    <listener>
+        <listener-class>org.jboss.sample.ServletInitializer</listener-class>
+    </listener>
+
   <servlet>
     <servlet-name>SessionServlet</servlet-name>
     <servlet-class>org.jboss.sample.SessionServlet</servlet-class>

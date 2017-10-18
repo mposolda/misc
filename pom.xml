@@ -39,6 +39,7 @@
     <module>undertow-sample</module>
     <module>jwe-example</module>
     <module>jwe-encryption-nimbus</module>
+      <module>ispn-plugin</module>
   </modules>
 
   <repositories>
