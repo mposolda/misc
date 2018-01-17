@@ -49,7 +49,7 @@ public class SSLSocketClient {
     // Requires keycloak running on http://localhost:8443
     public static void readSecuredServer(boolean addClientCertificate) throws Exception {
         KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(TRUSTSTORE_PATH), "password".toCharArray());
+        ks.load(new FileInputStream(TRUSTSTORE_PATH), "secret".toCharArray());
 
         TrustManagerFactory tmf =
                 TrustManagerFactory.getInstance("SunX509");
@@ -59,7 +59,7 @@ public class SSLSocketClient {
         KeyManager[] keyManagers = null;
         if (addClientCertificate) {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-            kmf.init(ks, "password".toCharArray());
+            kmf.init(ks, "secret".toCharArray());
             keyManagers = kmf.getKeyManagers();
         }
 

@@ -3,7 +3,7 @@ cd certs
 rm *
 
 # GENERATE SERVER "localhost" CERTIFICATE AND PUT INTO KEYSTORES
-keytool -genkey -alias localhost -keyalg RSA -keystore keycloak-server.jks -validity 10950
+keytool -genkey -alias localhost -keyalg RSA -keystore keycloak-server.jks -validity 10950 -keysize 2048
 
 keytool -exportcert -keystore keycloak-server.jks -alias localhost -file localhost.crt
 keytool -importcert -keystore keycloak-jbrown.jks -alias localhost -file localhost.crt
