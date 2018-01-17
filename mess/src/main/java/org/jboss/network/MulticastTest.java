@@ -6,21 +6,23 @@ import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 
 /**
+ * Start from command line with: java -cp target/mess-0.1-SNAPSHOT.jar -Dmy.host=127.0.0.1 -Dmulticast.host=224.0.0.8 -Dmulticast.port=4446 org.jboss.network.MulticastTest
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class MulticastTest {
 
     public static void main(String[] args) throws Exception {
-        //System.out.println("Using hostname: " + HostResolveUtil.getHostname() + ", port: " + HostResolveUtil.getPort());
+        System.out.println("Using hostname: " + HostResolveUtil.getHostname() +
+                ", multicast host: " + HostResolveUtil.getMulticastHost() + ", multicast port: " + HostResolveUtil.getMulticastPort());
 
         MulticastReceiver server = new MulticastReceiver();
         server.start();
 
-        System.out.println("Multicast server started on port " + HostResolveUtil.getPort() + ". Sending messages");
+        System.out.println("Multicast server started. Sending messages");
 
         clientSendingMessagesFromStdin(server);
 
@@ -59,10 +61,10 @@ public class MulticastTest {
 
         public void multicast(String multicastMessage) throws IOException {
             socket = new DatagramSocket();
-            group = InetAddress.getByName("224.0.0.10");
+            group = InetAddress.getByName(HostResolveUtil.getMulticastHost());
             buf = multicastMessage.getBytes();
 
-            DatagramPacket packet = new DatagramPacket(buf, buf.length, group, 4446);
+            DatagramPacket packet = new DatagramPacket(buf, buf.length, group, HostResolveUtil.getMulticastPort());
             socket.send(packet);
             socket.close();
         }
@@ -78,9 +80,9 @@ public class MulticastTest {
             try {
                 // TODO: Investigate why it doesn't work
                 //MulticastSocket socket = new MulticastSocket(new InetSocketAddress("192.168.0.101", 4446));
-                MulticastSocket socket = new MulticastSocket(4446);
+                MulticastSocket socket = new MulticastSocket(HostResolveUtil.getMulticastPort());
 
-                InetAddress group = InetAddress.getByName("224.0.0.10");
+                InetAddress group = InetAddress.getByName(HostResolveUtil.getMulticastHost());
                 socket.joinGroup(group);
                 while (true) {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
