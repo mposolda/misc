@@ -19,6 +19,8 @@ public class MulticastTest {
         System.out.println("Using hostname: " + HostResolveUtil.getHostname() +
                 ", multicast host: " + HostResolveUtil.getMulticastHost() + ", multicast port: " + HostResolveUtil.getMulticastPort());
 
+        System.out.println("Send 'end' message for the end");
+
         MulticastReceiver server = new MulticastReceiver();
         server.start();
 
@@ -90,6 +92,7 @@ public class MulticastTest {
                     String received = new String(
                             packet.getData(), 0, packet.getLength());
                     if ("end".equals(received)) {
+                        System.out.println("Exit server");
                         break;
                     } else {
                         System.out.println("Server received: " + received);
