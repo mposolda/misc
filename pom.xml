@@ -41,6 +41,7 @@
     <module>jwe-encryption-nimbus</module>
       <module>ispn-plugin</module>
       <module>files-pictures-download</module>
+      <module>rolling-upgrade-ispn</module>
   </modules>
 
   <repositories>
