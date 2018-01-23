@@ -31,14 +31,17 @@ public class IspnTestV1 {
 
         boolean clustered = true;
 
-        boolean allowDuplicateJMXDomains = true;
+        //boolean allowDuplicateJMXDomains = true;
 
         if (clustered) {
             gcb = gcb.clusteredDefault();
             gcb.transport().clusterName("test-clustering");
         }
 
-        gcb.globalJmxStatistics().allowDuplicateDomains(allowDuplicateJMXDomains);
+        gcb.globalJmxStatistics()
+                //.allowDuplicateDomains(allowDuplicateJMXDomains)
+                .cacheManagerName("myCacheManager")
+                .enable();
 
         EmbeddedCacheManager cacheManager = new DefaultCacheManager(gcb.build());
 
