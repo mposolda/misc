@@ -7,8 +7,7 @@ import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
-import org.mposolda.ispn.v1.TestsuiteCLI;
-import org.mposolda.ispn.v1.UserSessionEntity;
+import org.mposolda.ispn.entity.UserSessionEntity;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>

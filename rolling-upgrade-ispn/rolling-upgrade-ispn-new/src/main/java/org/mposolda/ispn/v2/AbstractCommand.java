@@ -1,4 +1,4 @@
-package org.mposolda.ispn.v1;
+package org.mposolda.ispn.v2;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>

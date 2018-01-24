@@ -3,6 +3,7 @@ package org.mposolda.ispn.v1;
 import java.util.Date;
 
 import org.infinispan.Cache;
+import org.mposolda.ispn.entity.UserSessionEntity;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>

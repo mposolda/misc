@@ -1,4 +1,4 @@
-package org.mposolda.ispn.v1;
+package org.mposolda.ispn.v2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +23,8 @@ public class TestsuiteCLI<K, V> {
             ExitCommand.class,
             HelpCommand.class,
             CreateSessionCommand.class,
-            ListSessionsCommand.class
+            ListSessionsCommand.class,
+            GetSessionCommand.class
             /*AbstractSessionCacheCommand.GetMultipleCommand.class,
             AbstractSessionCacheCommand.GetLocalCommand.class,
             AbstractSessionCacheCommand.SizeLocalCommand.class,

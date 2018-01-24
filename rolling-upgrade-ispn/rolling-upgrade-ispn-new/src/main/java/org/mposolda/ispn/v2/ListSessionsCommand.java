@@ -1,4 +1,4 @@
-package org.mposolda.ispn.v1;
+package org.mposolda.ispn.v2;
 
 import java.util.Map;
 

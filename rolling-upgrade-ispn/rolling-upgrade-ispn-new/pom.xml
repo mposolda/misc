@@ -21,7 +21,17 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
-            <version>9.1.4.Final</version>
+            <version>9.2.0.CR1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cli-client</artifactId>
+            <version>9.2.0.CR1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cachestore-remote</artifactId>
+            <version>9.2.0.CR1</version>
         </dependency>
     </dependencies>
 

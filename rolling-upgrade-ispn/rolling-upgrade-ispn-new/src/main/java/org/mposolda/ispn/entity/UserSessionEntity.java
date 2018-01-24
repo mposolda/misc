@@ -1,15 +1,22 @@
-package org.mposolda.ispn.v1;
+package org.mposolda.ispn.entity;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.infinispan.commons.marshall.Externalizer;
+import org.infinispan.commons.marshall.MarshallUtil;
+import org.infinispan.commons.marshall.SerializeWith;
 import org.jboss.logging.Logger;
+import org.mposolda.ispn.v2.KeycloakMarshallUtil;
 
 /**
  * @author <a href="mailto:sthorger@redhat.com">Stian Thorgersen</a>
  */
-//@SerializeWith(UserSessionEntity.ExternalizerImpl.class)
+@SerializeWith(UserSessionEntity.ExternalizerImpl.class)
 public class UserSessionEntity implements Serializable /*extends SessionEntity*/ {
 
     public static final Logger logger = Logger.getLogger(UserSessionEntity.class);
@@ -204,10 +211,10 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 //    }
 
 
-//    public static class ExternalizerImpl implements Externalizer<UserSessionEntity> {
-//
-//        private static final int VERSION_1 = 1;
-//
+    public static class ExternalizerImpl implements Externalizer<UserSessionEntity> {
+
+        private static final int VERSION_1 = 1;
+
 //        private static final EnumMap<UserSessionModel.State, Integer> STATE_TO_ID = new EnumMap<>(UserSessionModel.State.class);
 //        private static final Map<Integer, UserSessionModel.State> ID_TO_STATE = new HashMap<>();
 //        static {
@@ -219,72 +226,72 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 //                ID_TO_STATE.put(entry.getValue(), entry.getKey());
 //            }
 //        }
-//
-//        @Override
-//        public void writeObject(ObjectOutput output, UserSessionEntity session) throws IOException {
-//            output.writeByte(VERSION_1);
-//
-//            MarshallUtil.marshallString(session.getAuthMethod(), output);
-//            MarshallUtil.marshallString(session.getBrokerSessionId(), output);
-//            MarshallUtil.marshallString(session.getBrokerUserId(), output);
-//            MarshallUtil.marshallString(session.getId(), output);
-//            MarshallUtil.marshallString(session.getIpAddress(), output);
-//            MarshallUtil.marshallString(session.getLoginUsername(), output);
-//            MarshallUtil.marshallString(session.getRealmId(), output);
-//            MarshallUtil.marshallString(session.getUser(), output);
-//
-//            MarshallUtil.marshallInt(output, session.getLastSessionRefresh());
-//            MarshallUtil.marshallInt(output, session.getStarted());
-//            output.writeBoolean(session.isRememberMe());
-//
+
+        @Override
+        public void writeObject(ObjectOutput output, UserSessionEntity session) throws IOException {
+            output.writeByte(VERSION_1);
+
+            MarshallUtil.marshallString(session.getAuthMethod(), output);
+            MarshallUtil.marshallString(session.getBrokerSessionId(), output);
+            MarshallUtil.marshallString(session.getBrokerUserId(), output);
+            MarshallUtil.marshallString(session.getId(), output);
+            MarshallUtil.marshallString(session.getIpAddress(), output);
+            MarshallUtil.marshallString(session.getLoginUsername(), output);
+            MarshallUtil.marshallString(session.getRealmId(), output);
+            MarshallUtil.marshallString(session.getUser(), output);
+
+            output.write(session.getLastSessionRefresh());
+            output.write(session.getStarted());
+            output.writeBoolean(session.isRememberMe());
+
 //            int state = session.getState() == null ? 0 : STATE_TO_ID.get(session.getState());
 //            output.writeInt(state);
-//
-//            Map<String, String> notes = session.getNotes();
-//            KeycloakMarshallUtil.writeMap(notes, KeycloakMarshallUtil.STRING_EXT, KeycloakMarshallUtil.STRING_EXT, output);
-//
+
+            Map<String, String> notes = session.getNotes();
+            KeycloakMarshallUtil.writeMap(notes, KeycloakMarshallUtil.STRING_EXT, KeycloakMarshallUtil.STRING_EXT, output);
+
 //            output.writeObject(session.getAuthenticatedClientSessions());
-//        }
-//
-//
-//        @Override
-//        public UserSessionEntity readObject(ObjectInput input) throws IOException, ClassNotFoundException {
-//            switch (input.readByte()) {
-//                case VERSION_1:
-//                    return readObjectVersion1(input);
-//                default:
-//                    throw new IOException("Unknown version");
-//            }
-//        }
-//
-//        public UserSessionEntity readObjectVersion1(ObjectInput input) throws IOException, ClassNotFoundException {
-//            UserSessionEntity sessionEntity = new UserSessionEntity();
-//
-//            sessionEntity.setAuthMethod(MarshallUtil.unmarshallString(input));
-//            sessionEntity.setBrokerSessionId(MarshallUtil.unmarshallString(input));
-//            sessionEntity.setBrokerUserId(MarshallUtil.unmarshallString(input));
-//            final String userSessionId = MarshallUtil.unmarshallString(input);
-//            sessionEntity.setId(userSessionId);
-//            sessionEntity.setIpAddress(MarshallUtil.unmarshallString(input));
-//            sessionEntity.setLoginUsername(MarshallUtil.unmarshallString(input));
-//            sessionEntity.setRealmId(MarshallUtil.unmarshallString(input));
-//            sessionEntity.setUser(MarshallUtil.unmarshallString(input));
-//
-//            sessionEntity.setLastSessionRefresh(MarshallUtil.unmarshallInt(input));
-//            sessionEntity.setStarted(MarshallUtil.unmarshallInt(input));
-//            sessionEntity.setRememberMe(input.readBoolean());
-//
+        }
+
+
+        @Override
+        public UserSessionEntity readObject(ObjectInput input) throws IOException, ClassNotFoundException {
+            switch (input.readByte()) {
+                case VERSION_1:
+                    return readObjectVersion1(input);
+                default:
+                    throw new IOException("Unknown version");
+            }
+        }
+
+        public UserSessionEntity readObjectVersion1(ObjectInput input) throws IOException, ClassNotFoundException {
+            UserSessionEntity sessionEntity = new UserSessionEntity();
+
+            sessionEntity.setAuthMethod(MarshallUtil.unmarshallString(input));
+            sessionEntity.setBrokerSessionId(MarshallUtil.unmarshallString(input));
+            sessionEntity.setBrokerUserId(MarshallUtil.unmarshallString(input));
+            final String userSessionId = MarshallUtil.unmarshallString(input);
+            sessionEntity.setId(userSessionId);
+            sessionEntity.setIpAddress(MarshallUtil.unmarshallString(input));
+            sessionEntity.setLoginUsername(MarshallUtil.unmarshallString(input));
+            sessionEntity.setRealmId(MarshallUtil.unmarshallString(input));
+            sessionEntity.setUser(MarshallUtil.unmarshallString(input));
+
+            sessionEntity.setLastSessionRefresh(input.read());
+            sessionEntity.setStarted(input.read());
+            sessionEntity.setRememberMe(input.readBoolean());
+
 //            sessionEntity.setState(ID_TO_STATE.get(input.readInt()));
-//
-//            Map<String, String> notes = KeycloakMarshallUtil.readMap(input, KeycloakMarshallUtil.STRING_EXT, KeycloakMarshallUtil.STRING_EXT,
-//                    new KeycloakMarshallUtil.ConcurrentHashMapBuilder<>());
-//            sessionEntity.setNotes(notes);
-//
+
+            Map<String, String> notes = KeycloakMarshallUtil.readMap(input, KeycloakMarshallUtil.STRING_EXT, KeycloakMarshallUtil.STRING_EXT,
+                    new KeycloakMarshallUtil.ConcurrentHashMapBuilder<>());
+            sessionEntity.setNotes(notes);
+
 //            AuthenticatedClientSessionStore authSessions = (AuthenticatedClientSessionStore) input.readObject();
 //            sessionEntity.setAuthenticatedClientSessions(authSessions);
-//
-//            return sessionEntity;
-//        }
-//
-//    }
+
+            return sessionEntity;
+        }
+
+    }
 }
