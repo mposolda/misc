@@ -25,6 +25,11 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-persistence-cli</artifactId>
+            <version>8.2.8.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
             <artifactId>infinispan-cachestore-remote</artifactId>
             <version>8.2.8.Final</version>
         </dependency>

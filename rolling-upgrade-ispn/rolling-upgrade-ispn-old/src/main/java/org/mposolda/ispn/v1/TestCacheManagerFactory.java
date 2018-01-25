@@ -1,9 +1,5 @@
 package org.mposolda.ispn.v1;
 
-/**
- * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
- */
-
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.cache.StoreConfigurationBuilder;

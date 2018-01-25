@@ -21,17 +21,29 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-core</artifactId>
-            <version>9.2.0.CR1</version>
+            <version>9.1.4.Final</version>
         </dependency>
+
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-cli-client</artifactId>
-            <version>9.2.0.CR1</version>
+            <artifactId>infinispan-cli-interpreter</artifactId>
+            <version>9.1.4.Final</version>
         </dependency>
+
+       <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-persistence-cli</artifactId>
+            <version>9.1.4.Final</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-cli</artifactId>
+            <version>9.1.4.Final</version>
+        </dependency>-->
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-cachestore-remote</artifactId>
-            <version>9.2.0.CR1</version>
+            <version>9.1.4.Final</version>
         </dependency>
     </dependencies>
 

@@ -23,7 +23,9 @@ public class TestsuiteCLI<K, V> {
             ExitCommand.class,
             HelpCommand.class,
             CreateSessionCommand.class,
-            ListSessionsCommand.class
+            CreateStringCommand.class,
+            ListSessionsCommand.class,
+            RemoveCommand.class
             /*AbstractSessionCacheCommand.GetMultipleCommand.class,
             AbstractSessionCacheCommand.GetLocalCommand.class,
             AbstractSessionCacheCommand.SizeLocalCommand.class,

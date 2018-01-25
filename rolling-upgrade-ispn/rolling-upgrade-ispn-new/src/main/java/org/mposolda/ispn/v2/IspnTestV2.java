@@ -7,6 +7,7 @@ import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
+import org.infinispan.persistence.cli.configuration.CLInterfaceLoaderConfigurationBuilder;
 import org.mposolda.ispn.entity.UserSessionEntity;
 
 /**
@@ -28,6 +29,9 @@ public class IspnTestV2 {
     public static EmbeddedCacheManager createManager() {
         System.setProperty("java.net.preferIPv4Stack", "true");
         System.setProperty("jgroups.tcp.port", "53715");
+
+        // This is different than IspnTestV1 !!!
+        System.setProperty("jgroups.udp.mcast_addr", "226.6.7.9");
         GlobalConfigurationBuilder gcb = new GlobalConfigurationBuilder();
 
         boolean clustered = true;
@@ -39,7 +43,10 @@ public class IspnTestV2 {
             gcb.transport().clusterName("test-clustering");
         }
 
-        gcb.globalJmxStatistics().allowDuplicateDomains(allowDuplicateJMXDomains);
+        gcb.globalJmxStatistics()
+                //.allowDuplicateDomains(allowDuplicateJMXDomains)
+                .cacheManagerName("myCacheManager")
+                .enable();
 
         EmbeddedCacheManager cacheManager = new DefaultCacheManager(gcb.build());
 
@@ -48,6 +55,11 @@ public class IspnTestV2 {
         if (clustered) {
             cacheConfigBuilder.clustering().cacheMode(CacheMode.REPL_SYNC);
         }
+
+        // CLI loader
+        cacheConfigBuilder.persistence()
+                .addStore(CLInterfaceLoaderConfigurationBuilder.class)
+                .connectionString("jmx://localhost:1255/myCacheManager/sessions");
 
         Configuration cacheConfiguration = cacheConfigBuilder.build();
 
