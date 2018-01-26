@@ -23,7 +23,10 @@ public class CreateSessionCommand extends AbstractCommand<String, UserSessionEnt
         userSession.setId(id);
         userSession.setRealmId("foo");
 
-        userSession.setLastSessionRefresh((int) (new Date().getTime() / 1000));
+        int started = (int) (new Date().getTime() / 1000);
+        userSession.setStarted(started);
+        userSession.setLastSessionRefresh(String.valueOf(started + 100));
+
         cache.put(id, userSession);
         log.infof("Created: %s=%s", id, userSession);
     }

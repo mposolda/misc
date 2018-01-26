@@ -43,7 +43,8 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 
     private int started;
 
-    private int lastSessionRefresh;
+    // CHANGED FROM int TO String in new version
+    private String lastSessionRefresh;
 
     //private UserSessionModel.State state;
 
@@ -115,11 +116,11 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
         this.started = started;
     }
 
-    public int getLastSessionRefresh() {
+    public String getLastSessionRefresh() {
         return lastSessionRefresh;
     }
 
-    public void setLastSessionRefresh(int lastSessionRefresh) {
+    public void setLastSessionRefresh(String lastSessionRefresh) {
         this.lastSessionRefresh = lastSessionRefresh;
     }
 
@@ -182,7 +183,8 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 
     @Override
     public String toString() {
-        return String.format("UserSessionEntity [id=%s, realm=%s, lastSessionRefresh=%d ]", getId(), getRealmId(), getLastSessionRefresh());
+        return String.format("UserSessionEntity [id=%s, realm=%s, started=%d, lastSessionRefresh=%s ]", getId(), getRealmId(),
+                getStarted(), getLastSessionRefresh());
     }
 
 //    @Override
@@ -214,6 +216,7 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
     public static class ExternalizerImpl implements Externalizer<UserSessionEntity> {
 
         private static final int VERSION_1 = 1;
+        private static final int VERSION_2 = 2;
 
 //        private static final EnumMap<UserSessionModel.State, Integer> STATE_TO_ID = new EnumMap<>(UserSessionModel.State.class);
 //        private static final Map<Integer, UserSessionModel.State> ID_TO_STATE = new HashMap<>();
@@ -229,7 +232,7 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 
         @Override
         public void writeObject(ObjectOutput output, UserSessionEntity session) throws IOException {
-            output.writeByte(VERSION_1);
+            output.writeByte(VERSION_2);
 
             MarshallUtil.marshallString(session.getAuthMethod(), output);
             MarshallUtil.marshallString(session.getBrokerSessionId(), output);
@@ -240,8 +243,8 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
             MarshallUtil.marshallString(session.getRealmId(), output);
             MarshallUtil.marshallString(session.getUser(), output);
 
-            output.write(session.getLastSessionRefresh());
-            output.write(session.getStarted());
+            MarshallUtil.marshallString(String.valueOf(session.getLastSessionRefresh()), output);
+            output.writeInt(session.getStarted());
             output.writeBoolean(session.isRememberMe());
 
 //            int state = session.getState() == null ? 0 : STATE_TO_ID.get(session.getState());
@@ -256,15 +259,17 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 
         @Override
         public UserSessionEntity readObject(ObjectInput input) throws IOException, ClassNotFoundException {
-            switch (input.readByte()) {
+            int version = input.readByte();
+            switch (version) {
                 case VERSION_1:
-                    return readObjectVersion1(input);
+                case VERSION_2:
+                    return readObject(input, version);
                 default:
                     throw new IOException("Unknown version");
             }
         }
 
-        public UserSessionEntity readObjectVersion1(ObjectInput input) throws IOException, ClassNotFoundException {
+        private UserSessionEntity readObject(ObjectInput input, int version) throws IOException, ClassNotFoundException {
             UserSessionEntity sessionEntity = new UserSessionEntity();
 
             sessionEntity.setAuthMethod(MarshallUtil.unmarshallString(input));
@@ -277,8 +282,18 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
             sessionEntity.setRealmId(MarshallUtil.unmarshallString(input));
             sessionEntity.setUser(MarshallUtil.unmarshallString(input));
 
-            sessionEntity.setLastSessionRefresh(input.read());
-            sessionEntity.setStarted(input.read());
+            if (version == 1) {
+                // WAS int IN VERSION 1
+                System.out.println("Unmarshall lastSessionRefresh int");
+                int lsrInt = input.readInt();
+                sessionEntity.setLastSessionRefresh(String.valueOf(lsrInt));
+            } else {
+                // STRING in VERSION 2
+                System.out.println("Unmarshall lastSessionRefresh String");
+                sessionEntity.setLastSessionRefresh(MarshallUtil.unmarshallString(input));
+            }
+
+            sessionEntity.setStarted(input.readInt());
             sessionEntity.setRememberMe(input.readBoolean());
 
 //            sessionEntity.setState(ID_TO_STATE.get(input.readInt()));

@@ -182,7 +182,8 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 
     @Override
     public String toString() {
-        return String.format("UserSessionEntity [id=%s, realm=%s, lastSessionRefresh=%d ]", getId(), getRealmId(), getLastSessionRefresh());
+        return String.format("UserSessionEntity [id=%s, realm=%s, started=%d, lastSessionRefresh=%d ]", getId(), getRealmId(),
+                getStarted(), getLastSessionRefresh());
     }
 
 //    @Override
@@ -240,8 +241,8 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
             MarshallUtil.marshallString(session.getRealmId(), output);
             MarshallUtil.marshallString(session.getUser(), output);
 
-            output.write(session.getLastSessionRefresh());
-            output.write(session.getStarted());
+            output.writeInt(session.getLastSessionRefresh());
+            output.writeInt(session.getStarted());
             output.writeBoolean(session.isRememberMe());
 
 //            int state = session.getState() == null ? 0 : STATE_TO_ID.get(session.getState());
@@ -277,8 +278,8 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
             sessionEntity.setRealmId(MarshallUtil.unmarshallString(input));
             sessionEntity.setUser(MarshallUtil.unmarshallString(input));
 
-            sessionEntity.setLastSessionRefresh(input.read());
-            sessionEntity.setStarted(input.read());
+            sessionEntity.setLastSessionRefresh(input.readInt());
+            sessionEntity.setStarted(input.readInt());
             sessionEntity.setRememberMe(input.readBoolean());
 
 //            sessionEntity.setState(ID_TO_STATE.get(input.readInt()));
