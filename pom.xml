@@ -42,6 +42,7 @@
       <module>ispn-plugin</module>
       <module>files-pictures-download</module>
       <module>rolling-upgrade-ispn</module>
+      <module>passwordencoder</module>
   </modules>
 
   <repositories>
