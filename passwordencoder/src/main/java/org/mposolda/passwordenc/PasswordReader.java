@@ -13,7 +13,7 @@ public abstract class PasswordReader {
     public static String readPassword() throws IOException {
         Console console = System.console();
         if (console == null) {
-            System.out.print("Password: ");
+            System.out.println("Password: ");
             String line = new BufferedReader(new InputStreamReader(System.in)).readLine();
             return line;
         } else {

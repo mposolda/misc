@@ -43,5 +43,29 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>exec</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>org.mposolda.passwordenc.PasswordFileEncoder</mainClass>
+                            <classpathScope>test</classpathScope>
+                            <arguments>
+                                <argument>${enc.mode}</argument>
+                                <argument>${enc.input.file}</argument>
+                                <argument>${enc.output.file}</argument>
+                                <argument>${enc.hash.file}</argument>
+                            </arguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
 </project>
