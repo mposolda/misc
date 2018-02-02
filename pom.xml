@@ -43,6 +43,7 @@
       <module>files-pictures-download</module>
       <module>rolling-upgrade-ispn</module>
       <module>passwordencoder</module>
+      <module>rolling-upgrade-jpa</module>
   </modules>
 
   <repositories>
