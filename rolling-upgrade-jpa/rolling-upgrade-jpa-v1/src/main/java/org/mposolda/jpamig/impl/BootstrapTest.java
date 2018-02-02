@@ -15,6 +15,7 @@ import javax.persistence.EntityManager;
 
 import org.jboss.logging.Logger;
 import org.mposolda.jpamig.Company;
+import org.mposolda.jpamig.Realm;
 import org.mposolda.jpamig.common.JpaKeycloakTransaction;
 import org.mposolda.jpamig.common.JpaProvider;
 import org.mposolda.jpamig.common.JpaUtils;
@@ -23,6 +24,8 @@ import org.mposolda.jpamig.common.JpaUtils;
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class BootstrapTest {
+
+    private static final int REALM_COUNT = 5;
 
     private static final Logger logger = Logger.getLogger(BootstrapTest.class);
 
@@ -41,6 +44,22 @@ public class BootstrapTest {
         jpaProvider.init(cfg);
 
         JpaUtils.wrapTransaction(jpaProvider, (EntityManager em, JpaKeycloakTransaction transaction) -> {
+            Realm r = em.find(Realm.class, "1");
+
+            // We don't yet have realms. Let's create them
+            if (r == null) {
+                logger.info("Creating realms");
+                for (int i=1 ; i<REALM_COUNT+1 ; i++) {
+                    r = new Realm();
+                    r.setId(String.valueOf(i));
+                    r.setName("realm " + i);
+                    em.persist(r);
+                }
+
+            } else {
+                logger.info("Realms already exist");
+            }
+
             int count = getCompanyCount(em);
             logger.info("Existing company count: " + count);
             counter.set(count);
@@ -60,7 +79,7 @@ public class BootstrapTest {
 
         logger.info("Sleeping");
 
-        Thread.sleep(30000);
+        Thread.sleep(2000);
 
         logger.info("Stopping");
         for (AbstractTask task : tasks) {
@@ -121,6 +140,10 @@ public class BootstrapTest {
             company.setName("MyComp " + id);
             company.setAddress("Elm 123");
 
+            int random = new Random().nextInt(5) + 1;
+            Realm r = em.find(Realm.class, String.valueOf(random));
+            company.setRealm(r);
+
             em.persist(company);
             if (id % 100 == 0) {
                 logger.info("Created: " + id + " companies.");
@@ -137,7 +160,7 @@ public class BootstrapTest {
 
         @Override
         protected void doWork(EntityManager em, JpaKeycloakTransaction transaction) {
-            int randomId = new Random(counter.get()).nextInt();
+            int randomId = new Random().nextInt(counter.get());
             Company company = em.find(Company.class, String.valueOf(randomId));
             if (randomId % 100 == 0) {
                 logger.info("Read: " + randomId + " " + company.getName());

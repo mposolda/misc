@@ -4,7 +4,10 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -28,6 +31,10 @@ public class Company {
     @Column(name = "ADDRESS", nullable = false)
     private String address;
 
+    @ManyToOne(fetch= FetchType.LAZY)
+    @JoinColumn(name = "REALM_ID")
+    protected Realm realm;
+
     public String getId() {
         return id;
     }
@@ -50,5 +57,13 @@ public class Company {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Realm getRealm() {
+        return realm;
+    }
+
+    public void setRealm(Realm realm) {
+        this.realm = realm;
     }
 }

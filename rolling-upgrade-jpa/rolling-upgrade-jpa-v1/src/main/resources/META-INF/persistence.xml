@@ -22,6 +22,7 @@
     <persistence-unit name="keycloak-default" transaction-type="RESOURCE_LOCAL">
 
         <class>org.mposolda.jpamig.Company</class>
+        <class>org.mposolda.jpamig.Realm</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
