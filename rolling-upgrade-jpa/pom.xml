@@ -16,6 +16,7 @@
 
         <module>rolling-upgrade-jpa-v1</module>
         <module>rolling-upgrade-jpa-common</module>
+        <module>rolling-upgrade-jpa-v2</module>
     </modules>
 
 

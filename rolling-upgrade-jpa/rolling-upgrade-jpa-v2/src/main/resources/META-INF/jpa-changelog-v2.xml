@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="erik.mulder@docdatapayments.com" id="example-2.0">
+
+        <addColumn tableName="EXAMPLE_COMPANY">
+            <column name="FOO" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <addUniqueConstraint tableName="EXAMPLE_COMPANY" columnNames="NAME" />
+
+        <dropForeignKeyConstraint baseTableName="EXAMPLE_COMPANY" constraintName="FK_11B7SGQW18I532811V7O2DV76" />
+
+        <modifyDataType
+                        columnName="REALM_ID"
+                        tableName="EXAMPLE_COMPANY"
+                        newDataType="VARCHAR(255)" />
+
+        <addForeignKeyConstraint baseColumnNames="REALM_ID" baseTableName="EXAMPLE_COMPANY"
+                                 constraintName="FK_11B7SGQW18I532811V7O2DV77"
+                                 referencedColumnNames="ID" referencedTableName="EXAMPLE_REALM"/>
+
+    </changeSet>
+
+</databaseChangeLog>

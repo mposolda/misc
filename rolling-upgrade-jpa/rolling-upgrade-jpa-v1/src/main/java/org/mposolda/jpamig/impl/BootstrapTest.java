@@ -79,7 +79,7 @@ public class BootstrapTest {
 
         logger.info("Sleeping");
 
-        Thread.sleep(2000);
+        Thread.sleep(3600000);
 
         logger.info("Stopping");
         for (AbstractTask task : tasks) {
