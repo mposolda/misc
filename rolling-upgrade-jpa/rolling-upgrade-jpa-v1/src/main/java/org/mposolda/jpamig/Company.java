@@ -11,7 +11,10 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "EXAMPLE_COMPANY")
-@NamedQueries({ @NamedQuery(name = "findByRealm", query = "from Company where realmId = :realmId") })
+@NamedQueries({
+        @NamedQuery(name = "findByRealm", query = "from Company where realmId = :realmId") ,
+        @NamedQuery(name = "findCount", query = "select count(company) from Company company")
+})
 public class Company {
 
     @Id

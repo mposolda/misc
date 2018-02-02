@@ -22,14 +22,14 @@ public class JpaKeycloakTransaction {
 
 
     public void begin() {
-        logger.info("Begin transaction");
+        logger.debug("Begin transaction");
         em.getTransaction().begin();
     }
 
 
     public void commit() {
 //        try {
-            logger.info("Committing transaction");
+            logger.debug("Committing transaction");
             em.getTransaction().commit();
 //        } catch (PersistenceException e) {
 //            throw PersistenceExceptionConverter.convert(e.getCause() != null ? e.getCause() : e);
