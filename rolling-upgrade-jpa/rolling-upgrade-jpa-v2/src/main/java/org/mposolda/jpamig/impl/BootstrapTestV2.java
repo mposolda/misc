@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -45,12 +46,15 @@ public class BootstrapTestV2 {
 
             }
 
-            Company c = em.find(Company.class, "1");
-            if (c == null) {
-                throw new RuntimeException("Companies not found!!!");
-            } else {
-                logger.info("Company name=" + c.getName() + ", address: " + c.getAddress() +
-                        ", realm: " + c.getRealm().getName() + ", foo: " + c.getFoo());
+            boolean found = false;
+            while (!found) {
+                int id = new Random().nextInt(10000);
+                Company c = em.find(Company.class, String.valueOf(id));
+                if (c != null) {
+                    found = true;
+                    logger.info("Company name=" + c.getName() + ", address: " + c.getAddress() +
+                            ", realm: " + c.getRealm().getName() + ", foo: " + c.getFoo());
+                }
             }
 
             logger.info("Realms and companies are here");

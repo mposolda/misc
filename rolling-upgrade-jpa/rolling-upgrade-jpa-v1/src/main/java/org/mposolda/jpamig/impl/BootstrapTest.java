@@ -65,7 +65,7 @@ public class BootstrapTest {
             counter.set(count);
         });
 
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        ExecutorService executor = Executors.newFixedThreadPool(20);
         for (int i=0 ; i<10 ; i++) {
             tasks.add(new CreatorTask(jpaProvider));
         }
@@ -108,6 +108,11 @@ public class BootstrapTest {
         @Override
         public void run() {
             while (!stopped.get()) {
+                try {
+                    //Thread.sleep(1000);
+                } catch (Exception e) {
+                }
+
                 JpaUtils.wrapTransaction(jpaProvider, (EntityManager em, JpaKeycloakTransaction transaction) -> {
                             doWork(em, transaction);
                         }
@@ -162,7 +167,7 @@ public class BootstrapTest {
         protected void doWork(EntityManager em, JpaKeycloakTransaction transaction) {
             int randomId = new Random().nextInt(counter.get());
             Company company = em.find(Company.class, String.valueOf(randomId));
-            if (randomId % 100 == 0) {
+            if (randomId % 100 == 0 && company != null) {
                 logger.info("Read: " + randomId + " " + company.getName());
             }
         }

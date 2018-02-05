@@ -12,10 +12,16 @@
 
         <dropForeignKeyConstraint baseTableName="EXAMPLE_COMPANY" constraintName="FK_11B7SGQW18I532811V7O2DV76" />
 
+        <!-- 2 modifications, just for the testing -->
         <modifyDataType
                         columnName="REALM_ID"
                         tableName="EXAMPLE_COMPANY"
                         newDataType="VARCHAR(255)" />
+
+        <modifyDataType
+                columnName="REALM_ID"
+                tableName="EXAMPLE_COMPANY"
+                newDataType="VARCHAR(36)" />
 
         <addForeignKeyConstraint baseColumnNames="REALM_ID" baseTableName="EXAMPLE_COMPANY"
                                  constraintName="FK_11B7SGQW18I532811V7O2DV77"
