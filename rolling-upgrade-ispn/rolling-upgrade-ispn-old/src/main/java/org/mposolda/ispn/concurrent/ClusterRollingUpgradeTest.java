@@ -60,12 +60,11 @@ public class ClusterRollingUpgradeTest {
         }
         System.out.println("Remote cache successfully started. Counter: " + counter.get());
 
+        shouldUseRemoteCache.set(true);
+        System.out.println("Switched shouldUseRemoteCache to true. Counter: " + counter.get());
 
         addExistingItemsToRemoteCache(cache);
         System.out.println("Inserted items to remote cache. Counter: " + counter.get());
-
-        shouldUseRemoteCache.set(true);
-        System.out.println("Switched shouldUseRemoteCache to true. Counter: " + counter.get());
 
         sleep(SLEEP_WITH_REMOTE_CACHE);
 
@@ -80,6 +79,8 @@ public class ClusterRollingUpgradeTest {
         if (testCache(cache)) {
             System.out.println("Test cache PASSED");
         }
+
+        cache.getCacheManager().stop();
     }
 
 
@@ -134,8 +135,10 @@ public class ClusterRollingUpgradeTest {
 
             @Override
             public void accept(Map.Entry<String, UserSessionEntity> entry) {
-                // Sync entry to remoteCache
-                remoteCache.put(entry.getKey(), entry.getValue());
+                // Sync entries to remoteCache. Some may be already present (Those for which UpdaterTask updated items already).
+                remoteCache
+                        .withFlags(Flag.FORCE_RETURN_VALUE)
+                        .putIfAbsentAsync(entry.getKey(), entry.getValue());
             }
 
         });
