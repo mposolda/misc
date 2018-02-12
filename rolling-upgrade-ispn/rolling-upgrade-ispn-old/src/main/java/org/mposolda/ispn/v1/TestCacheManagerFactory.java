@@ -1,5 +1,7 @@
 package org.mposolda.ispn.v1;
 
+import org.infinispan.client.hotrod.RemoteCache;
+import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -9,6 +11,7 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.persistence.remote.configuration.ExhaustedAction;
 import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationChildBuilder;
+import org.mposolda.ispn.entity.UserSessionEntity;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -72,6 +75,21 @@ public class TestCacheManagerFactory {
                 .exhaustedAction(ExhaustedAction.CREATE_NEW)
                 .async()
                 .   enabled(false).build();
+    }
+
+
+    public RemoteCache<String, UserSessionEntity> bootstrapRemoteCache(int port, String cacheName) {
+        org.infinispan.client.hotrod.configuration.ConfigurationBuilder builder = new org.infinispan.client.hotrod.configuration.ConfigurationBuilder();
+
+        builder.addServer()
+                .host("localhost")
+                .port(port);
+
+        builder.connectionPool().maxActive(20)
+                .forceReturnValues(false);
+
+        RemoteCacheManager manager = new RemoteCacheManager(builder.build());
+        return manager.getCache(cacheName);
     }
 
 
