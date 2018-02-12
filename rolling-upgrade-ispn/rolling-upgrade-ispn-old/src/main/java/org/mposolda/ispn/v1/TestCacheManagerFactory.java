@@ -1,5 +1,6 @@
 package org.mposolda.ispn.v1;
 
+import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.configuration.cache.StoreConfigurationBuilder;
@@ -12,15 +13,16 @@ import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationC
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-class TestCacheManagerFactory {
+public class TestCacheManagerFactory {
 
+    // REMOTE STORE
 
-    <T extends StoreConfigurationBuilder<?, T> & RemoteStoreConfigurationChildBuilder<T>> EmbeddedCacheManager createManager(int port, String cacheName, Class<T> builderClass) {
+    public <T extends StoreConfigurationBuilder<?, T> & RemoteStoreConfigurationChildBuilder<T>> EmbeddedCacheManager createManager(
+            int port, String cacheName, Class<T> builderClass, boolean clustered, boolean remoteStore) {
         System.setProperty("java.net.preferIPv4Stack", "true");
         System.setProperty("jgroups.tcp.port", "53715");
         GlobalConfigurationBuilder gcb = new GlobalConfigurationBuilder();
 
-        boolean clustered = false;
         boolean async = false;
         boolean allowDuplicateJMXDomains = true;
 
@@ -33,9 +35,14 @@ class TestCacheManagerFactory {
 
         EmbeddedCacheManager cacheManager = new DefaultCacheManager(gcb.build());
 
-        Configuration invalidationCacheConfiguration = getCacheBackedByRemoteStore(port, cacheName, builderClass);
+        if (remoteStore) {
+            Configuration invalidationCacheConfiguration = getCacheBackedByRemoteStore(port, cacheName, builderClass);
+            cacheManager.defineConfiguration(cacheName, invalidationCacheConfiguration);
+        } else {
+            Configuration invalidationCacheConfiguration = getClusteredCache();
+            cacheManager.defineConfiguration(cacheName, invalidationCacheConfiguration);
+        }
 
-        cacheManager.defineConfiguration(cacheName, invalidationCacheConfiguration);
         return cacheManager;
 
     }
@@ -66,4 +73,14 @@ class TestCacheManagerFactory {
                 .async()
                 .   enabled(false).build();
     }
+
+
+    private Configuration getClusteredCache() {
+        ConfigurationBuilder cacheConfigBuilder = new ConfigurationBuilder();
+
+        return cacheConfigBuilder
+                .clustering().cacheMode(CacheMode.DIST_SYNC)
+                .build();
+    }
+
 }

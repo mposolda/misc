@@ -23,6 +23,6 @@ public class RemoteIspnTestV1 {
     }
 
     private static EmbeddedCacheManager createManager(int port) {
-        return new TestCacheManagerFactory().createManager(port, CACHE_NAME, RemoteStoreConfigurationBuilder.class);
+        return new TestCacheManagerFactory().createManager(port, CACHE_NAME, RemoteStoreConfigurationBuilder.class, false, true);
     }
 }

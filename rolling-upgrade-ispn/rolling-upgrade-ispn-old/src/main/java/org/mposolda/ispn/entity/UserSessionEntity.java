@@ -172,6 +172,9 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
+        // LastSEssionRefresh for illustration purposes
+        if (lastSessionRefresh != that.lastSessionRefresh) return false;
+
         return true;
     }
 
