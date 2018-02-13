@@ -25,7 +25,7 @@ public class ClusterRollingUpgradeTest {
 
     private static final String CACHE_NAME = "default";
 
-    private static final int TASK_SLEEP_MS = 10;
+    private static final int TASK_SLEEP_MS = 1;
 
     private static final int REMOTE_CACHE_PORT = 11222;
 
@@ -131,17 +131,29 @@ public class ClusterRollingUpgradeTest {
 
 
     private static void addExistingItemsToRemoteCache(Cache<String, UserSessionEntity> cache) {
+        FutureHelper futureHelper = new FutureHelper();
+
         cache.entrySet().stream().forEach(new Consumer<Map.Entry<String, UserSessionEntity>>() {
 
             @Override
             public void accept(Map.Entry<String, UserSessionEntity> entry) {
                 // Sync entries to remoteCache. Some may be already present (Those for which UpdaterTask updated items already).
-                remoteCache
-                        .withFlags(Flag.FORCE_RETURN_VALUE)
-                        .putIfAbsentAsync(entry.getKey(), entry.getValue());
+                futureHelper.registerTask(() -> {
+
+                    return remoteCache
+                            .withFlags(Flag.FORCE_RETURN_VALUE)
+                            .putIfAbsentAsync(entry.getKey(), entry.getValue());
+
+                }, () -> {
+                    remoteCache
+                            .withFlags(Flag.FORCE_RETURN_VALUE)
+                            .putIfAbsent(entry.getKey(), entry.getValue());
+                });
             }
 
         });
+
+        futureHelper.waitForAllToFinish();
     }
 
 
@@ -215,7 +227,7 @@ public class ClusterRollingUpgradeTest {
                     VersionedValue<UserSessionEntity> oldVersioned = remoteCache.getVersioned(randomId);
 
                     if (oldVersioned == null) {
-                        System.out.println("Not present entity with key " + randomId + " in remote cache. Use putIfAbsent");
+                        //System.out.println("Not present entity with key " + randomId + " in remote cache. Use putIfAbsent");
 
                         // Try to putIfAbsent our entity
                         UserSessionEntity existing = remoteCache

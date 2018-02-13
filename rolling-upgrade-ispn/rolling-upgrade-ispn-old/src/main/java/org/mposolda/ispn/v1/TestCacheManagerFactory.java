@@ -85,7 +85,9 @@ public class TestCacheManagerFactory {
                 .host("localhost")
                 .port(port);
 
-        builder.connectionPool().maxActive(20)
+        builder.connectionPool()
+                  .maxActive(20)
+                  .exhaustedAction(org.infinispan.client.hotrod.configuration.ExhaustedAction.CREATE_NEW)
                 .forceReturnValues(false);
 
         RemoteCacheManager manager = new RemoteCacheManager(builder.build());
