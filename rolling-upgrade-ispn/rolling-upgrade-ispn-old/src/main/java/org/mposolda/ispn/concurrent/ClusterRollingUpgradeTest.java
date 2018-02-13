@@ -6,13 +6,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
-import jdk.nashorn.internal.runtime.regexp.joni.SearchAlgorithm;
 import org.infinispan.Cache;
 import org.infinispan.client.hotrod.Flag;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.VersionedValue;
 import org.infinispan.manager.EmbeddedCacheManager;
-import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationBuilder;
 import org.mposolda.ispn.entity.UserSessionEntity;
 import org.mposolda.ispn.v1.TestCacheManagerFactory;
 
@@ -31,9 +29,9 @@ public class ClusterRollingUpgradeTest {
 
     private static final int REMOTE_CACHE_PORT = 11222;
 
-    private static final int SLEEP_WITHOUT_REMOTE_CACHE = 30000;
+    private static final int SLEEP_WITHOUT_REMOTE_CACHE = 10000;
 
-    private static final int SLEEP_WITH_REMOTE_CACHE = 30000;
+    private static final int SLEEP_WITH_REMOTE_CACHE = 10000;
 
 
     private static RemoteCache<String, UserSessionEntity> remoteCache;
@@ -42,23 +40,23 @@ public class ClusterRollingUpgradeTest {
 
     public static void main(String[] args) {
         // Start clustered cache on 2 nodes
-        EmbeddedCacheManager node1 = createManager();
-        Cache<String, UserSessionEntity> cache1 = node1.getCache(CACHE_NAME);
+        EmbeddedCacheManager node11 = createManager("node11", "234.56.78.99");
+        Cache<String, UserSessionEntity> cache11 = node11.getCache(CACHE_NAME);
 
-        EmbeddedCacheManager node2 = createManager();
-        Cache<String, UserSessionEntity> cache2 = node1.getCache(CACHE_NAME);
+        EmbeddedCacheManager node12 = createManager("node12", "234.56.78.99");
+        Cache<String, UserSessionEntity> cache12 = node12.getCache(CACHE_NAME);
 
 
         // Start inserting and updating on both clustered caches
         AtomicInteger counter1 = new AtomicInteger();
-        InserterWorker inserter1 = new InserterWorker("n1-", counter1, cache1);
-        UpdaterWorker updater1 = new UpdaterWorker("n1-", counter1, cache1);
+        InserterWorker inserter1 = new InserterWorker("n1-", counter1, cache11);
+        UpdaterWorker updater1 = new UpdaterWorker("n1-", counter1, cache11);
         new Thread(inserter1).start();
         new Thread(updater1).start();
 
         AtomicInteger counter2 = new AtomicInteger();
-        InserterWorker inserter2 = new InserterWorker("n2-", counter2, cache1);
-        UpdaterWorker updater2 = new UpdaterWorker("n2-", counter2, cache1);
+        InserterWorker inserter2 = new InserterWorker("n2-", counter2, cache12);
+        UpdaterWorker updater2 = new UpdaterWorker("n2-", counter2, cache12);
         new Thread(inserter2).start();
         new Thread(updater2).start();
 
@@ -75,19 +73,19 @@ public class ClusterRollingUpgradeTest {
         if (remoteCache.size() != 0) {
             throw new RuntimeException("Remote cache already had " + remoteCache.size() + " existing items in it!!!");
         }
-        System.out.println("Remote cache successfully started. Cluster cache size: " + cache1.size());
+        System.out.println("Remote cache successfully started. Cluster cache size: " + cache11.size());
 
         // Ensure that further writes will be propagated to the remote cache
         shouldUseRemoteCache.set(true);
-        System.out.println("Switched shouldUseRemoteCache to true. Cluster cache size: " + cache1.size());
+        System.out.println("Switched shouldUseRemoteCache to true. Cluster cache size: " + cache11.size());
 
         // Every cluster node will sync the items owned by him to the remote cache
-        addExistingItemsToRemoteCache(cache1);
+        addExistingItemsToRemoteCache(cache11);
         System.out.println("node1: Finished sync entries to remoteCache");
-        addExistingItemsToRemoteCache(cache2);
+        addExistingItemsToRemoteCache(cache12);
         System.out.println("node2: Finished sync entries to remoteCache");
 
-        System.out.println("Inserted items to remote cache. Cluster cache size: " + cache1.size());
+        System.out.println("Inserted items to remote cache. Cluster cache size: " + cache11.size());
 
         sleep(SLEEP_WITH_REMOTE_CACHE);
 
@@ -101,12 +99,15 @@ public class ClusterRollingUpgradeTest {
         // Just some syncs sleep before test the content
         sleep(2000);
 
-        if (testCache(cache1)) {
-            System.out.println("Test cache PASSED");
+        if (testCache(cache11)) {
+            System.out.println("Test cache cache11 PASSED");
+        }
+        if (testCache(cache12)) {
+            System.out.println("Test cache cache12 PASSED");
         }
 
-        cache1.getCacheManager().stop();
-        cache2.getCacheManager().stop();
+        cache11.getCacheManager().stop();
+        cache12.getCacheManager().stop();
     }
 
 
@@ -119,9 +120,8 @@ public class ClusterRollingUpgradeTest {
     }
 
 
-    private static EmbeddedCacheManager createManager() {
-        // Port is not used
-        return new TestCacheManagerFactory().createManager(1111, CACHE_NAME, RemoteStoreConfigurationBuilder.class, true, false);
+    private static EmbeddedCacheManager createManager(String nodeName, String jgroupsUdpAddr) {
+        return new TestCacheManagerFactory().createClusteredCacheManager(CACHE_NAME, nodeName, jgroupsUdpAddr);
     }
 
 
@@ -291,7 +291,9 @@ public class ClusterRollingUpgradeTest {
 
         AtomicBoolean passed = new AtomicBoolean(true);
 
-        cache.entrySet().stream().forEach(new Consumer<Map.Entry<String, UserSessionEntity>>() {
+        cache
+                .getAdvancedCache().withFlags(org.infinispan.context.Flag.CACHE_MODE_LOCAL)
+                .entrySet().stream().forEach(new Consumer<Map.Entry<String, UserSessionEntity>>() {
 
             @Override
             public void accept(Map.Entry<String, UserSessionEntity> entry) {

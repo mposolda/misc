@@ -28,11 +28,11 @@ class FutureHelper {
     public void registerTask(Callable<NotifyingFuture> asyncTask, Runnable syncTask) {
         if (counter.get() > LIMIT) {
             // Just run synchronously
-            System.out.println("sync run");
+            //System.out.println("sync run");
             syncTask.run();
         } else {
             // Register and run asynchronously
-            System.out.println("async run. Counter: " + counter.get());
+            //System.out.println("async run. Counter: " + counter.get());
             try {
                 NotifyingFuture future = asyncTask.call();
                 registerFuture(future);

@@ -2,6 +2,8 @@ package org.mposolda.ispn.v1;
 
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.commons.util.FileLookup;
+import org.infinispan.commons.util.FileLookupFactory;
 import org.infinispan.configuration.cache.CacheMode;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
@@ -11,6 +13,8 @@ import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.persistence.remote.configuration.ExhaustedAction;
 import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationChildBuilder;
+import org.infinispan.remoting.transport.jgroups.JGroupsTransport;
+import org.jgroups.JChannel;
 import org.mposolda.ispn.entity.UserSessionEntity;
 
 /**
@@ -20,31 +24,49 @@ public class TestCacheManagerFactory {
 
     // REMOTE STORE
 
-    public <T extends StoreConfigurationBuilder<?, T> & RemoteStoreConfigurationChildBuilder<T>> EmbeddedCacheManager createManager(
-            int port, String cacheName, Class<T> builderClass, boolean clustered, boolean remoteStore) {
+    public EmbeddedCacheManager createClusteredCacheManager(
+            String cacheName, String nodeName, String jgroupsUdpAddr) {
         System.setProperty("java.net.preferIPv4Stack", "true");
         System.setProperty("jgroups.tcp.port", "53715");
         GlobalConfigurationBuilder gcb = new GlobalConfigurationBuilder();
 
-        boolean async = false;
         boolean allowDuplicateJMXDomains = true;
 
-        if (clustered) {
-            gcb = gcb.clusteredDefault();
-            gcb.transport().clusterName("test-clustering");
-        }
+
+        gcb = gcb.clusteredDefault();
+        gcb.transport().clusterName("test-clustering");
+        configureTransport(gcb, nodeName, jgroupsUdpAddr);
 
         gcb.globalJmxStatistics().allowDuplicateDomains(allowDuplicateJMXDomains);
 
         EmbeddedCacheManager cacheManager = new DefaultCacheManager(gcb.build());
 
-        if (remoteStore) {
-            Configuration invalidationCacheConfiguration = getCacheBackedByRemoteStore(port, cacheName, builderClass);
-            cacheManager.defineConfiguration(cacheName, invalidationCacheConfiguration);
-        } else {
-            Configuration invalidationCacheConfiguration = getClusteredCache();
-            cacheManager.defineConfiguration(cacheName, invalidationCacheConfiguration);
-        }
+        Configuration invalidationCacheConfiguration = getClusteredCache();
+        cacheManager.defineConfiguration(cacheName, invalidationCacheConfiguration);
+
+        return cacheManager;
+    }
+
+
+    public <T extends StoreConfigurationBuilder<?, T> & RemoteStoreConfigurationChildBuilder<T>> EmbeddedCacheManager createCacheManagerWithRemoteCache(
+            int port, String cacheName, Class<T> builderClass) {
+        System.setProperty("java.net.preferIPv4Stack", "true");
+        System.setProperty("jgroups.tcp.port", "53715");
+        GlobalConfigurationBuilder gcb = new GlobalConfigurationBuilder();
+
+        boolean allowDuplicateJMXDomains = true;
+
+//        if (clustered) {
+//            gcb = gcb.clusteredDefault();
+//            gcb.transport().clusterName("test-clustering");
+//        }
+
+        gcb.globalJmxStatistics().allowDuplicateDomains(allowDuplicateJMXDomains);
+
+        EmbeddedCacheManager cacheManager = new DefaultCacheManager(gcb.build());
+
+        Configuration invalidationCacheConfiguration = getCacheBackedByRemoteStore(port, cacheName, builderClass);
+        cacheManager.defineConfiguration(cacheName, invalidationCacheConfiguration);
 
         return cacheManager;
 
@@ -101,6 +123,39 @@ public class TestCacheManagerFactory {
         return cacheConfigBuilder
                 .clustering().cacheMode(CacheMode.DIST_SYNC)
                 .build();
+    }
+
+
+
+    private static final Object CHANNEL_INIT_SYNCHRONIZER = new Object();
+
+    protected void configureTransport(GlobalConfigurationBuilder gcb, String nodeName, String jgroupsUdpMcastAddr) {
+
+            FileLookup fileLookup = FileLookupFactory.newInstance();
+
+            synchronized (CHANNEL_INIT_SYNCHRONIZER) {
+                System.setProperty("jgroups.udp.mcast_addr", jgroupsUdpMcastAddr);
+
+                try {
+                    // Compatibility with Wildfly
+                    JChannel channel = new JChannel(fileLookup.lookupFileLocation("default-configs/default-jgroups-udp.xml", this.getClass().getClassLoader()));
+                    channel.setName(nodeName);
+                    JGroupsTransport transport = new JGroupsTransport(channel);
+
+                    gcb.transport()
+                            .nodeName(nodeName)
+                            .transport(transport)
+                            .globalJmxStatistics()
+                            .jmxDomain("jmx-" + nodeName)
+                            .enable()
+                    ;
+
+                    System.out.println("Configured jgroups transport with the channel name: " + nodeName);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
     }
 
 }
