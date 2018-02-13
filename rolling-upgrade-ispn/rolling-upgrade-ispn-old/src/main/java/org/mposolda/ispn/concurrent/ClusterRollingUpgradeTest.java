@@ -19,6 +19,8 @@ import org.mposolda.ispn.v1.TestCacheManagerFactory;
 /**
  * Test rolling upgrade for cluster (no cross-dc) environment.
  *
+ * Requires JDG (or Infinispan server) to be running locally simply via "./standalone.sh"
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class ClusterRollingUpgradeTest {
@@ -35,22 +37,37 @@ public class ClusterRollingUpgradeTest {
 
 
     private static RemoteCache<String, UserSessionEntity> remoteCache;
-    private static AtomicInteger counter = new AtomicInteger();
     private static AtomicBoolean shouldUseRemoteCache = new AtomicBoolean(false);
 
 
     public static void main(String[] args) {
+        // Start clustered cache on 2 nodes
         EmbeddedCacheManager node1 = createManager();
-        Cache<String, UserSessionEntity> cache = node1.getCache(CACHE_NAME);
+        Cache<String, UserSessionEntity> cache1 = node1.getCache(CACHE_NAME);
 
-        InserterWorker inserter = new InserterWorker(cache);
-        UpdaterWorker updater = new UpdaterWorker(cache);
-        new Thread(inserter).start();
-        new Thread(updater).start();
+        EmbeddedCacheManager node2 = createManager();
+        Cache<String, UserSessionEntity> cache2 = node1.getCache(CACHE_NAME);
+
+
+        // Start inserting and updating on both clustered caches
+        AtomicInteger counter1 = new AtomicInteger();
+        InserterWorker inserter1 = new InserterWorker("n1-", counter1, cache1);
+        UpdaterWorker updater1 = new UpdaterWorker("n1-", counter1, cache1);
+        new Thread(inserter1).start();
+        new Thread(updater1).start();
+
+        AtomicInteger counter2 = new AtomicInteger();
+        InserterWorker inserter2 = new InserterWorker("n2-", counter2, cache1);
+        UpdaterWorker updater2 = new UpdaterWorker("n2-", counter2, cache1);
+        new Thread(inserter2).start();
+        new Thread(updater2).start();
+
         System.out.println("Workers started");
 
+        // Sleep when inserters+updaters in progress
         sleep(SLEEP_WITHOUT_REMOTE_CACHE);
 
+        // Attach remote cache now
         System.out.println("Adding remote cache");
         remoteCache = new TestCacheManagerFactory().bootstrapRemoteCache(REMOTE_CACHE_PORT, CACHE_NAME);
 
@@ -58,29 +75,38 @@ public class ClusterRollingUpgradeTest {
         if (remoteCache.size() != 0) {
             throw new RuntimeException("Remote cache already had " + remoteCache.size() + " existing items in it!!!");
         }
-        System.out.println("Remote cache successfully started. Counter: " + counter.get());
+        System.out.println("Remote cache successfully started. Cluster cache size: " + cache1.size());
 
+        // Ensure that further writes will be propagated to the remote cache
         shouldUseRemoteCache.set(true);
-        System.out.println("Switched shouldUseRemoteCache to true. Counter: " + counter.get());
+        System.out.println("Switched shouldUseRemoteCache to true. Cluster cache size: " + cache1.size());
 
-        addExistingItemsToRemoteCache(cache);
-        System.out.println("Inserted items to remote cache. Counter: " + counter.get());
+        // Every cluster node will sync the items owned by him to the remote cache
+        addExistingItemsToRemoteCache(cache1);
+        System.out.println("node1: Finished sync entries to remoteCache");
+        addExistingItemsToRemoteCache(cache2);
+        System.out.println("node2: Finished sync entries to remoteCache");
+
+        System.out.println("Inserted items to remote cache. Cluster cache size: " + cache1.size());
 
         sleep(SLEEP_WITH_REMOTE_CACHE);
 
         System.out.println("Stop threads");
-        inserter.stop();
-        updater.stop();
+        inserter1.stop();
+        updater1.stop();
+        inserter2.stop();
+        updater2.stop();
         System.out.println("Checking contents");
 
         // Just some syncs sleep before test the content
         sleep(2000);
 
-        if (testCache(cache)) {
+        if (testCache(cache1)) {
             System.out.println("Test cache PASSED");
         }
 
-        cache.getCacheManager().stop();
+        cache1.getCacheManager().stop();
+        cache2.getCacheManager().stop();
     }
 
 
@@ -94,6 +120,7 @@ public class ClusterRollingUpgradeTest {
 
 
     private static EmbeddedCacheManager createManager() {
+        // Port is not used
         return new TestCacheManagerFactory().createManager(1111, CACHE_NAME, RemoteStoreConfigurationBuilder.class, true, false);
     }
 
@@ -101,11 +128,15 @@ public class ClusterRollingUpgradeTest {
 
     private static abstract class AbstractWorker implements Runnable {
 
-        Cache<String, UserSessionEntity> cache;
+        final String prefix;
+        final AtomicInteger counter;
+        final Cache<String, UserSessionEntity> cache;
 
         private AtomicBoolean stopped = new AtomicBoolean(false);
 
-        private AbstractWorker(Cache<String, UserSessionEntity> cache) {
+        private AbstractWorker(String prefix, AtomicInteger counter, Cache<String, UserSessionEntity> cache) {
+            this.prefix = prefix;
+            this.counter = counter;
             this.cache = cache;
         }
 
@@ -130,10 +161,13 @@ public class ClusterRollingUpgradeTest {
     }
 
 
+    // Method is executed separately for every cluster node. Hence every node updating just the local entities
     private static void addExistingItemsToRemoteCache(Cache<String, UserSessionEntity> cache) {
         FutureHelper futureHelper = new FutureHelper();
 
-        cache.entrySet().stream().forEach(new Consumer<Map.Entry<String, UserSessionEntity>>() {
+        cache
+                .getAdvancedCache().withFlags(org.infinispan.context.Flag.CACHE_MODE_LOCAL)
+                .entrySet().stream().forEach(new Consumer<Map.Entry<String, UserSessionEntity>>() {
 
             @Override
             public void accept(Map.Entry<String, UserSessionEntity> entry) {
@@ -159,22 +193,22 @@ public class ClusterRollingUpgradeTest {
 
     private static class InserterWorker extends AbstractWorker {
 
-        private InserterWorker(Cache<String, UserSessionEntity> cache) {
-            super(cache);
+        private InserterWorker(String prefix, AtomicInteger counter, Cache<String, UserSessionEntity> cache) {
+            super(prefix, counter, cache);
         }
 
         @Override
         protected void runTask() {
             UserSessionEntity ent = new UserSessionEntity();
-            int counterr = counter.incrementAndGet();
-            String id = String.valueOf(counterr);
+            int counterVal = counter.incrementAndGet();
+            String id = prefix + counterVal;
             ent.setId(id);
             ent.setRealmId("foo");
             ent.setLastSessionRefresh(new Random().nextInt(2000));
             cache.put(id, ent);
 
-            if (counterr % 1000 == 0) {
-                System.out.println(counterr + " values inserted");
+            if (counterVal % 1000 == 0) {
+                System.out.println(counterVal + " values inserted on " + prefix);
             }
 
             if (shouldUseRemoteCache.get()) {
@@ -189,8 +223,8 @@ public class ClusterRollingUpgradeTest {
 
         private int updateCounter = 0;
 
-        private UpdaterWorker(Cache<String, UserSessionEntity> cache) {
-            super(cache);
+        private UpdaterWorker(String prefix, AtomicInteger counter, Cache<String, UserSessionEntity> cache) {
+            super(prefix, counter, cache);
         }
 
 
@@ -202,7 +236,7 @@ public class ClusterRollingUpgradeTest {
                 return;
             }
 
-            String randomId = String.valueOf(new Random().nextInt(currentCounter - 1) + 1);
+            String randomId = prefix + (new Random().nextInt(currentCounter - 1) + 1);
 
             boolean replaced = false;
             UserSessionEntity neww = null;
@@ -218,7 +252,7 @@ public class ClusterRollingUpgradeTest {
 
 //            System.out.println(updateCounter + " values updated");
             if (updateCounter % 1000 == 0) {
-                System.out.println(updateCounter + " values updated");
+                System.out.println(updateCounter + " values updated on " + prefix);
             }
 
             if (shouldUseRemoteCache.get()) {

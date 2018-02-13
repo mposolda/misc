@@ -14,7 +14,7 @@ import org.infinispan.util.concurrent.ConcurrentHashSet;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class FutureHelper {
+class FutureHelper {
 
     private static final int LIMIT = 100;
 
