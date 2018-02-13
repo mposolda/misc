@@ -29,9 +29,9 @@ public class ClusterRollingUpgradeTest {
 
     private static final int REMOTE_CACHE_PORT = 11222;
 
-    private static final int SLEEP_WITHOUT_REMOTE_CACHE = 10000;
+    private static final int SLEEP_WITHOUT_REMOTE_CACHE = 30000;
 
-    private static final int SLEEP_WITH_REMOTE_CACHE = 10000;
+    private static final int SLEEP_WITH_REMOTE_CACHE = 30000;
 
 
     private static RemoteCache<String, UserSessionEntity> remoteCache;
@@ -75,6 +75,14 @@ public class ClusterRollingUpgradeTest {
         }
         System.out.println("Remote cache successfully started. Cluster cache size: " + cache11.size());
 
+        // Now create new cluster
+        EmbeddedCacheManager node21 = createManager("node21", "234.56.78.100");
+        Cache<String, UserSessionEntity> cache21 = node21.getCache(CACHE_NAME);
+
+        // Attach remoteListener to the new cluster node
+        RemoteCacheSessionListener remoteCacheListener = RemoteCacheSessionListener.createListener(cache21, remoteCache, "node21");
+        remoteCache.addClientListener(remoteCacheListener);
+
         // Ensure that further writes will be propagated to the remote cache
         shouldUseRemoteCache.set(true);
         System.out.println("Switched shouldUseRemoteCache to true. Cluster cache size: " + cache11.size());
@@ -99,15 +107,17 @@ public class ClusterRollingUpgradeTest {
         // Just some syncs sleep before test the content
         sleep(2000);
 
-        if (testCache(cache11)) {
+        // Test that newCache (cache21) correctly contains all the stuff from old cache
+        if (testCache(cache11, cache21)) {
             System.out.println("Test cache cache11 PASSED");
         }
-        if (testCache(cache12)) {
+        if (testCache(cache12, cache21)) {
             System.out.println("Test cache cache12 PASSED");
         }
 
         cache11.getCacheManager().stop();
         cache12.getCacheManager().stop();
+        cache21.getCacheManager().stop();
     }
 
 
@@ -280,10 +290,10 @@ public class ClusterRollingUpgradeTest {
     }
 
 
-    private static boolean testCache(Cache<String, UserSessionEntity> cache) {
-        int size1 = cache.size();
-        int size2 = remoteCache.size();
-        System.out.println("Cache size: " + size1 + ", Remote Cache size: " + size2);
+    private static boolean testCache(Cache<String, UserSessionEntity> oldCache, Cache<String, UserSessionEntity> newCache) {
+        int size1 = oldCache.size();
+        int size2 = newCache.size();
+        System.out.println("Cache size: " + size1 + ", New cache size: " + size2);
         if (size1 != size2) {
             System.err.println("Sizes not match.");
             return false;
@@ -291,7 +301,7 @@ public class ClusterRollingUpgradeTest {
 
         AtomicBoolean passed = new AtomicBoolean(true);
 
-        cache
+        oldCache
                 .getAdvancedCache().withFlags(org.infinispan.context.Flag.CACHE_MODE_LOCAL)
                 .entrySet().stream().forEach(new Consumer<Map.Entry<String, UserSessionEntity>>() {
 
@@ -300,7 +310,7 @@ public class ClusterRollingUpgradeTest {
                 String key = entry.getKey();
                 UserSessionEntity value = entry.getValue();
 
-                UserSessionEntity remoteCacheVal = remoteCache.get(key);
+                UserSessionEntity remoteCacheVal = newCache.get(key);
                 if (remoteCacheVal == null) {
                     System.err.println("FAILED. No entity for key " + key);
                     passed.set(false);
