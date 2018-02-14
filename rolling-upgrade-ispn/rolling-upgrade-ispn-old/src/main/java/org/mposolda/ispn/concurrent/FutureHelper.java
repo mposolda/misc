@@ -66,10 +66,12 @@ class FutureHelper {
 
                 Future f = futures.iterator().next();
                 f.get();
-                Thread.sleep(2); // Just very short sleep to avoid checking same future (listener should be invoked in the meantime and remove it)
+                // Just very short sleep to avoid checking same future many times.
+                // 2 ms should ensure that listener will be invoked in the meantime and remove it from collection)
+                Thread.sleep(2);
 
             } catch (NoSuchElementException nsee) {
-                // Could happen if "hasNext" returns true, but "next()" will throw NSEE due the element removed by the other thread
+                // Could happen if "hasNext" returns true, but "next()" will throw NSEE due the element removed by the listener in the other thread in the meantime
             } catch (InterruptedException | ExecutionException ee) {
                 throw new RuntimeException(ee);
             }
