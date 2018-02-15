@@ -103,7 +103,17 @@ through remoteCache. See source code of infinispan 9.1.4 and methods `HotRodTarg
 
 2) Skip points 5,6,7 from above (no need to connect to infinispan-server 8.2.6 console)
 
-3) Just use the points 8-12 from above. There is difference, that there will be just 3 entries comparing to alternative 1. 
+3) Just use the points 8-12 from above. There is difference, that there will be just 3 entries comparing to alternative 1.
+
+
+Concurrent Rolling Upgrade test
+-------------------------------
+Example test, which is doing "hot upgrade". The old cluster is concurrently doing lots 
+of inserts/updates when the remoteCache (JDG) is connected with it. The new cluster 
+reads data from JDG. There is test that there are not lost writes (All the write operations
+done on old cluster are visible on new cluster after backup.). See class `ClusterRollingUpgradeTest` .
+
+It just requires JDG server to be running locally on `./standalone.sh` before it's executed.  
 
 
 
