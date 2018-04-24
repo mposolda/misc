@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -309,4 +312,243 @@ public class UserSessionEntity implements Serializable /*extends SessionEntity*/
         }
 
     }
+
+
+
+    public static class ExternalizerImpll implements Externalizer<UserSessionEntity> {
+
+        private static final int VERSION_1 = 1;
+        private static final int VERSION_2 = 2;
+        private static final int VERSION_3 = 3;
+
+        private static final Map<Integer, UserSessionReader> VERSION_TO_READER = new HashMap<>();
+        static {
+            VERSION_TO_READER.put(VERSION_1, new UserSessionReaderV1());
+            VERSION_TO_READER.put(VERSION_2, new UserSessionReaderV2());
+            //VERSION_TO_READER.put(VERSION_2, new UserSessionReaderV3());
+        }
+
+        private static final List<UserSessionMigrator> MIGRATORS = new LinkedList<>();
+        static {
+            MIGRATORS.add(new UserSessionMigratorToV2());
+            MIGRATORS.add(new UserSessionMigratorToV3());
+        }
+
+//        private static final EnumMap<UserSessionModel.State, Integer> STATE_TO_ID = new EnumMap<>(UserSessionModel.State.class);
+//        private static final Map<Integer, UserSessionModel.State> ID_TO_STATE = new HashMap<>();
+//        static {
+//            STATE_TO_ID.put(State.LOGGED_IN, 1);
+//            STATE_TO_ID.put(State.LOGGED_OUT, 2);
+//            STATE_TO_ID.put(State.LOGGING_OUT, 3);
+//
+//            for (Map.Entry<State, Integer> entry : STATE_TO_ID.entrySet()) {
+//                ID_TO_STATE.put(entry.getValue(), entry.getKey());
+//            }
+//        }
+
+        @Override
+        public void writeObject(ObjectOutput output, UserSessionEntity session) throws IOException {
+            output.writeByte(VERSION_3);
+
+            MarshallUtil.marshallString(session.getAuthMethod(), output);
+            MarshallUtil.marshallString(session.getBrokerSessionId(), output);
+            MarshallUtil.marshallString(session.getBrokerUserId(), output);
+            MarshallUtil.marshallString(session.getId(), output);
+            MarshallUtil.marshallString(session.getIpAddress(), output);
+            MarshallUtil.marshallString(session.getLoginUsername(), output);
+            MarshallUtil.marshallString(session.getRealmId(), output);
+            MarshallUtil.marshallString(session.getUser(), output);
+
+            MarshallUtil.marshallString(String.valueOf(session.getLastSessionRefresh()), output);
+            output.writeInt(session.getStarted());
+            output.writeBoolean(session.isRememberMe());
+
+//            int state = session.getState() == null ? 0 : STATE_TO_ID.get(session.getState());
+//            output.writeInt(state);
+
+            Map<String, String> notes = session.getNotes();
+            KeycloakMarshallUtil.writeMap(notes, KeycloakMarshallUtil.STRING_EXT, KeycloakMarshallUtil.STRING_EXT, output);
+
+//            output.writeObject(session.getAuthenticatedClientSessions());
+        }
+
+
+        @Override
+        public UserSessionEntity readObject(ObjectInput input) throws IOException, ClassNotFoundException {
+            int version = input.readByte();
+
+            switch (version) {
+                case VERSION_1:
+                case VERSION_2:
+                    // Get reader for my version
+                    UserSessionReader entityReader = VERSION_TO_READER.get(version);
+
+                    // Read de-typed entity of old version entity data
+                    Map<String, Object> entityData = entityReader.readOldUserSession(input);
+
+                    // Convert entity data through chain of migrators to newest version
+                    for (UserSessionMigrator migrator : MIGRATORS) {
+                        if (migrator.getVersion() > version) {
+                            migrator.migrate(entityData);
+                        }
+                    }
+
+                    UserSessionEntity userSession = convertToEntity(entityData);
+                    return userSession;
+
+                    // Newest version. Avoid detyped reads for performance purposes
+                case VERSION_3:
+                    return readObject(input, version);
+                default:
+                    throw new IOException("Unknown version");
+            }
+        }
+
+        private UserSessionEntity readObject(ObjectInput input, int version) throws IOException, ClassNotFoundException {
+            UserSessionEntity sessionEntity = new UserSessionEntity();
+
+            sessionEntity.setAuthMethod(MarshallUtil.unmarshallString(input));
+            sessionEntity.setBrokerSessionId(MarshallUtil.unmarshallString(input));
+            sessionEntity.setBrokerUserId(MarshallUtil.unmarshallString(input));
+            final String userSessionId = MarshallUtil.unmarshallString(input);
+            sessionEntity.setId(userSessionId);
+            sessionEntity.setIpAddress(MarshallUtil.unmarshallString(input));
+            sessionEntity.setLoginUsername(MarshallUtil.unmarshallString(input));
+            sessionEntity.setRealmId(MarshallUtil.unmarshallString(input));
+            sessionEntity.setUser(MarshallUtil.unmarshallString(input));
+
+            // STRING in VERSION 3
+            System.out.println("Unmarshall lastSessionRefresh String");
+            sessionEntity.setLastSessionRefresh(MarshallUtil.unmarshallString(input));
+
+            sessionEntity.setStarted(input.readInt());
+            sessionEntity.setRememberMe(input.readBoolean());
+
+//            sessionEntity.setState(ID_TO_STATE.get(input.readInt()));
+
+            Map<String, String> notes = KeycloakMarshallUtil.readMap(input, KeycloakMarshallUtil.STRING_EXT, KeycloakMarshallUtil.STRING_EXT,
+                    new KeycloakMarshallUtil.ConcurrentHashMapBuilder<>());
+            sessionEntity.setNotes(notes);
+
+//            AuthenticatedClientSessionStore authSessions = (AuthenticatedClientSessionStore) input.readObject();
+//            sessionEntity.setAuthenticatedClientSessions(authSessions);
+
+            return sessionEntity;
+        }
+
+        private UserSessionEntity convertToEntity(Map<String, Object> data) {
+            UserSessionEntity entity = new UserSessionEntity();
+            entity.setId(data.get("id").toString());
+            entity.setRealmId(data.get("realmId").toString());
+
+            // Reads the String now
+            entity.setLastSessionRefresh(data.get("lastSessionRefresh").toString());
+
+            // TODO: rest...
+
+            return entity;
+        }
+
+    }
+
+
+
+    public interface UserSessionReader {
+
+        Map<String, Object> readOldUserSession(ObjectInput input) throws IOException;
+
+    }
+
+    public interface UserSessionMigrator {
+
+        /**
+         * Return my version
+         * @return
+         */
+        int getVersion();
+
+        void migrate(Map<String, Object> previousVersionEntity);
+
+    }
+
+    // READERS
+
+    private static class UserSessionReaderV1 implements UserSessionReader {
+
+        @Override
+        public Map<String, Object> readOldUserSession(ObjectInput input) throws IOException {
+            Map<String, Object> data = new HashMap<>();
+
+            String id = MarshallUtil.unmarshallString(input);
+            data.put("id", id);
+
+            String realmId = MarshallUtil.unmarshallString(input);
+            data.put("realmId", realmId);
+
+            // Read lastSessionRefresh as int
+            Integer lastSessionRefresh = input.readInt();
+            data.put("lastSessionRefresh", lastSessionRefresh);
+
+            // TODO: rest...
+
+            return data;
+        }
+    }
+
+
+    private static class UserSessionReaderV2 implements UserSessionReader {
+
+        @Override
+        public Map<String, Object> readOldUserSession(ObjectInput input) throws IOException {
+            Map<String, Object> data = new HashMap<>();
+
+            String id = MarshallUtil.unmarshallString(input);
+            data.put("id", id);
+
+            String realmId = MarshallUtil.unmarshallString(input);
+            data.put("realmId", realmId);
+
+            // Read lastSessionRefresh as int
+            Integer lastSessionRefresh = input.readInt();
+            data.put("lastSessionRefresh", lastSessionRefresh);
+
+            // TODO: rest...
+
+            return data;
+        }
+    }
+
+    // MIGRATORS
+
+    private static class UserSessionMigratorToV2 implements UserSessionMigrator {
+
+        @Override
+        public int getVersion() {
+            return ExternalizerImpll.VERSION_2;
+        }
+
+        @Override
+        public void migrate(Map<String, Object> entityData) {
+        }
+    }
+
+    private static class UserSessionMigratorToV3 implements UserSessionMigrator {
+
+        @Override
+        public int getVersion() {
+            return ExternalizerImpll.VERSION_3;
+        }
+
+        @Override
+        public void migrate(Map<String, Object> entityData) {
+            Integer lastSessionRefresh = (Integer) entityData.get("lastSessionRefresh");
+
+            String newLsr = String.valueOf(lastSessionRefresh);
+
+            entityData.put("lastSessionRefresh", newLsr);
+        }
+    }
+
+
+
 }
