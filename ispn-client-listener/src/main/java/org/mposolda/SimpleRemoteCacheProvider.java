@@ -11,9 +11,8 @@ import org.infinispan.executors.DefaultExecutorFactory;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class SimpleRemoteCacheProvider implements ClientListenerFailoverTest.RemoteCacheProvider {
+public class SimpleRemoteCacheProvider {
 
-    @Override
     public RemoteCache getRemoteCache() {
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder

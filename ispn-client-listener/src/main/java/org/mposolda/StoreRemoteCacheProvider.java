@@ -17,10 +17,9 @@ import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationC
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class StoreRemoteCacheProvider implements ClientListenerFailoverTest.RemoteCacheProvider {
+public class StoreRemoteCacheProvider {
 
 
-    @Override
     public RemoteCache getRemoteCache() {
         EmbeddedCacheManager mgr = createManager("default");
         Cache cache = mgr.getCache("default");
