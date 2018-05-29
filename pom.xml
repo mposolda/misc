@@ -45,6 +45,7 @@
       <module>passwordencoder</module>
       <module>rolling-upgrade-jpa</module>
       <module>no-deps-playground</module>
+      <module>ispn-client-listener</module>
   </modules>
 
   <repositories>
