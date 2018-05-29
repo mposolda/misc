@@ -1,18 +1,9 @@
 package org.mposolda;
 
-import java.util.Set;
-
-import org.infinispan.Cache;
 import org.infinispan.client.hotrod.RemoteCache;
-import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.annotation.ClientCacheEntryCreated;
 import org.infinispan.client.hotrod.annotation.ClientListener;
-import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.event.ClientCacheEntryCreatedEvent;
-import org.infinispan.manager.EmbeddedCacheManager;
-import org.infinispan.persistence.manager.PersistenceManager;
-import org.infinispan.persistence.remote.RemoteStore;
-import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationBuilder;
 import org.jboss.logging.Logger;
 
 /**
@@ -64,13 +55,8 @@ public class ClientListenerFailoverTest {
     }
 
     private static RemoteCache getRemoteCache() {
-        ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder
-                .addServer()
-                    .host("127.0.0.1")
-                    .port(11222);
-
-        return new RemoteCacheManager(builder.build()).getCache("default");
+        return new SimpleRemoteCacheProvider().getRemoteCache();
+        //return new StoreRemoteCacheProvider().getRemoteCache();
     }
 
 
@@ -86,6 +72,13 @@ public class ClientListenerFailoverTest {
             String cacheKey = (String) event.getKey();
             logger.infof("Listener: created: %s", cacheKey);
         }
+
+    }
+
+
+    public interface RemoteCacheProvider {
+
+        RemoteCache getRemoteCache();
 
     }
 }
