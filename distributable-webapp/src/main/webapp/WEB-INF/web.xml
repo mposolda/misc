@@ -4,7 +4,7 @@
 
   <display-name>distributable-webapp</display-name>
 
-  <!--<distributable />-->
+    <distributable />
 
     <servlet>
         <servlet-name>BackupCacheInitiator</servlet-name>
