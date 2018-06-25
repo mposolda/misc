@@ -43,7 +43,7 @@ public class RemoteCacheExpirationTest {
 
         System.out.println("expired1: " + expired1 + ", expired2: " + expired2);
 
-        if (!expired2) {
+        if (expired2) {
             System.err.println("ERROR: val2 is expired!");
         }
 
@@ -53,7 +53,7 @@ public class RemoteCacheExpirationTest {
 
     /**
      * Convert RemoteCache metadata to InternalMetadata and check expiration
-     * (same check used by org.infinispan.persistence.PersistenceUtil#loadAndCheckExpiration 
+     * (same check used by org.infinispan.persistence.PersistenceUtil#loadAndCheckExpiration
      */
     private static boolean isExpired(MetadataValue value , long currentTimeMs) {
         Metadata metadata = new EmbeddedMetadata.Builder()
