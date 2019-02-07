@@ -2,17 +2,23 @@ package org.mposolda.expiration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.infinispan.Cache;
 import org.infinispan.client.hotrod.MetadataValue;
 import org.infinispan.client.hotrod.ProtocolVersion;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.impl.ConfigurationProperties;
+import org.infinispan.configuration.cache.Configuration;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.container.versioning.NumericVersion;
+import org.infinispan.manager.DefaultCacheManager;
+import org.infinispan.manager.EmbeddedCacheManager;
 import org.infinispan.metadata.EmbeddedMetadata;
 import org.infinispan.metadata.Metadata;
 import org.infinispan.metadata.impl.InternalMetadataImpl;
-import org.infinispan.util.TimeService;
+import org.infinispan.persistence.remote.configuration.ExhaustedAction;
+import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationBuilder;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -36,18 +42,28 @@ public class RemoteCacheExpirationTest {
         MetadataValue val2 = remoteCache.getWithMetadata("key2");
         System.out.println("val2.created: " + val2.getCreated() + ", val2.lastUsed: " + val2.getLastUsed());
 
-        long currentTimeMs = System.currentTimeMillis();
+        // Retrieve info through remoteStore
+        Cache<String, String> remoteStoreBackedCache = getCacheWithRemoteStore();
+        String cacheVal1 = remoteStoreBackedCache.get("key1");
+        String cacheVal2 = remoteStoreBackedCache.get("key2");
 
-        boolean expired1 = isExpired(val1, currentTimeMs);
-        boolean expired2 = isExpired(val2, currentTimeMs);
+        System.out.println(cacheVal1);
+        System.out.println(cacheVal2);
 
-        System.out.println("expired1: " + expired1 + ", expired2: " + expired2);
 
-        if (expired2) {
-            System.err.println("ERROR: val2 is expired!");
-        }
+//        long currentTimeMs = System.currentTimeMillis();
+//
+//        boolean expired1 = isExpired(val1, currentTimeMs);
+//        boolean expired2 = isExpired(val2, currentTimeMs);
+//
+//        System.out.println("expired1: " + expired1 + ", expired2: " + expired2);
+//
+//        if (expired2) {
+//            System.err.println("ERROR: val2 is expired!");
+//        }
 
         cacheManager.stop();
+        remoteStoreBackedCache.getCacheManager().stop();
     }
 
 
@@ -66,5 +82,44 @@ public class RemoteCacheExpirationTest {
         InternalMetadataImpl internalMetadata = new InternalMetadataImpl(metadata, created, lastUsed);
         boolean expired = internalMetadata.isExpired(currentTimeMs);
         return expired;
+    }
+
+
+
+    private static Cache<String, String> getCacheWithRemoteStore() {
+        // Configure cache backed by remote store
+        org.infinispan.configuration.cache.ConfigurationBuilder cacheConfigBuilder = new org.infinispan.configuration.cache.ConfigurationBuilder();
+
+        String host = "localhost";
+        int port = ConfigurationProperties.DEFAULT_HOTROD_PORT;
+        //int port = 12232;
+
+        Configuration cfg = cacheConfigBuilder.persistence().addStore(RemoteStoreConfigurationBuilder.class)
+                .fetchPersistentState(false)
+                .ignoreModifications(false)
+                .purgeOnStartup(false)
+                .preload(false)
+                .shared(true)
+                .remoteCacheName("trans")
+                .rawValues(true)
+                .forceReturnValues(false)
+                //.marshaller(KeycloakHotRodMarshallerFactory.class.getName())
+                //.protocolVersion(ProtocolVersion.PROTOCOL_VERSION_26)
+                //.maxBatchSize(5)
+                .addServer()
+                    .host(host)
+                    .port(port)
+                .connectionPool()
+                    .maxActive(20)
+                    .exhaustedAction(ExhaustedAction.CREATE_NEW)
+                .async()
+                    .enabled(false).build();
+
+        // Configure cacheManager
+        GlobalConfigurationBuilder gcb = new GlobalConfigurationBuilder();
+        EmbeddedCacheManager cacheManager = new DefaultCacheManager(gcb.build());
+
+        cacheManager.defineConfiguration("remoteStore", cfg);
+        return cacheManager.getCache("remoteStore");
     }
 }
