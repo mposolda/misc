@@ -85,6 +85,7 @@ public class SSLSocketServer {
 
         // Requesting client auth here
         ss.setWantClientAuth(true);
+        //ss.setNeedClientAuth(true);
 
         while (true) {
             System.out.println("Accepting connections on 8543");
