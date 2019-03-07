@@ -22,6 +22,7 @@ public class LDAPPaginationTest {
         System.setProperty("com.sun.jndi.ldap.connect.pool.initsize", "1");
         System.setProperty("com.sun.jndi.ldap.connect.pool.prefsize", "5");
         System.setProperty("com.sun.jndi.ldap.connect.pool.maxsize", "100");
+        System.setProperty("com.sun.jndi.ldap.connect.pool.protocol", "plain ssl");
 
         String ldapVendor = System.getProperty("ldap.vendor", "apacheds");
         boolean singleCtx = System.getProperty("ldap.ctx", "single").equals("single");
@@ -43,7 +44,12 @@ public class LDAPPaginationTest {
             env.put(Context.SECURITY_PRINCIPAL, "uid=admin,cn=users,cn=accounts,dc=demo1,dc=freeipa,dc=org");
             env.put(Context.SECURITY_CREDENTIALS, "Secret123");
         } else if (ldapVendor.equals("msad")) {
+            usersDn = "OU=People,O=keycloak,DC=JBOSS3,DC=test";
 
+            env.put(Context.PROVIDER_URL, "ldaps://dev156-w2012-x86-64.JBOSS3.test:636");
+            env.put(Context.SECURITY_AUTHENTICATION, "simple");
+            env.put(Context.SECURITY_PRINCIPAL, "JBOSS3\\jbossqa");
+            env.put(Context.SECURITY_CREDENTIALS, "jboss42");
         } else {
             throw new IllegalArgumentException("Unknown LDAP Vendor: " + ldapVendor);
         }
