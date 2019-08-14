@@ -6,27 +6,7 @@
 <html>
   <head>
     <title>Hello</title>
-    <script>
-
-    function test() {
-        var testOutput = "<%= WebAuthnBean.test() %>";
-        output(testOutput);
-    }
-
-    function webauthnRegister() {
-        output('webauthnRegister called');
-    }
-
-    function webauthnLogin() {
-        output('webauthnLogin called');
-    }
-
-    function output(event) {
-        var e = document.getElementById('output').innerHTML;
-        document.getElementById('output').innerHTML = new Date().toLocaleString() + "\t" + event + "\n" + e;
-    }
-
-    </script>
+    <script src="my-script.jsp"></script>
   </head>
 
   <body>
