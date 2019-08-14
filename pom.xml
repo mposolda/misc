@@ -46,6 +46,7 @@
       <module>rolling-upgrade-jpa</module>
       <module>no-deps-playground</module>
       <module>ispn-client-listener</module>
+    <module>webauthndemo</module>
   </modules>
 
   <repositories>
