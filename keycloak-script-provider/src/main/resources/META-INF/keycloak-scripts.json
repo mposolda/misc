@@ -1,0 +1,9 @@
+{
+  "authenticators": [
+    {
+      "name": "My Role Authenticator",
+      "fileName": "role-authenticator.js",
+      "description": "My Role Authenticator from a JS file"
+    }
+  ]
+}

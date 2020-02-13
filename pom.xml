@@ -47,6 +47,7 @@
       <module>no-deps-playground</module>
       <module>ispn-client-listener</module>
     <module>webauthndemo</module>
+    <module>keycloak-script-provider</module>
   </modules>
 
   <repositories>
