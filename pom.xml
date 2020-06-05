@@ -48,6 +48,7 @@
       <module>ispn-client-listener</module>
     <module>webauthndemo</module>
     <module>keycloak-script-provider</module>
+      <module>stocker</module>
   </modules>
 
   <repositories>
