@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-import org.mposolda.cli.StockerCli;
-import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.services.Services;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -16,11 +15,11 @@ public abstract class AbstractCommand {
 
     protected List<String> args;
 
-    protected FinnhubHttpClient finhubClient;
+    protected Services services;
 
-    public void injectProperties(List<String> args, StockerCli cli, FinnhubHttpClient finhubClient) {
+    public void injectProperties(List<String> args, StockerCli cli, Services services) {
         this.args = args;
-        this.finhubClient = finhubClient;
+        this.services = services;
     }
 
     public void runCommand() {
@@ -51,6 +50,16 @@ public abstract class AbstractCommand {
         String str = getArg(index);
         try {
             return Integer.parseInt(str);
+        } catch (NumberFormatException nex) {
+            log.errorf("Usage: %s", printUsage());
+            throw new HandledException();
+        }
+    }
+
+    protected Double getDoubleArg(int index) {
+        String str = getArg(index);
+        try {
+            return Double.parseDouble(str);
         } catch (NumberFormatException nex) {
             log.errorf("Usage: %s", printUsage());
             throw new HandledException();

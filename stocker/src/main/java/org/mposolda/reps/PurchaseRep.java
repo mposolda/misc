@@ -13,8 +13,8 @@ public class PurchaseRep extends BaseRep {
     @JsonProperty("stocksCount")
     public int stocksCount;
 
-    @JsonProperty("price")
-    public double price;
+    @JsonProperty("pricePerStock")
+    public double pricePerStock;
 
     public String getDate() {
         return date;
@@ -32,11 +32,11 @@ public class PurchaseRep extends BaseRep {
         this.stocksCount = stocksCount;
     }
 
-    public double getPrice() {
-        return price;
+    public double getPricePerStock() {
+        return pricePerStock;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPricePerStock(double pricePerStock) {
+        this.pricePerStock = pricePerStock;
     }
 }

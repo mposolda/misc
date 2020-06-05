@@ -2,13 +2,18 @@ package org.mposolda.services;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.client.JsonSerialization;
 import org.mposolda.dao.CompanyFull;
 import org.mposolda.reps.CompanyRep;
+import org.mposolda.reps.ExpectedBackflowRep;
+import org.mposolda.reps.PurchaseRep;
+import org.mposolda.reps.rest.QuoteRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -19,19 +24,19 @@ public class CompanyInfoManager {
 
     private final String  companiesJsonFileLocation;
 
-    public CompanyInfoManager(FinnhubHttpClient finhubClient, String companiesJsonFileLocation) {
+    CompanyInfoManager(FinnhubHttpClient finhubClient, String companiesJsonFileLocation) {
         this.finhubClient = finhubClient;
         this.companiesJsonFileLocation = companiesJsonFileLocation;
     }
 
-    public void run() {
+    void start() {
         // Load company informations from JSON file
         List<CompanyRep> companies = loadCompanies();
 
         // Load company informations with HTTP client and compute rest of them
-        List<CompanyFull> fullCompanies = computeCompanies(companies);
+        List<CompanyFull> fullCompanies = computeCompanies(companies, true);
 
-        dumpCompanies(fullCompanies);
+        System.out.println(fullCompanies);
     }
 
 
@@ -44,12 +49,62 @@ public class CompanyInfoManager {
         }
     }
 
-    private List<CompanyFull> computeCompanies(List<CompanyRep> companies) {
-        return null;
-        // TODO:mposolda
+    private List<CompanyFull> computeCompanies(List<CompanyRep> companies, boolean dump) {
+        return companies.stream()
+                .map(companyRep -> {
+
+                    CompanyFull company = computeCompanyFull(companyRep);
+                    if (dump) {
+                        dumpCompany(company);
+                    }
+
+                    return company;
+
+                })
+                .collect(Collectors.toList());
     }
 
-    private void dumpCompanies(List<CompanyFull> fullCompanies) {
+    private CompanyFull computeCompanyFull(CompanyRep company) {
+        CompanyFull result = new CompanyFull(company);
+
+        QuoteRep quote = finhubClient.getQuoteRep(company.getTicker());
+        result.setCurrentStockPrice(quote.getCurrentPrice());
+        int totalStocksInHold = 0;
+        double totalPricePayed = 0;
+
+        // TODO: For now, use just always first expected backflo
+        ExpectedBackflowRep expectedBackflow = company.getExpectedBackflows().get(0);
+
+        List<CompanyFull.PurchaseFull> purchases = new LinkedList<>();
+        for (PurchaseRep purchase : company.getPurchases()) {
+            totalStocksInHold += purchase.getStocksCount();
+            totalPricePayed += (purchase.getPricePerStock() * totalStocksInHold);
+            int expectedBackflowInPercent = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / quote.getCurrentPrice());
+
+            CompanyFull.PurchaseFull purchaseFull = new CompanyFull.PurchaseFull(purchase);
+            purchaseFull.setExpectedBackflowInPercent(expectedBackflowInPercent);
+            purchases.add(purchaseFull);
+        }
+
+        result.setTotalStocksInHold(totalStocksInHold);
+        result.setTotalPricePayed(totalPricePayed);
+        result.setPurchasesFull(purchases);
+
+        double currentPriceOfAllStocksInHold = totalStocksInHold * quote.getCurrentPrice();
+        result.setCurrentPriceOfAllStocksInHold(currentPriceOfAllStocksInHold);
+
+        double earning = currentPriceOfAllStocksInHold - totalPricePayed;
+        result.setEarning(earning);
+
+        int totalBackflowInPercent = (int) Math.round(((currentPriceOfAllStocksInHold / totalPricePayed) - 1) * 100);
+        result.setTotalBackflowInPercent(totalBackflowInPercent);
+
+        // TODO: compute averageYearBackflowInPercent
+
+        return result;
+    }
+
+    private void dumpCompany(CompanyFull company) {
         // TODO:mposolda
         // Nakup v EU byl zrejme za 27 EU za KC
         // Nakup v CZK byl zrejme za 24.
@@ -63,9 +118,9 @@ public class CompanyInfoManager {
 //
 //        Mnozstvi drzenych akcii: 100 (spocitano ze vsech koupi jako soucet)
 //
-//        Cena vsech akcii: 2866 USD (spocitano jako soucin toho navrchu a toho dole)
+//        Cena za nakup vsech akcii: 2358 USD (spocitano z koupi)
 //
-//        Cena za nakup vsech akcii: 2358 USD
+//        Cena vsech akcii: 2866 USD (spocitano jako soucin toho navrchu a toho dole)
 //
 //        Vydelek: 508 USD (Spocitano jako rozdil tech dvou vrchnich parametru)
 //

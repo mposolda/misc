@@ -18,7 +18,7 @@ public class QuoteCommand extends AbstractCommand {
     protected void doRunCommand() throws IOException {
         String ticker = getArg(0);
 
-        QuoteRep quote = finhubClient.getQuoteRep(ticker);
+        QuoteRep quote = services.getFinhubClient().getQuoteRep(ticker);
 
         log.info("Info: " + quote);
     }

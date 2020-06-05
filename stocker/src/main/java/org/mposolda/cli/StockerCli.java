@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
-import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.services.Services;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -23,15 +23,16 @@ public class StockerCli {
             CompanyProfileCommand.class,
             DateConvertCommand.class,
             QuoteCommand.class,
+            CurrencyConvertCommand.class,
             ExitCommand.class,
             HelpCommand.class,
     };
 
     private final Map<String, Class<? extends AbstractCommand>> commands = new LinkedHashMap<>();
-    private final FinnhubHttpClient finhubClient;
+    private final Services services;
 
-    public StockerCli(FinnhubHttpClient finhubClient) {
-        this.finhubClient = finhubClient;
+    public StockerCli(Services services) {
+        this.services = services;
 
         // register builtin commands
         for (Class<?> clazz : BUILTIN_COMMANDS) {
@@ -68,7 +69,7 @@ public class StockerCli {
                         AbstractCommand command = commandClass.newInstance();
                         List<String> args = new ArrayList<>(Arrays.asList(splits));
                         args.remove(0);
-                        command.injectProperties(args, this, finhubClient);
+                        command.injectProperties(args, this, services);
                         command.runCommand();
 
                         // Just special handling of ExitCommand
@@ -119,7 +120,7 @@ public class StockerCli {
         private List<String> commandNames = new ArrayList<>();
 
         @Override
-        public void injectProperties(List<String> args, StockerCli cli, FinnhubHttpClient finhubClient) {
+        public void injectProperties(List<String> args, StockerCli cli, Services services) {
             for (String commandName : cli.commands.keySet()) {
                 commandNames.add(commandName);
             }
