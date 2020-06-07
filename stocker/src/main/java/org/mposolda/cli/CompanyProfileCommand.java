@@ -2,8 +2,7 @@ package org.mposolda.cli;
 
 import java.io.IOException;
 
-import org.mposolda.cli.AbstractCommand;
-import org.mposolda.reps.rest.CompanyProfileRep;
+import org.mposolda.reps.finhub.CompanyProfileRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>

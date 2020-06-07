@@ -2,7 +2,7 @@ package org.mposolda.cli;
 
 import java.io.IOException;
 
-import org.mposolda.services.NumberFormatUtil;
+import org.mposolda.util.NumberFormatUtil;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>

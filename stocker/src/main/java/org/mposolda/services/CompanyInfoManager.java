@@ -13,7 +13,7 @@ import org.mposolda.dao.CompanyFull;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.ExpectedBackflowRep;
 import org.mposolda.reps.PurchaseRep;
-import org.mposolda.reps.rest.QuoteRep;
+import org.mposolda.reps.finhub.QuoteRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>

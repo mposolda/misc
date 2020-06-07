@@ -8,10 +8,22 @@ import org.mposolda.services.Services;
  */
 public class StockerRunner {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Throwable {
+        // Start services
         Services services = Services.instance();
         services.start();
 
+        // Start REST server
+        StockerServer server = new StockerServer();
+        server.start();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                server.stop();
+            }
+        });
+
+        // Start CLI
         StockerCli cli = new StockerCli(services);
         cli.start();
     }

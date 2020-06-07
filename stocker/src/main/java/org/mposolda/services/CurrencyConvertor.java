@@ -1,7 +1,7 @@
 package org.mposolda.services;
 
 import org.mposolda.client.FinnhubHttpClient;
-import org.mposolda.reps.rest.CurrenciesRep;
+import org.mposolda.reps.finhub.CurrenciesRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>

@@ -1,8 +1,8 @@
 package org.mposolda.client;
 
-import org.mposolda.reps.rest.CompanyProfileRep;
-import org.mposolda.reps.rest.CurrenciesRep;
-import org.mposolda.reps.rest.QuoteRep;
+import org.mposolda.reps.finhub.CompanyProfileRep;
+import org.mposolda.reps.finhub.CurrenciesRep;
+import org.mposolda.reps.finhub.QuoteRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
