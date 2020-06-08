@@ -284,12 +284,14 @@ public class AdminConsole {
     }
 
     @GET
+    @NoCache
     @Path("{indexhtml: index.html}") // this expression is a hack to get around jaxdoclet generation bug.  Doesn't like index.html
     public Response getIndexHtmlRedirect() {
         return Response.status(302).location(uriInfo.getRequestUriBuilder().path("../").build()).build();
     }
 
     @GET
+    @NoCache
     @Path("messages.json")
     @Produces(MediaType.APPLICATION_JSON)
     public Properties getMessages(@QueryParam("lang") String lang) {

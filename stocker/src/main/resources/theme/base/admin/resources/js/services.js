@@ -220,45 +220,39 @@ module.factory('Notifications', function($rootScope, $timeout) {
     return notifications;
 });
 
-module.factory('Realm', function($resource) {
-    return $resource(authUrl + '/admin/realms/:id', {
-        id : '@realm'
-    }, {
-        update : {
-            method : 'PUT'
-        },
-        create : {
-            method : 'POST',
-            params : { id : ''}
-        }
-
+module.factory('Companies', function($resource) {
+    return $resource(authUrl + '/rest/companies', {
     });
 });
 
-module.factory('RealmKeys', function($resource) {
-    return $resource(authUrl + '/admin/realms/:id/keys', {
-        id : '@realm'
+//module.factory('Company', function($resource) {
+//    return $resource(authUrl + '/rest/companies/:id', {
+//        id : '@company'
+//    });
+//});
+
+module.factory('Currencies', function($resource) {
+    return $resource(authUrl + '/rest/currencies', {
     });
 });
 
 
-module.factory('Current', function(Realm, $route, $rootScope) {
+module.factory('Current', function(Companies, $route, $rootScope) {
+    console.log("Current executed");
     var current = {
-        realms: {},
-        realm: null
     };
 
     $rootScope.$on('$routeChangeStart', function() {
-        current.realms = Realm.query(null, function(realms) {
-            var currentRealm = null;
-            if ($route.current.params.realm) {
-                for (var i = 0; i < realms.length; i++) {
-                    if (realms[i].realm == $route.current.params.realm) {
-                        currentRealm =  realms[i];
-                    }
-                }
-            }
-            current.realm = currentRealm;
+        current.companies = Companies.get(null, function(companies) {
+//            var currentRealm = null;
+//            if ($route.current.params.company) {
+//                for (var i = 0; i < companies.length; i++) {
+//                    if (companies[i].company == $route.current.params.company) {
+//                        currentCompany =  companies[i];
+//                    }
+//                }
+//            }
+            current.companies = companies;
         });
     });
 

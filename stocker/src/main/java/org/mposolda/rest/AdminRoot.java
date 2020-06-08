@@ -22,6 +22,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.annotations.cache.NoCache;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.HttpResponse;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
@@ -77,6 +78,7 @@ public class AdminRoot {
      * @return
      */
     @GET
+    @NoCache
     public Response masterRealmAdminConsoleRedirect() {
         URI location = uriInfo.getBaseUriBuilder().path(AdminRoot.class).path(AdminRoot.class, "getAdminConsole").path("/").build();
         return Response.status(302).location(location).build();
@@ -89,6 +91,7 @@ public class AdminRoot {
      * @return
      */
     @Path("index.{html:html}") // expression is actually "index.html" but this is a hack to get around jax-doclet bug
+    @NoCache
     @GET
     public Response masterRealmAdminConsoleRedirectHtml() {
         return masterRealmAdminConsoleRedirect();
@@ -119,6 +122,7 @@ public class AdminRoot {
      * @return
      */
     @Path("/console")
+    @NoCache
     public AdminConsole getAdminConsole() {
 //        RealmManager realmManager = new RealmManager(session);
 //        RealmModel realm = locateRealm(name, realmManager);
@@ -174,7 +178,8 @@ public class AdminRoot {
      * @param headers
      * @return
      */
-    @Path("stock")
+    @Path("rest")
+    @NoCache
     public Object getStocksAdmin(@Context final HttpHeaders headers) {
 //        if (request.getHttpMethod().equals(HttpMethod.OPTIONS)) {
 //            return new AdminCorsPreflightService(request);

@@ -32,18 +32,19 @@ module.factory('Loader', function($q) {
 });
 
 
-module.factory('RealmLoader', function(Loader, Realm, $route, $q) {
-	return Loader.get(Realm, function() {
-		return {
-			id : $route.current.params.realm
-		}
-	});
+module.factory('CompaniesLoader', function(Loader, Companies, $route, $q) {
+    console.log("CompaniesLoader executed");
+
+    return Loader.get(Companies, function() {
+        return {
+        }
+    });
 });
 
-module.factory('RealmKeysLoader', function(Loader, RealmKeys, $route, $q) {
-    return Loader.get(RealmKeys, function() {
+module.factory('CurrenciesLoader', function(Loader, Currencies, $route, $q) {
+    console.log("CurrenciesLoader executed");
+    return Loader.get(Currencies, function() {
         return {
-            id : $route.current.params.realm
         }
     });
 });

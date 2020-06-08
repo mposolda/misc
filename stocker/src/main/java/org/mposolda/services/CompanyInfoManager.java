@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.client.JsonSerialization;
-import org.mposolda.dao.CompanyFull;
+import org.mposolda.reps.rest.CompaniesRep;
+import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.ExpectedBackflowRep;
 import org.mposolda.reps.PurchaseRep;
@@ -24,6 +25,8 @@ public class CompanyInfoManager {
 
     private final String  companiesJsonFileLocation;
 
+    private final CompaniesRep companies = new CompaniesRep();
+
     CompanyInfoManager(FinnhubHttpClient finhubClient, String companiesJsonFileLocation) {
         this.finhubClient = finhubClient;
         this.companiesJsonFileLocation = companiesJsonFileLocation;
@@ -34,11 +37,16 @@ public class CompanyInfoManager {
         List<CompanyRep> companies = loadCompanies();
 
         // Load company informations with HTTP client and compute rest of them
-        List<CompanyFull> fullCompanies = computeCompanies(companies, true);
+        List<CompanyFullRep> fullCompanies = computeCompanies(companies, true);
+        this.companies.setCompanies(fullCompanies);
+        this.companies.setFinished(true);
 
         System.out.println(fullCompanies);
     }
 
+    public CompaniesRep getCompanies() {
+        return companies;
+    }
 
     private List<CompanyRep> loadCompanies() {
         try {
@@ -49,11 +57,11 @@ public class CompanyInfoManager {
         }
     }
 
-    private List<CompanyFull> computeCompanies(List<CompanyRep> companies, boolean dump) {
+    private List<CompanyFullRep> computeCompanies(List<CompanyRep> companies, boolean dump) {
         return companies.stream()
                 .map(companyRep -> {
 
-                    CompanyFull company = computeCompanyFull(companyRep);
+                    CompanyFullRep company = computeCompanyFull(companyRep);
                     if (dump) {
                         dumpCompany(company);
                     }
@@ -64,27 +72,30 @@ public class CompanyInfoManager {
                 .collect(Collectors.toList());
     }
 
-    private CompanyFull computeCompanyFull(CompanyRep company) {
-        CompanyFull result = new CompanyFull(company);
+    private CompanyFullRep computeCompanyFull(CompanyRep company) {
+        CompanyFullRep result = new CompanyFullRep(company);
 
         QuoteRep quote = finhubClient.getQuoteRep(company.getTicker());
         result.setCurrentStockPrice(quote.getCurrentPrice());
         int totalStocksInHold = 0;
         double totalPricePayed = 0;
 
-        // TODO: For now, use just always first expected backflo
+        // TODO: For now, use just always first expected backflow
         ExpectedBackflowRep expectedBackflow = company.getExpectedBackflows().get(0);
 
-        List<CompanyFull.PurchaseFull> purchases = new LinkedList<>();
+        List<CompanyFullRep.PurchaseFull> purchases = new LinkedList<>();
         for (PurchaseRep purchase : company.getPurchases()) {
             totalStocksInHold += purchase.getStocksCount();
             totalPricePayed += (purchase.getPricePerStock() * totalStocksInHold);
-            int expectedBackflowInPercent = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / quote.getCurrentPrice());
+            int expectedBackflowInPercent = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / purchase.getPricePerStock());
 
-            CompanyFull.PurchaseFull purchaseFull = new CompanyFull.PurchaseFull(purchase);
+            CompanyFullRep.PurchaseFull purchaseFull = new CompanyFullRep.PurchaseFull(purchase);
             purchaseFull.setExpectedBackflowInPercent(expectedBackflowInPercent);
             purchases.add(purchaseFull);
         }
+
+        int expectedBackflowInPercentRightNow = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / quote.getCurrentPrice());
+        result.setExpectedYearBackflowInPercentRightNow(expectedBackflowInPercentRightNow);
 
         result.setTotalStocksInHold(totalStocksInHold);
         result.setTotalPricePayed(totalPricePayed);
@@ -104,7 +115,7 @@ public class CompanyInfoManager {
         return result;
     }
 
-    private void dumpCompany(CompanyFull company) {
+    private void dumpCompany(CompanyFullRep company) {
         // TODO:mposolda
         // Nakup v EU byl zrejme za 27 EU za KC
         // Nakup v CZK byl zrejme za 24.

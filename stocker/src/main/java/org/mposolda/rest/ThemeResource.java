@@ -9,6 +9,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.jboss.logging.Logger;
+import org.jboss.resteasy.annotations.cache.NoCache;
 
 /**
  * Theme resource
@@ -29,12 +30,13 @@ public class ThemeResource {
      * @return
      */
     @GET
+    @NoCache // This is due the easier development
     @Path("/{version}/{themeType}/{themeName}/{path:.*}")
     public Response getResource(@PathParam("version") String version, @PathParam("themeType") String themeType, @PathParam("themeName") String themeName, @PathParam("path") String path) {
         try {
             // TODO: Improve if needed
             String loadingPath = "theme/" + themeName + "/" + themeType + "/resources/" + path;
-            logger.infof("Loading resources from %s", loadingPath);
+            logger.debugf("Loading resources from %s", loadingPath);
 
             InputStream resource = getClass().getClassLoader().getResourceAsStream(loadingPath);
 //            Theme theme = session.theme().getTheme(themeName, Theme.Type.valueOf(themType.toUpperCase()));

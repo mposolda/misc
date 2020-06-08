@@ -59,36 +59,23 @@ module.config(['$locationProvider', function($locationProvider) {
 
 module.config([ '$routeProvider', function($routeProvider) {
     $routeProvider
-        .when('/realms/:realm', {
-            templateUrl : resourceUrl + '/partials/realm-detail.html',
+        .when('/companies', {
+            templateUrl : resourceUrl + '/partials/companies.html',
             resolve : {
-                realm : function(RealmLoader) {
-                    return RealmLoader();
-                },
-                serverInfo : function(ServerInfoLoader) {
-                    return ServerInfoLoader();
+                realm : function(CompaniesLoader) {
+                    return CompaniesLoader();
                 }
             },
-            controller : 'RealmDetailCtrl'
+            controller : 'CompaniesCtrl'
         })
-        .when('/realms', {
-            templateUrl : resourceUrl + '/partials/realm-list.html',
-            controller : 'RealmListCtrl'
-        })
-        .when('/realms/:realm/keys', {
-            templateUrl : resourceUrl + '/partials/realm-keys.html',
+        .when('/currencies', {
+            templateUrl : resourceUrl + '/partials/currencies.html',
             resolve : {
-                realm : function(RealmLoader) {
-                    return RealmLoader();
-                },
-                serverInfo : function(ServerInfoLoader) {
-                    return ServerInfoLoader();
-                },
-                keys: function(RealmKeysLoader) {
-                    return RealmKeysLoader();
+                realm : function(CurrenciesLoader) {
+                    return CurrenciesLoader();
                 }
             },
-            controller : 'RealmKeysCtrl'
+            controller : 'CurrenciesCtrl'
         })
         .when('/logout', {
             templateUrl : resourceUrl + '/partials/home.html',
@@ -572,102 +559,12 @@ module.directive('kcMenu', function () {
     }
 });
 
-module.directive('kcTabsRealm', function () {
+module.directive('kcTabsCompanies', function () {
     return {
         scope: true,
         restrict: 'E',
         replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-realm.html'
-    }
-});
-
-module.directive('kcTabsAuthentication', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-authentication.html'
-    }
-});
-
-module.directive('kcTabsRole', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-role.html'
-    }
-});
-
-module.directive('kcTabsClientRole', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-client-role.html'
-    }
-});
-
-module.directive('kcTabsUser', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-user.html'
-    }
-});
-
-module.directive('kcTabsUsers', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-users.html'
-    }
-});
-
-module.directive('kcTabsClients', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-clients.html'
-    }
-});
-
-module.directive('kcTabsGroup', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-group.html'
-    }
-});
-
-module.directive('kcTabsGroupList', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-group-list.html'
-    }
-});
-
-module.directive('kcTabsClient', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-client.html'
-    }
-});
-
-module.directive('kcTabsClientScope', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-client-scope.html'
+        templateUrl: resourceUrl + '/templates/kc-tabs-companies.html'
     }
 });
 
@@ -679,34 +576,6 @@ module.directive('kcNavigationUser', function () {
         templateUrl: resourceUrl + '/templates/kc-navigation-user.html'
     }
 });
-
-module.directive('kcTabsIdentityProvider', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-identity-provider.html'
-    }
-});
-
-module.directive('kcTabsUserFederation', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-user-federation.html'
-    }
-});
-
-module.directive('kcTabsLdap', function () {
-    return {
-        scope: true,
-        restrict: 'E',
-        replace: true,
-        templateUrl: resourceUrl + '/templates/kc-tabs-ldap.html'
-    }
-});
-
 
 /*
 *  Used to select the element (invoke $(elem).select()) on specified action list.

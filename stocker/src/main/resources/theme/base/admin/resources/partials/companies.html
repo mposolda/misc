@@ -1,0 +1,29 @@
+<div class="col-sm-9 col-md-12 col-sm-push-0 col-md-push-0">
+
+    <ol class="breadcrumb">
+        <li><a href="#/companies">{{:: 'companies' | translate}}</a></li>
+    </ol>
+
+    <kc-tabs-companies></kc-tabs-companies>
+
+    <table class="table table-striped table-bordered">
+        <thead>
+        <tr>
+            <th>{{:: 'company-namee' | translate}}</th>
+            <th>{{:: 'company-ticker' | translate}}</th>
+            <th>{{:: 'foo' | translate}}</th>
+            <th>{{:: 'bar' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="company in companies">
+            <td><a href="#/companies/{{company.ticker}}">{{company.name}}</a></td>
+            <td>{{company.ticker}}</td>
+            <td>{{company.foo}}</td>
+            <td>{{company.bar}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!--<kc-menu></kc-menu>-->
