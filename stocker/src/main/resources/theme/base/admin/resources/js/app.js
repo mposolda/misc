@@ -62,7 +62,7 @@ module.config([ '$routeProvider', function($routeProvider) {
         .when('/companies', {
             templateUrl : resourceUrl + '/partials/companies.html',
             resolve : {
-                realm : function(CompaniesLoader) {
+                companies : function(CompaniesLoader) {
                     return CompaniesLoader();
                 }
             },
@@ -71,7 +71,7 @@ module.config([ '$routeProvider', function($routeProvider) {
         .when('/currencies', {
             templateUrl : resourceUrl + '/partials/currencies.html',
             resolve : {
-                realm : function(CurrenciesLoader) {
+                currencies : function(CurrenciesLoader) {
                     return CurrenciesLoader();
                 }
             },

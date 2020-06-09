@@ -6,17 +6,28 @@
 
     <kc-tabs-companies></kc-tabs-companies>
 
+    <h2></h2>
     <table class="table table-striped table-bordered">
         <thead>
         <tr>
-            <th>{{:: 'currency-namee' | translate}}</th>
-            <th>{{:: 'currency-ticker' | translate}}</th>
+            <th>{{:: 'currency' | translate}}</th>
+            <th>{{:: 'bought-total' | translate}}</th>
+            <th>{{:: 'bought-total-price-in-czk' | translate}}</th>
+            <th>{{:: 'invested-to-stocks' | translate}}</th>
+            <th>{{:: 'in-hold' | translate}}</th>
+            <th>{{:: 'quotation' | translate}}</th>
+            <th>{{:: 'price-in-hold-czk' | translate}}</th>
         </tr>
         </thead>
         <tbody>
-        <tr ng-repeat="currency in currencies">
-            <td>{{currency.name}}</td>
-            <td>{{currency.ticker}}</td>
+        <tr ng-repeat="currency in currencies.currencies">
+            <td>{{currency.currencyTicker}}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{currency.quotation}}</td>
+            <td></td>
         </tr>
         </tbody>
     </table>
