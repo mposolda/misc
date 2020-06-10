@@ -1,5 +1,7 @@
 package org.mposolda.client;
 
+import java.util.function.Function;
+
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
@@ -12,7 +14,7 @@ import org.mposolda.reps.finhub.QuoteRep;
 public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
 
     // Interval in miliseconds, which should be always spent among 2 calls
-    private static final long INTERVAL = 2000;
+    private static final long INTERVAL = 1000;
 
     private final FinnhubHttpClient delegate;
 
@@ -24,20 +26,24 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
 
     @Override
     public CompanyProfileRep getCompanyProfile(String ticker) {
-        waitUntilCanCall();
-        return delegate.getCompanyProfile(ticker);
+        return waitAndCall(ticker, delegate::getCompanyProfile);
     }
 
     @Override
     public QuoteRep getQuoteRep(String ticker) {
-        waitUntilCanCall();
-        return delegate.getQuoteRep(ticker);
+        return waitAndCall(ticker, delegate::getQuoteRep);
     }
 
     @Override
     public CurrenciesRep getCurrencies() {
+        return waitAndCall(null, (str) -> delegate.getCurrencies());
+    }
+
+    private <INPUT, OUTPUT> OUTPUT waitAndCall(INPUT input, Function<INPUT, OUTPUT> function) {
         waitUntilCanCall();
-        return delegate.getCurrencies();
+        OUTPUT o = function.apply(input);
+        lastCallTimeMs = System.currentTimeMillis();
+        return o;
     }
 
     private void waitUntilCanCall() {

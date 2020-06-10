@@ -162,7 +162,7 @@ public class CompanyInfoManager {
             totalPrice += purchase.getCountBought() * purchase.getPricePerUnit();
             totalFeesInCZK += purchase.getFeeInCZK();
         }
-        
+
         double investedToStocks = 0;
         // Check how much money of particular currency we invested to stocks
         for (CompanyFullRep company : companies.getCompanies()) {

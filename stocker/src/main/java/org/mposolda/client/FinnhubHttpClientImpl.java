@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.client.HttpClient;
+import org.jboss.logging.Logger;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
@@ -12,6 +13,8 @@ import org.mposolda.reps.finhub.QuoteRep;
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class FinnhubHttpClientImpl implements FinnhubHttpClient {
+
+    protected final Logger log = Logger.getLogger(this.getClass().getName());
 
     private static final String URL_PREFIX = "https://finnhub.io/api/v1";
 
@@ -26,6 +29,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     @Override
     public CompanyProfileRep getCompanyProfile(String ticker) {
         try {
+            log.infof("Loading company profile: %s", ticker);
             String url = URL_PREFIX + "/stock/profile2?symbol=" + ticker + "&token=" + token;
             return SimpleHttp.doGet(url, httpClient)
                     .asJson(new TypeReference<CompanyProfileRep>() {
@@ -38,6 +42,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     @Override
     public QuoteRep getQuoteRep(String ticker) {
         try {
+            log.infof("Loading quote for company: %s", ticker);
             String url = URL_PREFIX + "/quote?symbol=" + ticker + "&token=" + token;
             return SimpleHttp.doGet(url, httpClient)
                     .asJson(new TypeReference<QuoteRep>() {
