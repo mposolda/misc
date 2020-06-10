@@ -9,12 +9,16 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.client.JsonSerialization;
+import org.mposolda.reps.CurrencyRep;
+import org.mposolda.reps.DatabaseRep;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.ExpectedBackflowRep;
 import org.mposolda.reps.PurchaseRep;
 import org.mposolda.reps.finhub.QuoteRep;
+import org.mposolda.reps.rest.CurrenciesRep;
+import org.mposolda.reps.rest.CurrencyFullRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -23,35 +27,48 @@ public class CompanyInfoManager {
 
     private final FinnhubHttpClient finhubClient;
 
+    private final CurrencyConvertor currencyConvertor;
+
     private final String  companiesJsonFileLocation;
 
     private final CompaniesRep companies = new CompaniesRep();
 
-    CompanyInfoManager(FinnhubHttpClient finhubClient, String companiesJsonFileLocation) {
+    private final CurrenciesRep currencies = new CurrenciesRep();
+
+    CompanyInfoManager(FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor, String companiesJsonFileLocation) {
         this.finhubClient = finhubClient;
+        this.currencyConvertor = currencyConvertor;
         this.companiesJsonFileLocation = companiesJsonFileLocation;
     }
 
     void start() {
         // Load company informations from JSON file
-        List<CompanyRep> companies = loadCompanies();
+        DatabaseRep database = loadDatabase();
 
         // Load company informations with HTTP client and compute rest of them
-        List<CompanyFullRep> fullCompanies = computeCompanies(companies, true);
+        List<CompanyFullRep> fullCompanies = computeCompanies(database.getCompanies(), true);
         this.companies.setCompanies(fullCompanies);
         this.companies.setFinished(true);
 
-        System.out.println(fullCompanies);
+        // Load company informations with HTTP client and compute rest of them
+        List<CurrencyFullRep> fullCurrencies = computeCurrencies(database.getCurrencies());
+        this.currencies.setCurrencies(fullCurrencies);
+        this.currencies.setFinished(true);
+
+        //System.out.println(fullCompanies);
     }
 
     public CompaniesRep getCompanies() {
         return companies;
     }
 
-    private List<CompanyRep> loadCompanies() {
+    public CurrenciesRep getCurrencies() {
+        return currencies;
+    }
+
+    private DatabaseRep loadDatabase() {
         try {
-            return JsonSerialization.readValue(new FileInputStream(companiesJsonFileLocation), new TypeReference<List<CompanyRep>>() {
-            });
+            return JsonSerialization.readValue(new FileInputStream(companiesJsonFileLocation), DatabaseRep.class);
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
@@ -80,7 +97,7 @@ public class CompanyInfoManager {
         int totalStocksInHold = 0;
         double totalPricePayed = 0;
 
-        // TODO: For now, use just always first expected backflow
+        // TODO:mposolda For now, use just always first expected backflow
         ExpectedBackflowRep expectedBackflow = company.getExpectedBackflows().get(0);
 
         List<CompanyFullRep.PurchaseFull> purchases = new LinkedList<>();
@@ -94,7 +111,7 @@ public class CompanyInfoManager {
             purchases.add(purchaseFull);
         }
 
-        int expectedBackflowInPercentRightNow = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / quote.getCurrentPrice());
+        double expectedBackflowInPercentRightNow = (expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / quote.getCurrentPrice();
         result.setExpectedYearBackflowInPercentRightNow(expectedBackflowInPercentRightNow);
 
         result.setTotalStocksInHold(totalStocksInHold);
@@ -107,10 +124,61 @@ public class CompanyInfoManager {
         double earning = currentPriceOfAllStocksInHold - totalPricePayed;
         result.setEarning(earning);
 
-        int totalBackflowInPercent = (int) Math.round(((currentPriceOfAllStocksInHold / totalPricePayed) - 1) * 100);
+        double totalBackflowInPercent = ((currentPriceOfAllStocksInHold / totalPricePayed) - 1) * 100;
         result.setTotalBackflowInPercent(totalBackflowInPercent);
 
-        // TODO: compute averageYearBackflowInPercent
+        // TODO:mposolda compute averageYearBackflowInPercent
+
+        // TODO:mposolda this is not accurate. It should be based on latest currency purchase and not on the currencyConvertor price
+        result.setTotalPricePayedCZK(currencyConvertor.exchangeMoney(result.getTotalPricePayed(), result.getCurrency(), "CZK"));
+
+        result.setCurrentPriceOfAllStocksInHoldCZK(currencyConvertor.exchangeMoney(result.getCurrentPriceOfAllStocksInHold(), result.getCurrency(), "CZK"));
+        result.setEarningCZK(result.getCurrentPriceOfAllStocksInHoldCZK() - result.getTotalPricePayedCZK());
+
+        return result;
+    }
+
+    private List<CurrencyFullRep> computeCurrencies(List<CurrencyRep> currencies) {
+        return currencies.stream()
+                .map(currencyRep -> {
+
+                    CurrencyFullRep currency = computeCurrencyFull(currencyRep);
+
+                    return currency;
+
+                })
+                .collect(Collectors.toList());
+    }
+
+    private CurrencyFullRep computeCurrencyFull(CurrencyRep currency) {
+        CurrencyFullRep result = new CurrencyFullRep();
+        result.setTicker(currency.getTicker());
+
+        double totalCountBought = 0;
+        double totalPrice = 0;
+        double totalFeesInCZK = 0;
+        for (CurrencyRep.CurrencyPurchaseRep purchase : currency.getPurchases()) {
+            totalCountBought += purchase.getCountBought();
+            totalPrice += purchase.getCountBought() * purchase.getPricePerUnit();
+            totalFeesInCZK += purchase.getFeeInCZK();
+        }
+
+        // TODO:mposolda this should be computed based on all done stock purchases
+        double investedToStocks = 0;
+
+        double inHold = totalCountBought - investedToStocks;
+
+        double quotation = currencyConvertor.exchangeMoney(1, currency.getTicker(), "CZK");
+
+        double priceInHoldCZK = currencyConvertor.exchangeMoney(inHold, currency.getTicker(), "CZK");
+
+        result.setBoughtTotal(totalCountBought);
+        result.setBoughtTotalPriceInCZK(totalPrice);
+        result.setInvestedTotal(investedToStocks);
+        result.setTotalHold(inHold);
+        result.setTotalFeesInCZK(totalFeesInCZK);
+        result.setQuotation(quotation);
+        result.setPriceInHoldCZK(priceInHoldCZK);
 
         return result;
     }

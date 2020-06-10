@@ -45,7 +45,7 @@ public class Services {
         currencyConvertor.start();
         log.info("Created currencyConvertor and loaded currencies from forex");
 
-        companyInfoManager = new CompanyInfoManager(finhubClient, companiesJsonFileLocation);
+        companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, companiesJsonFileLocation);
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
     }

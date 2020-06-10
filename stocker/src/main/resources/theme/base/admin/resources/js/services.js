@@ -357,4 +357,14 @@ module.factory('TimeUnit2', function() {
     return t;
 });
 
+module.factory('MyMath', function() {
+    var math = {};
+
+    math.round = function(num) {
+        return Math.round((num + Number.EPSILON) * 100) / 100
+    }
+
+    return math;
+});
+
 

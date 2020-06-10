@@ -24,21 +24,30 @@ public class CompanyFullRep extends CompanyRep {
     @JsonProperty("totalPricePayed")
     private double totalPricePayed;
 
+    @JsonProperty("totalPricePayedCZK")
+    private double totalPricePayedCZK;
+
     @JsonProperty("currentPriceOfAllStocksInHold")
     private double currentPriceOfAllStocksInHold;
+
+    @JsonProperty("currentPriceOfAllStocksInHoldCZK")
+    private double currentPriceOfAllStocksInHoldCZK;
 
     // Can be negative in case of loss
     @JsonProperty("earning")
     private double earning;
 
+    @JsonProperty("earningCZK")
+    private double earningCZK;
+
     @JsonProperty("totalBackflowInPercent")
-    private int totalBackflowInPercent;
+    private double totalBackflowInPercent;
 
     @JsonProperty("averageYearBackflowInPercent")
-    private int averageYearBackflowInPercent;
+    private double averageYearBackflowInPercent;
 
     @JsonProperty("expectedYearBackflowInPercentRightNow")
-    private int expectedYearBackflowInPercentRightNow;
+    private double expectedYearBackflowInPercentRightNow;
 
     @JsonProperty("purchasesFull")
     private List<PurchaseFull> purchasesFull;
@@ -75,6 +84,30 @@ public class CompanyFullRep extends CompanyRep {
         this.totalPricePayed = totalPricePayed;
     }
 
+    public double getTotalPricePayedCZK() {
+        return totalPricePayedCZK;
+    }
+
+    public void setTotalPricePayedCZK(double totalPricePayedCZK) {
+        this.totalPricePayedCZK = totalPricePayedCZK;
+    }
+
+    public double getCurrentPriceOfAllStocksInHoldCZK() {
+        return currentPriceOfAllStocksInHoldCZK;
+    }
+
+    public void setCurrentPriceOfAllStocksInHoldCZK(double currentPriceOfAllStocksInHoldCZK) {
+        this.currentPriceOfAllStocksInHoldCZK = currentPriceOfAllStocksInHoldCZK;
+    }
+
+    public double getEarningCZK() {
+        return earningCZK;
+    }
+
+    public void setEarningCZK(double earningCZK) {
+        this.earningCZK = earningCZK;
+    }
+
     public double getCurrentPriceOfAllStocksInHold() {
         return currentPriceOfAllStocksInHold;
     }
@@ -91,27 +124,27 @@ public class CompanyFullRep extends CompanyRep {
         this.earning = earning;
     }
 
-    public int getTotalBackflowInPercent() {
+    public double getTotalBackflowInPercent() {
         return totalBackflowInPercent;
     }
 
-    public void setTotalBackflowInPercent(int totalBackflowInPercent) {
+    public void setTotalBackflowInPercent(double totalBackflowInPercent) {
         this.totalBackflowInPercent = totalBackflowInPercent;
     }
 
-    public int getAverageYearBackflowInPercent() {
+    public double getAverageYearBackflowInPercent() {
         return averageYearBackflowInPercent;
     }
 
-    public void setAverageYearBackflowInPercent(int averageYearBackflowInPercent) {
+    public void setAverageYearBackflowInPercent(double averageYearBackflowInPercent) {
         this.averageYearBackflowInPercent = averageYearBackflowInPercent;
     }
 
-    public int getExpectedYearBackflowInPercentRightNow() {
+    public double getExpectedYearBackflowInPercentRightNow() {
         return expectedYearBackflowInPercentRightNow;
     }
 
-    public void setExpectedYearBackflowInPercentRightNow(int expectedYearBackflowInPercentRightNow) {
+    public void setExpectedYearBackflowInPercentRightNow(double expectedYearBackflowInPercentRightNow) {
         this.expectedYearBackflowInPercentRightNow = expectedYearBackflowInPercentRightNow;
     }
 

@@ -33,4 +33,43 @@ public class CurrenciesRep extends BaseRep {
     public void setFinished(Boolean finished) {
         this.finished.set(finished);
     }
+
+    /**
+     *
+     * @return Total amount of bought moneys, which are exchanged to other currencies
+     */
+    @JsonProperty("boughtTotalInCZK")
+    public Double getBoughtTotalInCZK() {
+        double result = 0;
+        for (CurrencyFullRep currency : currencies) {
+            result += currency.getBoughtTotalPriceInCZK();
+        }
+        return result;
+    }
+
+    /**
+     * @return Total amount of currently available money in CZK
+     */
+    @JsonProperty("priceInHoldCZK")
+    public Double getPriceInHoldCZK() {
+
+        double result = 0;
+        for (CurrencyFullRep currency : currencies) {
+            result += currency.getPriceInHoldCZK();
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @return Total amount of fees payed in the forex exchanges (currency exchanges)
+     */
+    @JsonProperty("totalFeesCZK")
+    public Double getTotalFeesCZK() {
+        double result = 0;
+        for (CurrencyFullRep currency : currencies) {
+            result += currency.getTotalFeesInCZK();
+        }
+        return result;
+    }
 }

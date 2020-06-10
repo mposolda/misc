@@ -18,8 +18,10 @@ module.controller('HomeCtrl', function(Auth, Current, $location) {
     console.log('HomeCtrl executed');
 });
 
-module.controller('CompaniesCtrl', function($scope, Companies) {
+module.controller('CompaniesCtrl', function($scope, Companies, companies, MyMath) {
     console.log('CompaniesCtrl executed');
+    $scope.companies = companies;
+    $scope.MyMath = MyMath;
 
 //    ServerInfo.reload();
 //
@@ -39,8 +41,9 @@ module.controller('CompaniesCtrl', function($scope, Companies) {
 //    }
 });
 
-module.controller('CurrenciesCtrl', function($scope, Currencies, currencies) {
+module.controller('CurrenciesCtrl', function($scope, Currencies, currencies, MyMath) {
     console.log('CurrenciesCtrl executed');
     $scope.currencies = currencies;
+    $scope.MyMath = MyMath;
 });
 

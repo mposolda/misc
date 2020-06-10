@@ -33,4 +33,54 @@ public class CompaniesRep extends BaseRep {
     public void setFinished(Boolean finished) {
         this.finished.set(finished);
     }
+
+    /**
+     *
+     * @return Total price payed for all stocks in CZK
+     */
+    @JsonProperty("totalPricePayedCZK")
+    public Double getTotalPricePayedCZK() {
+        double result = 0;
+        for (CompanyFullRep company : companies) {
+            result += company.getTotalPricePayedCZK();
+        }
+        return result;
+    }
+
+    /**
+     * @return Current price of all currently holded stocks in CZK
+     */
+    @JsonProperty("currentPriceOfAllStocksInHoldCZK")
+    public Double getCurrentPriceOfAllStocksInHoldCZK() {
+        double result = 0;
+        for (CompanyFullRep company : companies) {
+            result += company.getCurrentPriceOfAllStocksInHoldCZK();
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @return Total earning in CZK
+     */
+    @JsonProperty("earningCZK")
+    public Double getEarningCZK() {
+        double result = 0;
+        for (CompanyFullRep company : companies) {
+            result += company.getEarningCZK();
+        }
+        return result;
+    }
+
+    /**
+     * @return Total backflow in percent
+     */
+    @JsonProperty("totalBackflowInPercent")
+    public Double getTotalBackflowInPercent() {
+        return ((getCurrentPriceOfAllStocksInHoldCZK() / getTotalPricePayedCZK()) - 1) * 100;
+    }
+
+    // TODO:mposolda average year backflow in percent and expected year backflow in percent
+
+    // TODO:mposolda fees?
 }

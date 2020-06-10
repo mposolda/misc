@@ -63,26 +63,9 @@ public class StockResource {
     public CurrenciesRep getCurrencies() {
         log.info("getCurrencies called");
 
-        CurrencyConvertor currencyConvertor = Services.instance().getCurrencyConvertor();
+        CurrenciesRep currencies = Services.instance().getCompanyInfoManager().getCurrencies();
 
-        // TODO:mposolda - dont have this hardcoded here
-        String[] currencies = new String[] { "EUR", "USD", "CAD", "HKD", "NOK" };
-
-        List<CurrencyFullRep> result = new ArrayList<>();
-        for (String currencyFrom : currencies) {
-            double czechCrowns = currencyConvertor.exchangeMoney(1, currencyFrom, "CZK");
-            CurrencyFullRep currency = new CurrencyFullRep();
-            currency.setCurrencyTicker(currencyFrom);
-            currency.setQuotation(czechCrowns);
-            result.add(currency);
-        }
-
-        CurrenciesRep rep = new CurrenciesRep();
-        rep.setCurrencies(result);
-        rep.setFinished(true); // TODO:mposolda
-        return rep;
+        return currencies;
     }
-
-
 
 }
