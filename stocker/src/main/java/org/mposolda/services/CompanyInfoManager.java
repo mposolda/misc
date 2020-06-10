@@ -162,9 +162,14 @@ public class CompanyInfoManager {
             totalPrice += purchase.getCountBought() * purchase.getPricePerUnit();
             totalFeesInCZK += purchase.getFeeInCZK();
         }
-
-        // TODO:mposolda this should be computed based on all done stock purchases
+        
         double investedToStocks = 0;
+        // Check how much money of particular currency we invested to stocks
+        for (CompanyFullRep company : companies.getCompanies()) {
+            if (company.getCurrency().equals(currency.getTicker())) {
+                investedToStocks += company.getTotalPricePayed();
+            }
+        }
 
         double inHold = totalCountBought - investedToStocks;
 
