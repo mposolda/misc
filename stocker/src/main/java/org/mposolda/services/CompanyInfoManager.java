@@ -93,7 +93,10 @@ public class CompanyInfoManager {
         CompanyFullRep result = new CompanyFullRep(company);
 
         QuoteRep quote = finhubClient.getQuoteRep(company.getTicker());
-        result.setCurrentStockPrice(quote.getCurrentPrice());
+
+        // Using open-day price for now. Using current price returned strange results for some companies (EG. 1.03 instead of 1.3)
+        // TODO:mposolda figure the issue if possible and eventually replace with current price
+        result.setCurrentStockPrice(quote.getOpenDayPrice());
         int totalStocksInHold = 0;
         double totalPricePayed = 0;
 
