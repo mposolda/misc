@@ -357,11 +357,12 @@ module.factory('TimeUnit2', function() {
     return t;
 });
 
-module.factory('MyMath', function() {
+module.factory('MyMath', function(currentLocale) {
     var math = {};
 
     math.round = function(num) {
-        return Math.round((num + Number.EPSILON) * 100) / 100
+        let x = Math.round((num + Number.EPSILON) * 100) / 100
+        return x.toLocaleString(currentLocale);
     }
 
     return math;

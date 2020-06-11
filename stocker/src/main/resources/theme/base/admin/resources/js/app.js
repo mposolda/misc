@@ -2,7 +2,7 @@
 
 var auth = {};
 var resourceBundle;
-var locale = 'en';
+var locale = 'cs';
 
 var module = angular.module('keycloak', [ 'keycloak.services', 'keycloak.loaders', 'ui.bootstrap', 'ui.select2', 'angularFileUpload', 'angularTreeview', 'pascalprecht.translate', 'ngCookies', 'ngSanitize', 'ui.ace']);
 var resourceRequests = 0;
@@ -36,6 +36,9 @@ angular.element(document).ready(function () {
 
         module.factory('Auth', function () {
             return auth;
+        });
+        module.factory('currentLocale', function () {
+            return locale;
         });
         var injector = angular.bootstrap(document, ["keycloak"]);
 
