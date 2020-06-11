@@ -24,6 +24,7 @@
         var resourceUrl = '${resourceUrl}';
         var masterRealm = '${masterRealm}';
         var resourceVersion = '${resourceVersion}';
+        var locale = '${locale}';
     </script>
 
     <!-- Minimized versions (for those that have one) -->

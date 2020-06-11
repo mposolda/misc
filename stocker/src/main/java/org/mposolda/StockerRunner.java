@@ -1,5 +1,6 @@
 package org.mposolda;
 
+import org.jboss.logging.Logger;
 import org.mposolda.cli.StockerCli;
 import org.mposolda.services.Services;
 
@@ -9,13 +10,15 @@ import org.mposolda.services.Services;
 public class StockerRunner {
 
     public static void main(String[] args) throws Throwable {
+        long start = System.currentTimeMillis();
+
         // Start services
         Services services = Services.instance();
         services.start();
 
         // Start REST server
         StockerServer server = new StockerServer();
-        server.start();
+        server.start(start);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {

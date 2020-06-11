@@ -242,8 +242,8 @@ module.factory('Current', function(Companies, $route, $rootScope) {
     var current = {
     };
 
-    $rootScope.$on('$routeChangeStart', function() {
-        current.companies = Companies.get(null, function(companies) {
+//    $rootScope.$on('$routeChangeStart', function() {
+//        current.companies = Companies.get(null, function(companies) {
 //            var currentRealm = null;
 //            if ($route.current.params.company) {
 //                for (var i = 0; i < companies.length; i++) {
@@ -252,9 +252,9 @@ module.factory('Current', function(Companies, $route, $rootScope) {
 //                    }
 //                }
 //            }
-            current.companies = companies;
-        });
-    });
+//            current.companies = companies;
+//        });
+//    });
 
     return current;
 });

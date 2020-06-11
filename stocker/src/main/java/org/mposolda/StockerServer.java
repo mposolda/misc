@@ -24,11 +24,11 @@ public class StockerServer {
 
     public static final int WORKER_THREADS = Math.max(Runtime.getRuntime().availableProcessors(), 2) * 8;
 
+    public static final String DEFAULT_LOCALE = "cs";
+
     private UndertowJaxrsServer server;
 
-    public void start() throws Throwable {
-        long start = System.currentTimeMillis();
-
+    public void start(long startTimeMs) throws Throwable {
         ResteasyDeployment deployment = new ResteasyDeployment();
         deployment.setApplicationClass(StockerApplication.class.getName());
 
@@ -77,7 +77,7 @@ public class StockerServer {
 
             logger.info("Started Stocker (http://" + HOST + ":" + PORT + CONTEXT_ROOT
                     + " in "
-                    + (System.currentTimeMillis() - start) + " ms\n");
+                    + (System.currentTimeMillis() - startTimeMs) + " ms\n");
         } catch (RuntimeException e) {
             server.stop();
             throw e;

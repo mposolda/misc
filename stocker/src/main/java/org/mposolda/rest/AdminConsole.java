@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -238,7 +239,7 @@ public class AdminConsole {
      */
     @GET
     @NoCache
-    public Response getMainPage() throws IOException {
+    public Response getMainPage(@QueryParam("locale") String locale) throws IOException {
         if (!uriInfo.getRequestUri().getPath().endsWith("/")) {
             return Response.status(302).location(uriInfo.getRequestUriBuilder().path("/").build()).build();
         } else {
@@ -269,6 +270,12 @@ public class AdminConsole {
             map.put("masterRealm", "master");
             map.put("resourceVersion", Version.RESOURCES_VERSION);
             map.put("properties", PropertiesUtil.loadProperties("theme/base/admin/resources/theme.properties"));
+
+            logger.infof("Locale: %s", locale);
+            if (locale == null) {
+                locale = StockerServer.DEFAULT_LOCALE;
+            }
+            map.put("locale", locale);
 
             FreemarkerUtil freeMarkerUtil = new FreemarkerUtil();
             String result = freeMarkerUtil.processTemplate(map, "index.ftl");
