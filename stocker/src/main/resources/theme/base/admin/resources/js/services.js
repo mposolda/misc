@@ -368,4 +368,14 @@ module.factory('MyMath', function(currentLocale) {
     return math;
 });
 
+module.factory('ColorMarker', function() {
+    var colorMarker = {};
+
+    colorMarker.mark = function(num) {
+        return num >=0 ? "color: green" : "color: red";
+    }
+
+    return colorMarker;
+});
+
 

@@ -67,6 +67,15 @@ th.w-40 {
     width: 40%;
 }
 
+/*********** Other **************/
+.green {
+    color: green
+}
+
+.red {
+    color: red
+}
+
 /*********** Loading ***********/
 
 .loading {

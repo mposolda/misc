@@ -18,10 +18,11 @@ module.controller('HomeCtrl', function(Auth, Current, $location) {
     console.log('HomeCtrl executed');
 });
 
-module.controller('CompaniesCtrl', function($scope, Companies, companies, MyMath) {
+module.controller('CompaniesCtrl', function($scope, Companies, companies, MyMath, ColorMarker) {
     console.log('CompaniesCtrl executed');
     $scope.companies = companies;
     $scope.MyMath = MyMath;
+    $scope.ColorMarker = ColorMarker;
 
 //    ServerInfo.reload();
 //
@@ -41,9 +42,10 @@ module.controller('CompaniesCtrl', function($scope, Companies, companies, MyMath
 //    }
 });
 
-module.controller('CurrenciesCtrl', function($scope, Currencies, currencies, MyMath) {
+module.controller('CurrenciesCtrl', function($scope, Currencies, currencies, MyMath, ColorMarker) {
     console.log('CurrenciesCtrl executed');
     $scope.currencies = currencies;
     $scope.MyMath = MyMath;
+    $scope.ColorMarker = ColorMarker;
 });
 

@@ -33,12 +33,12 @@
                 <td>{{company.totalStocksInHold}}</td>
                 <td>{{MyMath.round(company.totalPricePayed)}} {{company.currency}}</td>
                 <td>{{MyMath.round(company.currentPriceOfAllStocksInHold)}} {{company.currency}}</td>
-                <td>{{MyMath.round(company.earning)}} {{company.currency}}</td>
+                <td style="{{ColorMarker.mark(company.earning)}}">{{MyMath.round(company.earning)}} {{company.currency}}</td>
                 <td>{{MyMath.round(company.totalPricePayedCZK)}} CZK</td>
                 <td>{{MyMath.round(company.currentPriceOfAllStocksInHoldCZK)}} CZK</td>
-                <td>{{MyMath.round(company.earningCZK)}} CZK</td>
-                <td>{{MyMath.round(company.totalBackflowInPercent)}} %</td>
-                <td>{{MyMath.round(company.averageYearBackflowInPercent)}} %</td>
+                <td style="{{ColorMarker.mark(company.earningCZK)}}">{{MyMath.round(company.earningCZK)}} CZK</td>
+                <td style="{{ColorMarker.mark(company.totalBackflowInPercent)}}">{{MyMath.round(company.totalBackflowInPercent)}} %</td>
+                <td style="{{ColorMarker.mark(company.averageYearBackflowInPercent)}}">{{MyMath.round(company.averageYearBackflowInPercent)}} %</td>
             </tr>
             <tr>
                 <td><b>{{:: 'total' | translate}}</b></td>
@@ -51,8 +51,8 @@
                 <td></td>
                 <td>{{MyMath.round(companies.totalPricePayedCZK)}} CZK</td>
                 <td>{{MyMath.round(companies.currentPriceOfAllStocksInHoldCZK)}} CZK</td>
-                <td>{{MyMath.round(companies.earningCZK)}} CZK</td>
-                <td>{{MyMath.round(companies.totalBackflowInPercent)}} %</td>
+                <td style="{{ColorMarker.mark(companies.earningCZK)}}">{{MyMath.round(companies.earningCZK)}} CZK</td>
+                <td style="{{ColorMarker.mark(ompanies.totalBackflowInPercent)}}">{{MyMath.round(companies.totalBackflowInPercent)}} %</td>
                 <td>TODO %</td>
             </tr>
         </tbody>
