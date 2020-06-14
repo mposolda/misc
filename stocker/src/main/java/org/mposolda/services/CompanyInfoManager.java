@@ -96,7 +96,9 @@ public class CompanyInfoManager {
 
         // Using open-day price for now. Using current price returned strange results for some companies (EG. 1.03 instead of 1.3)
         // TODO:mposolda figure the issue if possible and eventually replace with current price
-        result.setCurrentStockPrice(quote.getOpenDayPrice());
+        double currentPrice = quote.getOpenDayPrice();
+
+        result.setCurrentStockPrice(currentPrice);
         int totalStocksInHold = 0;
         double totalPricePayed = 0;
 
@@ -114,14 +116,14 @@ public class CompanyInfoManager {
             purchases.add(purchaseFull);
         }
 
-        double expectedBackflowInPercentRightNow = (expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / quote.getCurrentPrice();
+        double expectedBackflowInPercentRightNow = (expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / currentPrice;
         result.setExpectedYearBackflowInPercentRightNow(expectedBackflowInPercentRightNow);
 
         result.setTotalStocksInHold(totalStocksInHold);
         result.setTotalPricePayed(totalPricePayed);
         result.setPurchasesFull(purchases);
 
-        double currentPriceOfAllStocksInHold = totalStocksInHold * quote.getCurrentPrice();
+        double currentPriceOfAllStocksInHold = totalStocksInHold * currentPrice;
         result.setCurrentPriceOfAllStocksInHold(currentPriceOfAllStocksInHold);
 
         double earning = currentPriceOfAllStocksInHold - totalPricePayed;

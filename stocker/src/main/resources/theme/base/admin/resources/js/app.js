@@ -79,6 +79,18 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'CurrenciesCtrl'
         })
+        .when('/summary', {
+            templateUrl : resourceUrl + '/partials/summary.html',
+            resolve : {
+                companies : function(CompaniesLoader) {
+                    return CompaniesLoader();
+                },
+                currencies : function(CurrenciesLoader) {
+                    return CurrenciesLoader();
+                }
+            },
+            controller : 'SummaryCtrl'
+        })
         .when('/logout', {
             templateUrl : resourceUrl + '/partials/home.html',
             controller : 'LogoutCtrl'
