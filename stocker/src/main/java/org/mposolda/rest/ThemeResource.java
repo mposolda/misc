@@ -43,7 +43,7 @@ public class ThemeResource {
 //            InputStream resource = theme.getResourceAsStream(path);
 
             if (resource != null) {
-                return Response.ok(resource).type(MimeTypeUtil.getContentType(path)).cacheControl(CacheControlUtil.getDefaultCacheControl()).build();
+                return Response.ok(resource).type(MimeTypeUtil.getContentType(path)).cacheControl(CacheControlUtil.noCache()).build();
             } else {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }

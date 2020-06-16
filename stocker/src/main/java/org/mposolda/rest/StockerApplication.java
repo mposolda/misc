@@ -26,6 +26,7 @@ public class StockerApplication extends Application {
             singletons.add(new AdminRoot());
 
             classes.add(ThemeResource.class);
+            classes.add(ChartResource.class);
 
             // Not sure if this is needed...
             // classes.add(KeycloakErrorHandler.class);
