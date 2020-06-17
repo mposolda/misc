@@ -104,16 +104,6 @@ public class ChartResource {
     }
 
 
-    private PieDataset createPieDataset(final int sections) {
-        final DefaultPieDataset result = new DefaultPieDataset();
-        for (int i = 0; i < sections; i++) {
-            final double value = 100.0 * Math.random();
-            result.setValue("Section " + i, value);
-        }
-        return result;
-    }
-
-
     public static class FeedReturnStreamingOutput implements StreamingOutput {
 
         private final JFreeChart chart;
