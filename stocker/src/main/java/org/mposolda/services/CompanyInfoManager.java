@@ -1,14 +1,10 @@
 package org.mposolda.services;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import org.mposolda.client.FinnhubHttpClient;
-import org.mposolda.client.JsonSerialization;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
 import org.mposolda.reps.rest.CompaniesRep;
@@ -19,6 +15,7 @@ import org.mposolda.reps.PurchaseRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.rest.CurrenciesRep;
 import org.mposolda.reps.rest.CurrencyFullRep;
+import org.mposolda.util.JsonUtil;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -43,10 +40,10 @@ public class CompanyInfoManager {
 
     void start() {
         // Load company informations from JSON file
-        DatabaseRep database = loadDatabase();
+        DatabaseRep database = JsonUtil.loadDatabase(this.companiesJsonFileLocation);
 
         // Load company informations with HTTP client and compute rest of them
-        List<CompanyFullRep> fullCompanies = computeCompanies(database.getCompanies(), true);
+        List<CompanyFullRep> fullCompanies = computeCompanies(database.getCompanies());
         this.companies.setCompanies(fullCompanies);
         this.companies.setFinished(true);
 
@@ -66,22 +63,11 @@ public class CompanyInfoManager {
         return currencies;
     }
 
-    private DatabaseRep loadDatabase() {
-        try {
-            return JsonSerialization.readValue(new FileInputStream(companiesJsonFileLocation), DatabaseRep.class);
-        } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
-        }
-    }
-
-    private List<CompanyFullRep> computeCompanies(List<CompanyRep> companies, boolean dump) {
+    private List<CompanyFullRep> computeCompanies(List<CompanyRep> companies) {
         return companies.stream()
                 .map(companyRep -> {
 
                     CompanyFullRep company = computeCompanyFull(companyRep);
-                    if (dump) {
-                        dumpCompany(company);
-                    }
 
                     return company;
 
@@ -129,16 +115,20 @@ public class CompanyInfoManager {
         double earning = currentPriceOfAllStocksInHold - totalPricePayed;
         result.setEarning(earning);
 
-        double totalBackflowInPercent = ((currentPriceOfAllStocksInHold / totalPricePayed) - 1) * 100;
-        result.setTotalBackflowInPercent(totalBackflowInPercent);
-
         // TODO:mposolda compute averageYearBackflowInPercent
 
-        // TODO:mposolda this is not accurate. It should be based on latest currency purchase and not on the currencyConvertor price
-        result.setTotalPricePayedCZK(currencyConvertor.exchangeMoney(result.getTotalPricePayed(), result.getCurrency(), "CZK"));
+        PurchaseManager purchaseManager = Services.instance().getPurchaseManager();
+        PurchaseManager.CompanyPurchasesPrice companyPurchases = purchaseManager.getCompanyPurchases(company.getTicker());
+        double totalPriceOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllPurchases();
+
+        // result.setTotalPricePayedCZK(currencyConvertor.exchangeMoney(result.getTotalPricePayed(), result.getCurrency(), "CZK"));
+        result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
 
         result.setCurrentPriceOfAllStocksInHoldCZK(currencyConvertor.exchangeMoney(result.getCurrentPriceOfAllStocksInHold(), result.getCurrency(), "CZK"));
         result.setEarningCZK(result.getCurrentPriceOfAllStocksInHoldCZK() - result.getTotalPricePayedCZK());
+
+        double totalBackflowInPercent = ((result.getCurrentPriceOfAllStocksInHoldCZK() / totalPriceOfAllPurchasesCZK) - 1) * 100;
+        result.setTotalBackflowInPercent(totalBackflowInPercent);
 
         return result;
     }
@@ -193,37 +183,4 @@ public class CompanyInfoManager {
         return result;
     }
 
-    private void dumpCompany(CompanyFullRep company) {
-        // TODO:mposolda
-        // Nakup v EU byl zrejme za 27 EU za KC
-        // Nakup v CZK byl zrejme za 24.
-//        Firma: Sameour realty capital
-//
-//        Ticker: SHHH
-//
-//        Mena: USD
-//
-//        Cena akcie: 28.66 USD (zjisteno online)
-//
-//        Mnozstvi drzenych akcii: 100 (spocitano ze vsech koupi jako soucet)
-//
-//        Cena za nakup vsech akcii: 2358 USD (spocitano z koupi)
-//
-//        Cena vsech akcii: 2866 USD (spocitano jako soucin toho navrchu a toho dole)
-//
-//        Vydelek: 508 USD (Spocitano jako rozdil tech dvou vrchnich parametru)
-//
-//        Skutecna navratnost: 15% (prepocitano z jedne koupe zatim - musim vzit v uvahu jeste cas)
-//
-//        Ocekavana navratnost zadana:
-//        6.3.2020: 16% pri cene 25.26 USD (zadano)
-//        8.6.2021: 17% pri cene 28.75 USD (zadano)
-//
-//        Koupe:
-//        2.6.2020 - 100 akcii za 23.58 USD (zadano)
-//        Ocekavana navratnost, ktera byla pri koupi: 14% (spocitat)
-//
-//
-//                Ocekavana navratnost pri aktualni cene akcie: 13% (spocitano z posledni ocekavane navratnosti a z momentalni ceny akcie)
-    }
 }

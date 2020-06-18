@@ -23,6 +23,7 @@ public class Services {
     }
 
     // Services
+    private PurchaseManager purchaseManager;
     private FinnhubHttpClient finhubClient;
     private CurrencyConvertor currencyConvertor;
     private CompanyInfoManager companyInfoManager;
@@ -37,6 +38,10 @@ public class Services {
         if (companiesJsonFileLocation == null) {
             throw new IllegalArgumentException("Need to provide system property 'companiesJson' with the JSON information about companies");
         }
+
+        purchaseManager = new PurchaseManager(companiesJsonFileLocation);
+        purchaseManager.start();
+        log.info("Created purchase manager");
 
         finhubClient = new FinnhubHttpClientWrapper(new FinnhubHttpClientImpl(token));
         log.info("Created finnhub client");
@@ -56,6 +61,10 @@ public class Services {
 
     public CurrencyConvertor getCurrencyConvertor() {
         return currencyConvertor;
+    }
+
+    public PurchaseManager getPurchaseManager() {
+        return purchaseManager;
     }
 
     public CompanyInfoManager getCompanyInfoManager() {
