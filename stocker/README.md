@@ -1,13 +1,17 @@
-- Refresh
-
-- Add all stocks to stocks.json
--- Add more "sledovane" stocks?
--- Add some recent things (PAX Company and buying of some HKD dollars to stocks.json)
+P1
 
 - Compute fees if possible in stocks.json (but maybe not strictly needed?)
 
-- Correctly compute the price in CZK at the time of buying. Also support for buying HKD from USD (and others)
+- Unit test for PurchaseManager
+
+
+P2: 
+
+- Add all stocks to stocks.json
+-- Add more "sledovane" stocks?
 
 - TODOS: others
+
+- Refresh?
  
 - Charts - trend of the stocks in portfolio

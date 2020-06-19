@@ -46,6 +46,13 @@ public class PurchaseManager {
         return companiesPurchases.get(companyTicker);
     }
 
+    /**
+     * @return info about total CZK deposit and about the remaining amount of each currency
+     */
+    public CurrenciesInfo getCurrenciesInfo() {
+        return currenciesInfo;
+    }
+
     public void start() {
         // Load company informations from JSON file
         DatabaseRep database = JsonUtil.loadDatabase(this.companiesJsonFileLocation);
@@ -126,6 +133,13 @@ public class PurchaseManager {
             public int compare(PurchaseInternal o1, PurchaseInternal o2) {
                 if (o1.equals(o2)) return 0;
 
+                long diff = o1.getDateNumber() - o2.getDateNumber();
+                if (diff >0) {
+                    return 1;
+                } else if (diff < 0) {
+                    return -1;
+                }
+
                 if (o1 instanceof CurrencyPurchaseInternal && o2 instanceof CurrencyPurchaseInternal)
                     return currencyPurchaseComparator.compare((CurrencyPurchaseInternal)o1, (CurrencyPurchaseInternal) o2);
 
@@ -163,48 +177,69 @@ public class PurchaseManager {
             if (dateOfFirstDeposit == null) dateOfFirstDeposit = deposit.getDate();
         }
         CurrencyPurchaseInternal czkPurchase = new CurrencyPurchaseInternal(dateOfFirstDeposit, "CZK", 0, "CZK", totalDepositCZK);
-        czkPurchase.czkAmountForOneFromUnit = 1;
+        czkPurchase.czkAmountForOneToUnit = 1;
         czkStack.addCurrencyPurchase(czkPurchase);
 
-//        for (CurrencyPurchaseInternal currencyPurchaseInternal : sortedCurrencyPurchases) {
-//            String currencyFromTicker = currencyPurchaseInternal.currencyFrom;
-//
-//            CurrencyStack stack = currencyStacks.get(currencyFromTicker);
-//            if (stack == null) {
-//                stack = new CurrencyStack(currencyFromTicker);
-//                currencyStacks.put(currencyFromTicker, stack);
-//            }
-//
-//            // TODO:mposolda delete this line
-//            //stack.addCurrencyPurchase(currencyPurchaseInternal);
-//        }
-
         // 5 - Apply all company purchases and currency purchases based on the time. Compute CZK amount for each company purchase
-        for (CompanyPurchaseInternal stockPurchase : sortedCompanyPurchases) {
-            CurrencyStack stack = currencyStacks.get(stockPurchase.currency);
+        // and each currency purchase
+        for (PurchaseInternal purchase : allSortedPurchases) {
 
-            // Total price of purchase in "currency from"
-            double totalPriceOfPurchase = stockPurchase.stocksCount * stockPurchase.pricePerStock;
+            if (purchase instanceof CompanyPurchaseInternal) {
+                // 5.1 COMPANY PURCHASE
+                CompanyPurchaseInternal stockPurchase = (CompanyPurchaseInternal) purchase;
+                CurrencyStack stack = currencyStacks.get(stockPurchase.currency);
 
-            // Now compute the total amount of CZK needed
-            CurrencyPurchaseInternal currencyPurchase = stack.currencyPurchases.peek();
-            double totalPriceOfPurchaseCZK = 0;
-            double remainingPriceOfPurchase = totalPriceOfPurchase;
-            while (currencyPurchase.currencyFromAmount < remainingPriceOfPurchase) {
-                // The last currencyPurchase does not have sufficient money for buy this stock.
-                remainingPriceOfPurchase -= currencyPurchase.currencyFromAmount;
-                totalPriceOfPurchaseCZK += currencyPurchase.currencyFromAmount * currencyPurchase.czkAmountForOneFromUnit;
+                // Total price of purchase in "currency from"
+                double totalPriceOfPurchase = stockPurchase.stocksCount * stockPurchase.pricePerStock;
 
-                // Try another purchase
-                stack.currencyPurchases.remove();
-                currencyPurchase = stack.currencyPurchases.peek();
+                // Now compute the total amount of CZK needed
+                CurrencyPurchaseInternal currencyPurchase = stack.currencyPurchases.peek();
+                double totalPriceOfPurchaseCZK = 0;
+                double remainingPriceOfPurchase = totalPriceOfPurchase;
+                while (currencyPurchase.currencyToAmount < remainingPriceOfPurchase) {
+                    // The last currencyPurchase does not have sufficient money for buy this stock.
+                    remainingPriceOfPurchase -= currencyPurchase.currencyToAmount;
+                    totalPriceOfPurchaseCZK += currencyPurchase.currencyToAmount * currencyPurchase.czkAmountForOneToUnit;
+
+                    // Try another purchase
+                    stack.currencyPurchases.remove();
+                    currencyPurchase = stack.currencyPurchases.peek();
+                }
+
+                currencyPurchase.currencyToAmount = currencyPurchase.currencyToAmount - remainingPriceOfPurchase;
+                totalPriceOfPurchaseCZK += remainingPriceOfPurchase * currencyPurchase.czkAmountForOneToUnit;
+
+                stockPurchase.setTotalPriceInCZK(totalPriceOfPurchaseCZK);
+            } else {
+                // 5.2 CURRENCY PURCHASE
+                CurrencyPurchaseInternal currencyPurchaseTarget = (CurrencyPurchaseInternal) purchase;
+
+                CurrencyStack stackFrom = currencyStacks.get(currencyPurchaseTarget.currencyFrom);
+                CurrencyStack stackTo = currencyStacks.get(currencyPurchaseTarget.currencyTo);
+
+                // Total price of purchase in "currency from"
+                CurrencyPurchaseInternal currencyPurchase = stackFrom.currencyPurchases.peek();
+                double totalPriceOfPurchaseCZK = 0;
+                double remainingPriceOfPurchase = currencyPurchaseTarget.currencyFromAmount;
+                while (currencyPurchase.currencyToAmount < remainingPriceOfPurchase) {
+                    // The last currencyPurchase does not have sufficient money for buy this stock.
+                    remainingPriceOfPurchase -= currencyPurchase.currencyToAmount;
+                    totalPriceOfPurchaseCZK += currencyPurchase.currencyToAmount * currencyPurchase.czkAmountForOneToUnit;
+
+                    // Try another purchase
+                    stackFrom.currencyPurchases.remove();
+                    currencyPurchase = stackFrom.currencyPurchases.peek();
+                }
+
+                currencyPurchase.currencyToAmount = currencyPurchase.currencyToAmount - remainingPriceOfPurchase;
+                totalPriceOfPurchaseCZK += remainingPriceOfPurchase * currencyPurchase.czkAmountForOneToUnit;
+
+                currencyPurchaseTarget.czkAmountForOneToUnit = totalPriceOfPurchaseCZK / currencyPurchaseTarget.currencyToAmount;
+
+                stackTo.addCurrencyPurchase(currencyPurchaseTarget);
             }
-
-            currencyPurchase.currencyFromAmount = currencyPurchase.currencyFromAmount - remainingPriceOfPurchase;
-            totalPriceOfPurchaseCZK += remainingPriceOfPurchase * currencyPurchase.czkAmountForOneFromUnit;
-
-            stockPurchase.setTotalPriceInCZK(totalPriceOfPurchaseCZK);
         }
+
 
         // 6 - Create instance of CompanyPurchasesPrice
         for (CompanyPurchaseInternal stockPurchase : sortedCompanyPurchases) {
@@ -219,10 +254,12 @@ public class PurchaseManager {
             companyPurchases.addPurchase(stockPurchase);
         }
 
-        // 7 - Create instance of CurrenciesPrice (or some better name?)
-        // TODO:mposolda
+        // 7 - Create instance of CurrenciesInfo
+        currenciesInfo.czkDepositsTotal = totalDepositCZK;
 
-
+        for (CurrencyStack currencyStack : currencyStacks.values()) {
+            currenciesInfo.currencyRemainingAmount.put(currencyStack.currencyTicker, currencyStack.getRemainingTotalCurrencyToAmount());
+        }
     }
 
     // Class, which corresponds overal amount of CZK bought for ALL the purchases of the particular company
@@ -256,6 +293,8 @@ public class PurchaseManager {
 
     // Either companmy purchase or currency purchase
     interface PurchaseInternal {
+
+        long getDateNumber();
 
     }
 
@@ -291,6 +330,10 @@ public class PurchaseManager {
             return this.totalPriceInCZK;
         }
 
+        @Override
+        public long getDateNumber() {
+            return dateNumber;
+        }
     }
 
 
@@ -308,6 +351,14 @@ public class PurchaseManager {
             currencyPurchases.add(currencyPurchaseInternal);
         }
 
+        private double getRemainingTotalCurrencyToAmount() {
+            double result = 0;
+            for (CurrencyPurchaseInternal purchase : currencyPurchases) {
+                result += purchase.currencyToAmount;
+            }
+            return result;
+        }
+
     }
 
     public static class CurrenciesInfo {
@@ -316,6 +367,14 @@ public class PurchaseManager {
 
         // Key is currencyTicker. Value is the remaining amount of particular currency, which we have available
         private Map<String, Double> currencyRemainingAmount = new HashMap<>();
+
+        public double getCzkDepositsTotal() {
+            return czkDepositsTotal;
+        }
+
+        public Map<String, Double> getCurrencyRemainingAmount() {
+            return currencyRemainingAmount;
+        }
     }
 
 
@@ -332,8 +391,7 @@ public class PurchaseManager {
 
         private double currencyToAmount;
 
-        // TODO:mposolda needs to be computed
-        private double czkAmountForOneFromUnit;
+        private double czkAmountForOneToUnit;
 
         private CurrencyPurchaseInternal(String date, String currencyFrom, double currencyFromAmount, String currencyTo, double currencyToAmount) {
             this.currencyFrom = currencyFrom;
@@ -344,7 +402,10 @@ public class PurchaseManager {
             this.currencyToAmount = currencyToAmount;
         }
 
-
+        @Override
+        public long getDateNumber() {
+            return dateNumber;
+        }
 
     }
 }

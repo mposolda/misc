@@ -11,9 +11,6 @@
         <thead>
             <tr>
                 <th>{{:: 'currency' | translate}}</th>
-                <th>{{:: 'bought-total' | translate}}</th>
-                <th>{{:: 'bought-total-price-in-czk' | translate}}</th>
-                <th>{{:: 'invested-to-stocks' | translate}}</th>
                 <th>{{:: 'in-hold' | translate}}</th>
                 <th>{{:: 'quotation' | translate}}</th>
                 <th>{{:: 'price-in-hold-czk' | translate}}</th>
@@ -23,9 +20,6 @@
         <tbody>
             <tr ng-repeat="currency in currencies.currencies">
                 <td>{{currency.ticker}}</td>
-                <td>{{MyMath.round(currency.boughtTotal)}}</td>
-                <td>{{MyMath.round(currency.boughtTotalPriceInCZK)}}</td>
-                <td>{{MyMath.round(currency.investedTotal)}}</td>
                 <td>{{MyMath.round(currency.totalHold)}}</td>
                 <td>{{MyMath.round(currency.quotation)}}</td>
                 <td>{{MyMath.round(currency.priceInHoldCZK)}}</td>
@@ -33,9 +27,6 @@
             </tr>
             <tr>
                 <td><b>{{:: 'total' | translate}}</b></td>
-                <td></td>
-                <td>{{MyMath.round(currencies.boughtTotalInCZK)}}</td>
-                <td></td>
                 <td></td>
                 <td></td>
                 <td>{{MyMath.round(currencies.priceInHoldCZK)}}</td>

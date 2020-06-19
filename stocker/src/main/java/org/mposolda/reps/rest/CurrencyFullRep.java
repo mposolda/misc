@@ -8,17 +8,17 @@ import org.mposolda.reps.CurrencyRep;
  */
 public class CurrencyFullRep extends CurrencyRep {
 
-    @JsonProperty("boughtTotal")
-    private Double boughtTotal;
-
-    @JsonProperty("boughtTotalPriceInCZK")
-    private Double boughtTotalPriceInCZK;
+//    @JsonProperty("boughtTotal")
+//    private Double boughtTotal;
+//
+//    @JsonProperty("boughtTotalPriceInCZK")
+//    private Double boughtTotalPriceInCZK;
 
     @JsonProperty("totalFeesInCZK")
     private Double totalFeesInCZK;
 
-    @JsonProperty("investedTotal")
-    private Double investedTotal;
+//    @JsonProperty("investedTotal")
+//    private Double investedTotal;
 
     @JsonProperty("totalHold")
     private Double totalHold;
@@ -30,21 +30,21 @@ public class CurrencyFullRep extends CurrencyRep {
     private Double priceInHoldCZK;
 
 
-    public Double getBoughtTotal() {
-        return boughtTotal;
-    }
-
-    public void setBoughtTotal(Double boughtTotal) {
-        this.boughtTotal = boughtTotal;
-    }
-
-    public Double getBoughtTotalPriceInCZK() {
-        return boughtTotalPriceInCZK;
-    }
-
-    public void setBoughtTotalPriceInCZK(Double boughtTotalPriceInCZK) {
-        this.boughtTotalPriceInCZK = boughtTotalPriceInCZK;
-    }
+//    public Double getBoughtTotal() {
+//        return boughtTotal;
+//    }
+//
+//    public void setBoughtTotal(Double boughtTotal) {
+//        this.boughtTotal = boughtTotal;
+//    }
+//
+//    public Double getBoughtTotalPriceInCZK() {
+//        return boughtTotalPriceInCZK;
+//    }
+//
+//    public void setBoughtTotalPriceInCZK(Double boughtTotalPriceInCZK) {
+//        this.boughtTotalPriceInCZK = boughtTotalPriceInCZK;
+//    }
 
     public Double getTotalFeesInCZK() {
         return totalFeesInCZK;
@@ -54,13 +54,13 @@ public class CurrencyFullRep extends CurrencyRep {
         this.totalFeesInCZK = totalFeesInCZK;
     }
 
-    public Double getInvestedTotal() {
-        return investedTotal;
-    }
-
-    public void setInvestedTotal(Double investedTotal) {
-        this.investedTotal = investedTotal;
-    }
+//    public Double getInvestedTotal() {
+//        return investedTotal;
+//    }
+//
+//    public void setInvestedTotal(Double investedTotal) {
+//        this.investedTotal = investedTotal;
+//    }
 
     public Double getTotalHold() {
         return totalHold;

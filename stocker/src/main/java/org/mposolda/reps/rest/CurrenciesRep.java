@@ -12,11 +12,23 @@ import org.mposolda.reps.BaseRep;
  */
 public class CurrenciesRep extends BaseRep {
 
-    private List<CurrencyFullRep> currencies = new LinkedList<>();
-
-    private final AtomicBoolean finished = new AtomicBoolean(false);
+    @JsonProperty("depositTotalInCZK")
+    private double depositTotalInCZK;
 
     @JsonProperty("currencies")
+    private List<CurrencyFullRep> currencies = new LinkedList<>();
+
+    @JsonProperty("finished")
+    private final AtomicBoolean finished = new AtomicBoolean(false);
+
+    public double getDepositTotalInCZK() {
+        return depositTotalInCZK;
+    }
+
+    public void setDepositTotalInCZK(double depositTotalInCZK) {
+        this.depositTotalInCZK = depositTotalInCZK;
+    }
+
     public List<CurrencyFullRep> getCurrencies() {
         return currencies;
     }
@@ -25,26 +37,12 @@ public class CurrenciesRep extends BaseRep {
         this.currencies = currencies;
     }
 
-    @JsonProperty("finished")
     public Boolean getFinished() {
         return finished.get();
     }
 
     public void setFinished(Boolean finished) {
         this.finished.set(finished);
-    }
-
-    /**
-     *
-     * @return Total amount of bought moneys, which are exchanged to other currencies
-     */
-    @JsonProperty("boughtTotalInCZK")
-    public Double getBoughtTotalInCZK() {
-        double result = 0;
-        for (CurrencyFullRep currency : currencies) {
-            result += currency.getBoughtTotalPriceInCZK();
-        }
-        return result;
     }
 
     /**

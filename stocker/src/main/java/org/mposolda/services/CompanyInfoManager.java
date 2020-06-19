@@ -50,9 +50,13 @@ public class CompanyInfoManager {
         // Load company informations with HTTP client and compute rest of them
         List<CurrencyFullRep> fullCurrencies = computeCurrencies(database.getCurrencies());
         this.currencies.setCurrencies(fullCurrencies);
-        this.currencies.setFinished(true);
 
-        //System.out.println(fullCompanies);
+        // Total deposit is based on the computation in PurchaseManager
+        PurchaseManager purchaseManager = Services.instance().getPurchaseManager();
+        PurchaseManager.CurrenciesInfo currenciesInfo = purchaseManager.getCurrenciesInfo();
+        this.currencies.setDepositTotalInCZK(currenciesInfo.getCzkDepositsTotal());
+
+        this.currencies.setFinished(true);
     }
 
     public CompaniesRep getCompanies() {
@@ -82,7 +86,7 @@ public class CompanyInfoManager {
 
         // Using open-day price for now. Using current price returned strange results for some companies (EG. 1.03 instead of 1.3)
         // TODO:mposolda figure the issue if possible and eventually replace with current price
-        double currentPrice = quote.getOpenDayPrice();
+        double currentPrice = quote.getCurrentPrice();
 
         result.setCurrentStockPrice(currentPrice);
         int totalStocksInHold = 0;
@@ -149,32 +153,34 @@ public class CompanyInfoManager {
         CurrencyFullRep result = new CurrencyFullRep();
         result.setTicker(currency.getTicker());
 
-        double totalCountBought = 0;
-        double totalPrice = 0;
+        //double totalCountBought = 0;
+        //double totalPrice = 0;
         double totalFeesInCZK = 0;
         for (CurrencyRep.CurrencyPurchaseRep purchase : currency.getPurchases()) {
-            totalCountBought += purchase.getCountBought();
-            totalPrice += purchase.getCountBought() * purchase.getPricePerUnit();
+            //totalCountBought += purchase.getCountBought();
+            //totalPrice += purchase.getCountBought() * purchase.getPricePerUnit();
             totalFeesInCZK += purchase.getFeeInCZK();
         }
 
-        double investedToStocks = 0;
-        // Check how much money of particular currency we invested to stocks
-        for (CompanyFullRep company : companies.getCompanies()) {
-            if (company.getCurrency().equals(currency.getTicker())) {
-                investedToStocks += company.getTotalPricePayed();
-            }
-        }
+//        double investedToStocks = 0;
+//        // Check how much money of particular currency we invested to stocks
+//        for (CompanyFullRep company : companies.getCompanies()) {
+//            if (company.getCurrency().equals(currency.getTicker())) {
+//                investedToStocks += company.getTotalPricePayed();
+//            }
+//        }
 
-        double inHold = totalCountBought - investedToStocks;
+        PurchaseManager purchaseManager = Services.instance().getPurchaseManager();
+        PurchaseManager.CurrenciesInfo currenciesInfo = purchaseManager.getCurrenciesInfo();
+        double inHold = currenciesInfo.getCurrencyRemainingAmount().get(currency.getTicker());
 
         double quotation = currencyConvertor.exchangeMoney(1, currency.getTicker(), "CZK");
 
         double priceInHoldCZK = currencyConvertor.exchangeMoney(inHold, currency.getTicker(), "CZK");
 
-        result.setBoughtTotal(totalCountBought);
-        result.setBoughtTotalPriceInCZK(totalPrice);
-        result.setInvestedTotal(investedToStocks);
+        //result.setBoughtTotal(totalCountBought);
+        //result.setBoughtTotalPriceInCZK(totalPrice);
+        //result.setInvestedTotal(investedToStocks);
         result.setTotalHold(inHold);
         result.setTotalFeesInCZK(totalFeesInCZK);
         result.setQuotation(quotation);
