@@ -16,6 +16,9 @@ public class CurrencyRep extends BaseRep {
     @JsonProperty("purchases")
     private List<CurrencyPurchaseRep> purchases;
 
+    @JsonProperty("deposits")
+    private List<CurrencyDepositRep> deposits;
+
     public String getTicker() {
         return ticker;
     }
@@ -32,6 +35,40 @@ public class CurrencyRep extends BaseRep {
         this.purchases = purchases;
     }
 
+    public List<CurrencyDepositRep> getDeposits() {
+        return deposits;
+    }
+
+    public void setDeposits(List<CurrencyDepositRep> deposits) {
+        this.deposits = deposits;
+    }
+
+    public static class CurrencyDepositRep extends BaseRep {
+
+        @JsonProperty("date")
+        private String date;
+
+        @JsonProperty("countBought")
+        private Double countBought;
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public Double getCountBought() {
+            return countBought;
+        }
+
+        public void setCountBought(Double countBought) {
+            this.countBought = countBought;
+        }
+    }
+
+
     public static class CurrencyPurchaseRep extends BaseRep {
 
         @JsonProperty("date")
@@ -45,6 +82,9 @@ public class CurrencyRep extends BaseRep {
 
         @JsonProperty("pricePerUnit")
         private Double pricePerUnit;
+
+        @JsonProperty("currencyFrom")
+        private String currencyFrom;
 
         public String getDate() {
             return date;
@@ -76,6 +116,14 @@ public class CurrencyRep extends BaseRep {
 
         public void setPricePerUnit(Double pricePerUnit) {
             this.pricePerUnit = pricePerUnit;
+        }
+
+        public String getCurrencyFrom() {
+            return currencyFrom;
+        }
+
+        public void setCurrencyFrom(String currencyFrom) {
+            this.currencyFrom = currencyFrom;
         }
     }
 }

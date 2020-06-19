@@ -24,15 +24,14 @@ import org.mposolda.util.JsonUtil;
  */
 public class PurchaseManager {
 
-    // TODO:mposolda this should not be hardcoded!
-    public static final double CZK_DEPOSIT = 1790000;
-
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
     private final String  companiesJsonFileLocation;
 
     // All purchases of all companies
     private Map<String, CompanyPurchasesPrice> companiesPurchases = new HashMap<>();
+
+    private CurrenciesInfo currenciesInfo = new CurrenciesInfo();
 
     PurchaseManager(String companiesJsonFileLocation) {
         this.companiesJsonFileLocation = companiesJsonFileLocation;
@@ -52,10 +51,12 @@ public class PurchaseManager {
         DatabaseRep database = JsonUtil.loadDatabase(this.companiesJsonFileLocation);
 
         // 1 - Sort the company purchases by date
-        Set<PurchaseInternalRep> sortedPurchases = new TreeSet<>(new Comparator<PurchaseInternalRep>() {
+        Comparator<CompanyPurchaseInternal> companyPurchaseComparator = new Comparator<CompanyPurchaseInternal>() {
 
             @Override
-            public int compare(PurchaseInternalRep o1, PurchaseInternalRep o2) {
+            public int compare(CompanyPurchaseInternal o1, CompanyPurchaseInternal o2) {
+                if (o1.equals(o2)) return 0;
+
                 long diff = o1.dateNumber - o2.dateNumber;
 
                 if (diff > 0) {
@@ -67,13 +68,14 @@ public class PurchaseManager {
                 }
             }
 
-        });
+        };
+        Set<CompanyPurchaseInternal> sortedCompanyPurchases = new TreeSet<>(companyPurchaseComparator);
 
         for (CompanyRep company : database.getCompanies()) {
             List<PurchaseRep> purchases = company.getPurchases();
             for (PurchaseRep purchase : purchases) {
-                PurchaseInternalRep pi = new PurchaseInternalRep(company.getTicker(), company.getCurrency(), purchase);
-                sortedPurchases.add(pi);
+                CompanyPurchaseInternal pi = new CompanyPurchaseInternal(company.getTicker(), company.getCurrency(), purchase);
+                sortedCompanyPurchases.add(pi);
             }
         }
 
@@ -81,7 +83,7 @@ public class PurchaseManager {
         log.info("Created sorted purchases");
 
         // 2 - Sort currency purchases
-        Set<CurrencyPurchaseInternal> sortedCurrencyPurchases = new TreeSet<>(new Comparator<CurrencyPurchaseInternal>() {
+        Comparator<CurrencyPurchaseInternal> currencyPurchaseComparator = new Comparator<CurrencyPurchaseInternal>() {
 
             @Override
             public int compare(CurrencyPurchaseInternal o1, CurrencyPurchaseInternal o2) {
@@ -92,44 +94,93 @@ public class PurchaseManager {
                 if (diff > 0) {
                     return 1;
                 } else if (diff == 0) {
-                    int diff2 = o1.currencyFrom.compareTo(o2.currencyFrom);
+                    int diff2 = o1.currencyTo.compareTo(o2.currencyTo);
                     if (diff2 != 0) {
                         return diff2;
                     } else {
-                        throw new IllegalStateException("Two boughts of the currency " + o1.currencyFrom + " done at the same day!");
+                        throw new IllegalStateException("Two boughts of the currency " + o1.currencyTo + " done at the same day!");
                     }
                 } else {
                     return -1;
                 }
             }
 
-        });
+        };
+        Set<CurrencyPurchaseInternal> sortedCurrencyPurchases = new TreeSet<>(currencyPurchaseComparator);
 
         for (CurrencyRep currency : database.getCurrencies()) {
             List<CurrencyRep.CurrencyPurchaseRep> purchases = currency.getPurchases();
             for (CurrencyRep.CurrencyPurchaseRep purchase : purchases) {
-                CurrencyPurchaseInternal pi = new CurrencyPurchaseInternal(currency.getTicker(), purchase.getDate(),
-                        purchase.getCountBought(), purchase.getPricePerUnit());
+                double currencyFromAmount = purchase.getCountBought() * purchase.getPricePerUnit();
+
+                CurrencyPurchaseInternal pi = new CurrencyPurchaseInternal(purchase.getDate(), purchase.getCurrencyFrom(), currencyFromAmount,
+                        currency.getTicker(), purchase.getCountBought());
                 sortedCurrencyPurchases.add(pi);
             }
         }
 
-        // 3 Create currency stacks based on all currency purchases
-        Map<String, CurrencyStack> currencyStacks = new HashMap<>();
-        for (CurrencyPurchaseInternal currencyPurchaseInternal : sortedCurrencyPurchases) {
-            String currencyFromTicker = currencyPurchaseInternal.currencyFrom;
+        // 3 Create list of all purchases (currency + company purchases)
+        Set<PurchaseInternal> allSortedPurchases = new TreeSet<>(new Comparator<PurchaseInternal>() {
 
-            CurrencyStack stack = currencyStacks.get(currencyFromTicker);
-            if (stack == null) {
-                stack = new CurrencyStack(currencyFromTicker);
-                currencyStacks.put(currencyFromTicker, stack);
+            @Override
+            public int compare(PurchaseInternal o1, PurchaseInternal o2) {
+                if (o1.equals(o2)) return 0;
+
+                if (o1 instanceof CurrencyPurchaseInternal && o2 instanceof CurrencyPurchaseInternal)
+                    return currencyPurchaseComparator.compare((CurrencyPurchaseInternal)o1, (CurrencyPurchaseInternal) o2);
+
+                if (o1 instanceof CompanyPurchaseInternal && o2 instanceof CompanyPurchaseInternal)
+                    return companyPurchaseComparator.compare((CompanyPurchaseInternal)o1, (CompanyPurchaseInternal) o2);
+
+                // Currency purchases must go first
+                if (o1 instanceof CurrencyPurchaseInternal && o2 instanceof CompanyPurchaseInternal) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+
             }
 
-            stack.addCurrencyPurchase(currencyPurchaseInternal);
+        });
+        allSortedPurchases.addAll(sortedCurrencyPurchases);
+        allSortedPurchases.addAll(sortedCompanyPurchases);
+
+
+        // 4 Create currency stacks.
+        Map<String, CurrencyStack> currencyStacks = new HashMap<>();
+        CurrencyRep czkRep = null;
+        for (CurrencyRep currencyRep : database.getCurrencies()) {
+            currencyStacks.put(currencyRep.getTicker(), new CurrencyStack(currencyRep.getTicker()));
+            if ("CZK".equals(currencyRep.getTicker())) czkRep = currencyRep;
         }
 
-        // 4 - Apply all company purchases. Compute CZK amount for each company purchase
-        for (PurchaseInternalRep stockPurchase : sortedPurchases) {
+        // 5 Add CZK deposits to the CZK stack and nothing else
+        CurrencyStack czkStack = currencyStacks.get("CZK");
+        double totalDepositCZK = 0;
+        String dateOfFirstDeposit = null;
+        for (CurrencyRep.CurrencyDepositRep deposit : czkRep.getDeposits()) {
+            totalDepositCZK += deposit.getCountBought();
+            if (dateOfFirstDeposit == null) dateOfFirstDeposit = deposit.getDate();
+        }
+        CurrencyPurchaseInternal czkPurchase = new CurrencyPurchaseInternal(dateOfFirstDeposit, "CZK", 0, "CZK", totalDepositCZK);
+        czkPurchase.czkAmountForOneFromUnit = 1;
+        czkStack.addCurrencyPurchase(czkPurchase);
+
+//        for (CurrencyPurchaseInternal currencyPurchaseInternal : sortedCurrencyPurchases) {
+//            String currencyFromTicker = currencyPurchaseInternal.currencyFrom;
+//
+//            CurrencyStack stack = currencyStacks.get(currencyFromTicker);
+//            if (stack == null) {
+//                stack = new CurrencyStack(currencyFromTicker);
+//                currencyStacks.put(currencyFromTicker, stack);
+//            }
+//
+//            // TODO:mposolda delete this line
+//            //stack.addCurrencyPurchase(currencyPurchaseInternal);
+//        }
+
+        // 5 - Apply all company purchases and currency purchases based on the time. Compute CZK amount for each company purchase
+        for (CompanyPurchaseInternal stockPurchase : sortedCompanyPurchases) {
             CurrencyStack stack = currencyStacks.get(stockPurchase.currency);
 
             // Total price of purchase in "currency from"
@@ -155,8 +206,8 @@ public class PurchaseManager {
             stockPurchase.setTotalPriceInCZK(totalPriceOfPurchaseCZK);
         }
 
-        // 5 - Create instance of CompanyPurchasesPrice
-        for (PurchaseInternalRep stockPurchase : sortedPurchases) {
+        // 6 - Create instance of CompanyPurchasesPrice
+        for (CompanyPurchaseInternal stockPurchase : sortedCompanyPurchases) {
             String companyTicker = stockPurchase.companyTicker;
 
             CompanyPurchasesPrice companyPurchases = this.companiesPurchases.get(companyTicker);
@@ -168,6 +219,9 @@ public class PurchaseManager {
             companyPurchases.addPurchase(stockPurchase);
         }
 
+        // 7 - Create instance of CurrenciesPrice (or some better name?)
+        // TODO:mposolda
+
 
     }
 
@@ -176,32 +230,36 @@ public class PurchaseManager {
 
         private final String companyTicker;
 
-        private final List<PurchaseInternalRep> purchases = new ArrayList<>();
+        private final List<CompanyPurchaseInternal> purchases = new ArrayList<>();
 
         private CompanyPurchasesPrice(String companyTicker) {
             this.companyTicker = companyTicker;
         }
 
-        public List<PurchaseInternalRep> getPurchases() {
+        public List<CompanyPurchaseInternal> getPurchases() {
             return purchases;
         }
 
-        public void addPurchase(PurchaseInternalRep purchase) {
+        public void addPurchase(CompanyPurchaseInternal purchase) {
             this.purchases.add(purchase);
         }
 
         // Get total price of all purchases
         public double getTotalCZKPriceOfAllPurchases() {
             double sum = 0;
-            for (PurchaseInternalRep purchase : purchases) {
+            for (CompanyPurchaseInternal purchase : purchases) {
                 sum += purchase.getTotalPriceInCZK();
             }
             return sum;
         }
     }
 
+    // Either companmy purchase or currency purchase
+    interface PurchaseInternal {
 
-    public static class PurchaseInternalRep {
+    }
+
+    public static class CompanyPurchaseInternal implements PurchaseInternal {
 
         private final String companyTicker;
         private final String currency;
@@ -213,7 +271,7 @@ public class PurchaseManager {
 
         private double totalPriceInCZK;
 
-        private PurchaseInternalRep(String companyTicker, String currency, PurchaseRep purchase) {
+        private CompanyPurchaseInternal(String companyTicker, String currency, PurchaseRep purchase) {
             this.companyTicker = companyTicker;
             this.currency = currency;
             this.date = purchase.getDate();
@@ -252,26 +310,38 @@ public class PurchaseManager {
 
     }
 
-    private static class CurrencyPurchaseInternal {
+    public static class CurrenciesInfo {
+
+        private double czkDepositsTotal;
+
+        // Key is currencyTicker. Value is the remaining amount of particular currency, which we have available
+        private Map<String, Double> currencyRemainingAmount = new HashMap<>();
+    }
+
+
+    private static class CurrencyPurchaseInternal implements PurchaseInternal {
 
         private final String date;
         private final long dateNumber;
 
         private final String currencyFrom;
 
-        // private final String currencyTo;
+        private final String currencyTo;
 
         private double currencyFromAmount;
 
-        // TODO:mposolda not sure if this is always be CZK? Or other property for "currencyTo" needed?
-        private final double czkAmountForOneFromUnit;
+        private double currencyToAmount;
 
-        public CurrencyPurchaseInternal(String currencyFrom, String date, double currencyFromAmount, double czkAmountForOneFromUnit) {
+        // TODO:mposolda needs to be computed
+        private double czkAmountForOneFromUnit;
+
+        private CurrencyPurchaseInternal(String date, String currencyFrom, double currencyFromAmount, String currencyTo, double currencyToAmount) {
             this.currencyFrom = currencyFrom;
+            this.currencyTo = currencyTo;
             this.date = date;
             this.dateNumber = DateUtil.dateToNumber(date);
             this.currencyFromAmount = currencyFromAmount;
-            this.czkAmountForOneFromUnit = czkAmountForOneFromUnit;
+            this.currencyToAmount = currencyToAmount;
         }
 
 
