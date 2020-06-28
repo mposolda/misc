@@ -138,7 +138,7 @@ public class CompanyInfoManager {
     }
 
     private List<CurrencyFullRep> computeCurrencies(List<CurrencyRep> currencies) {
-        return currencies.stream()
+        List<CurrencyFullRep> result = currencies.stream()
                 .map(currencyRep -> {
 
                     CurrencyFullRep currency = computeCurrencyFull(currencyRep);
@@ -147,6 +147,19 @@ public class CompanyInfoManager {
 
                 })
                 .collect(Collectors.toList());
+
+        // Subtract fees in CZK from the CZK remaining value in hold
+        double totalFeesInCZK = 0;
+        CurrencyFullRep czkCurrency = null;
+        for (CurrencyFullRep currency : result) {
+            if ("CZK".equals(currency.getTicker())) {
+                czkCurrency = currency;
+            }
+            totalFeesInCZK += currency.getTotalFeesInCZK();
+        }
+        czkCurrency.setPriceInHoldCZK(czkCurrency.getPriceInHoldCZK() - totalFeesInCZK);
+
+        return result;
     }
 
     private CurrencyFullRep computeCurrencyFull(CurrencyRep currency) {
