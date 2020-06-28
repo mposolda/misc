@@ -4,6 +4,8 @@ P1
 
 - Unit test for PurchaseManager
 
+- Dividends support
+
 
 P2: 
 

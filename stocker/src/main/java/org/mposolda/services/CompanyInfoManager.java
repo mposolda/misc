@@ -98,7 +98,7 @@ public class CompanyInfoManager {
         List<CompanyFullRep.PurchaseFull> purchases = new LinkedList<>();
         for (PurchaseRep purchase : company.getPurchases()) {
             totalStocksInHold += purchase.getStocksCount();
-            totalPricePayed += (purchase.getPricePerStock() * totalStocksInHold);
+            totalPricePayed += (purchase.getPricePerStock() * purchase.getStocksCount());
             int expectedBackflowInPercent = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / purchase.getPricePerStock());
 
             CompanyFullRep.PurchaseFull purchaseFull = new CompanyFullRep.PurchaseFull(purchase);
