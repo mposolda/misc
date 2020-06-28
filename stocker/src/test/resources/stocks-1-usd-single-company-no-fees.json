@@ -1,0 +1,65 @@
+{
+  "companies": [
+    {
+      "name": "Foo Company",
+      "ticker": "FOO",
+      "currency": "USD",
+      "expectedBackflows": [
+        {
+          "date": "2020-03-06",
+          "price": 5.0,
+          "backflowInPercent": 25
+        }
+      ],
+      "purchases": [
+        {
+          "date": "2020-05-29",
+          "stocksCount": 1000,
+          "pricePerStock":  5.00,
+          "fee": 0
+        },
+        {
+          "date": "2020-06-18",
+          "stocksCount": 550,
+          "pricePerStock":  10.00,
+          "fee": 0
+        }
+      ]
+    }
+  ],
+  "currencies": [
+    {
+      "ticker": "CZK",
+      "purchases": [],
+      "deposits": [
+        {
+          "date": "2020-05-27",
+          "countBought": 200000.0
+        },
+        {
+          "date": "2020-05-28",
+          "countBought": 300000.0
+        }
+      ]
+    },
+    {
+      "ticker": "USD",
+      "purchases": [
+        {
+          "date": "2020-05-28",
+          "countBought": 10000.00,
+          "feeInCZK": 0,
+          "pricePerUnit":  20.0,
+          "currencyFrom": "CZK"
+        },
+        {
+          "date": "2020-05-29",
+          "countBought": 1000.00,
+          "feeInCZK": 0,
+          "pricePerUnit":  10.00,
+          "currencyFrom": "CZK"
+        }
+      ]
+    }
+  ]
+}

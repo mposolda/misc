@@ -33,7 +33,7 @@ public class PurchaseManager {
 
     private CurrenciesInfo currenciesInfo = new CurrenciesInfo();
 
-    PurchaseManager(String companiesJsonFileLocation) {
+    public PurchaseManager(String companiesJsonFileLocation) {
         this.companiesJsonFileLocation = companiesJsonFileLocation;
     }
 
