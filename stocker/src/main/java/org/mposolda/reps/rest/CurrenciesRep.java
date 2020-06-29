@@ -15,6 +15,9 @@ public class CurrenciesRep extends BaseRep {
     @JsonProperty("depositTotalInCZK")
     private double depositTotalInCZK;
 
+    @JsonProperty("totalFeesInCZK")
+    private double totalFeesInCZK;
+
     @JsonProperty("currencies")
     private List<CurrencyFullRep> currencies = new LinkedList<>();
 
@@ -64,10 +67,10 @@ public class CurrenciesRep extends BaseRep {
      */
     @JsonProperty("totalFeesCZK")
     public Double getTotalFeesCZK() {
-        double result = 0;
-        for (CurrencyFullRep currency : currencies) {
-            result += currency.getTotalFeesInCZK();
-        }
-        return result;
+        return totalFeesInCZK;
+    }
+
+    public void setTotalFeesCZK(Double totalFeesInCZK) {
+        this.totalFeesInCZK = totalFeesInCZK;
     }
 }

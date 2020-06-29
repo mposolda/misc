@@ -80,7 +80,15 @@ public class CompaniesRep extends BaseRep {
         return ((getCurrentPriceOfAllStocksInHoldCZK() / getTotalPricePayedCZK()) - 1) * 100;
     }
 
+    /**
+     * @return Total fees
+     */
+    @JsonProperty("totalFeesCZK")
+    public Double getTotalFeesCZK() {
+        // TODO:mposolda compute...
+        return 0.0;
+    }
+
     // TODO:mposolda average year backflow in percent and expected year backflow in percent
 
-    // TODO:mposolda fees?
 }

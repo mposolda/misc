@@ -55,7 +55,7 @@ public class CompanyInfoManager {
         PurchaseManager purchaseManager = Services.instance().getPurchaseManager();
         PurchaseManager.CurrenciesInfo currenciesInfo = purchaseManager.getCurrenciesInfo();
         this.currencies.setDepositTotalInCZK(currenciesInfo.getCzkDepositsTotal());
-
+        this.currencies.setTotalFeesCZK(currenciesInfo.getCzkFeesTotal());
         this.currencies.setFinished(true);
     }
 
@@ -148,17 +148,6 @@ public class CompanyInfoManager {
                 })
                 .collect(Collectors.toList());
 
-        // Subtract fees in CZK from the CZK remaining value in hold
-        double totalFeesInCZK = 0;
-        CurrencyFullRep czkCurrency = null;
-        for (CurrencyFullRep currency : result) {
-            if ("CZK".equals(currency.getTicker())) {
-                czkCurrency = currency;
-            }
-            totalFeesInCZK += currency.getTotalFeesInCZK();
-        }
-        czkCurrency.setPriceInHoldCZK(czkCurrency.getPriceInHoldCZK() - totalFeesInCZK);
-
         return result;
     }
 
@@ -168,12 +157,6 @@ public class CompanyInfoManager {
 
         //double totalCountBought = 0;
         //double totalPrice = 0;
-        double totalFeesInCZK = 0;
-        for (CurrencyRep.CurrencyPurchaseRep purchase : currency.getPurchases()) {
-            //totalCountBought += purchase.getCountBought();
-            //totalPrice += purchase.getCountBought() * purchase.getPricePerUnit();
-            totalFeesInCZK += purchase.getFeeInCZK();
-        }
 
 //        double investedToStocks = 0;
 //        // Check how much money of particular currency we invested to stocks
@@ -195,7 +178,6 @@ public class CompanyInfoManager {
         //result.setBoughtTotalPriceInCZK(totalPrice);
         //result.setInvestedTotal(investedToStocks);
         result.setTotalHold(inHold);
-        result.setTotalFeesInCZK(totalFeesInCZK);
         result.setQuotation(quotation);
         result.setPriceInHoldCZK(priceInHoldCZK);
 

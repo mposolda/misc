@@ -14,7 +14,6 @@
                 <th>{{:: 'in-hold' | translate}}</th>
                 <th>{{:: 'quotation' | translate}}</th>
                 <th>{{:: 'price-in-hold-czk' | translate}}</th>
-                <th>{{:: 'total-fees-in-czk' | translate}}</th>
             </tr>
         </thead>
         <tbody>
@@ -23,14 +22,12 @@
                 <td>{{MyMath.round(currency.totalHold)}}</td>
                 <td>{{MyMath.round(currency.quotation)}}</td>
                 <td>{{MyMath.round(currency.priceInHoldCZK)}}</td>
-                <td>{{MyMath.round(currency.totalFeesInCZK)}}</td>
             </tr>
             <tr>
                 <td><b>{{:: 'total' | translate}}</b></td>
                 <td></td>
                 <td></td>
                 <td>{{MyMath.round(currencies.priceInHoldCZK)}}</td>
-                <td>{{MyMath.round(currencies.totalFeesCZK)}}</td>
             </tr>
         </tbody>
     </table>

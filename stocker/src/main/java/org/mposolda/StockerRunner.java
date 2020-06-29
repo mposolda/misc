@@ -1,6 +1,6 @@
 package org.mposolda;
 
-import org.jboss.logging.Logger;
+
 import org.mposolda.cli.StockerCli;
 import org.mposolda.services.Services;
 

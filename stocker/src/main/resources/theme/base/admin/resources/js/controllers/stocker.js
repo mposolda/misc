@@ -55,5 +55,7 @@ module.controller('SummaryCtrl', function($scope, Companies, companies, Currenci
     $scope.currencies = currencies;
     $scope.MyMath = MyMath;
     $scope.ColorMarker = ColorMarker;
+
+    $scope.totalFees = companies.totalFeesCZK + currencies.totalFeesCZK;
 });
 
