@@ -18,6 +18,9 @@ public class PurchaseRep extends BaseRep {
     @JsonProperty("pricePerStock")
     public double pricePerStock;
 
+    @JsonProperty("fee")
+    public double fee;
+
     public String getDate() {
         return date;
     }
@@ -40,5 +43,13 @@ public class PurchaseRep extends BaseRep {
 
     public void setPricePerStock(double pricePerStock) {
         this.pricePerStock = pricePerStock;
+    }
+
+    public double getFee() {
+        return fee;
+    }
+
+    public void setFee(double fee) {
+        this.fee = fee;
     }
 }

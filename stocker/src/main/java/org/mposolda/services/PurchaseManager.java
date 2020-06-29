@@ -121,7 +121,7 @@ public class PurchaseManager {
                 double currencyFromAmount = purchase.getCountBought() * purchase.getPricePerUnit();
 
                 CurrencyPurchaseInternal pi = new CurrencyPurchaseInternal(purchase.getDate(), purchase.getCurrencyFrom(), currencyFromAmount,
-                        currency.getTicker(), purchase.getCountBought());
+                        currency.getTicker(), purchase.getCountBought(), purchase.getFeeInCZK());
                 sortedCurrencyPurchases.add(pi);
             }
         }
@@ -176,7 +176,8 @@ public class PurchaseManager {
             totalDepositCZK += deposit.getCountBought();
             if (dateOfFirstDeposit == null) dateOfFirstDeposit = deposit.getDate();
         }
-        CurrencyPurchaseInternal czkPurchase = new CurrencyPurchaseInternal(dateOfFirstDeposit, "CZK", 0, "CZK", totalDepositCZK);
+        CurrencyPurchaseInternal czkPurchase = new CurrencyPurchaseInternal(dateOfFirstDeposit, "CZK", 0, "CZK",
+                totalDepositCZK, 0);
         czkPurchase.czkAmountForOneToUnit = 1;
         czkStack.addCurrencyPurchase(czkPurchase);
 
@@ -191,6 +192,9 @@ public class PurchaseManager {
 
                 // Total price of purchase in "currency from"
                 double totalPriceOfPurchase = stockPurchase.stocksCount * stockPurchase.pricePerStock;
+
+                // Add the fee
+                totalPriceOfPurchase += stockPurchase.feeInOriginalCurrency;
 
                 // Now compute the total amount of CZK needed
                 CurrencyPurchaseInternal currencyPurchase = stack.currencyPurchases.peek();
@@ -210,6 +214,11 @@ public class PurchaseManager {
                 totalPriceOfPurchaseCZK += remainingPriceOfPurchase * currencyPurchase.czkAmountForOneToUnit;
 
                 stockPurchase.setTotalPriceInCZK(totalPriceOfPurchaseCZK);
+
+                // Compute the "fee" in CZK
+                double feeInCZK = stockPurchase.feeInOriginalCurrency * totalPriceOfPurchaseCZK / totalPriceOfPurchase;
+                stockPurchase.setTotalFeeInCZK(feeInCZK);
+
             } else {
                 // 5.2 CURRENCY PURCHASE
                 CurrencyPurchaseInternal currencyPurchaseTarget = (CurrencyPurchaseInternal) purchase;
@@ -260,6 +269,19 @@ public class PurchaseManager {
         for (CurrencyStack currencyStack : currencyStacks.values()) {
             currenciesInfo.currencyRemainingAmount.put(currencyStack.currencyTicker, currencyStack.getRemainingTotalCurrencyToAmount());
         }
+
+        double czkFeesForCurrencyPurchasesTotal = 0;
+        for (CurrencyRep currencyRep : database.getCurrencies()) {
+            for (CurrencyRep.CurrencyPurchaseRep currencyPurchase : currencyRep.getPurchases()) {
+                czkFeesForCurrencyPurchasesTotal += currencyPurchase.getFeeInCZK();
+            }
+        }
+        currenciesInfo.czkFeesTotal = czkFeesForCurrencyPurchasesTotal;
+
+        // Update remaining amount of CZK with the fees for currency purchases
+        double czkRemaining = currenciesInfo.currencyRemainingAmount.get("CZK");
+        czkRemaining -= czkFeesForCurrencyPurchasesTotal;
+        currenciesInfo.currencyRemainingAmount.put("CZK", czkRemaining);
     }
 
     // Class, which corresponds overal amount of CZK bought for ALL the purchases of the particular company
@@ -281,11 +303,20 @@ public class PurchaseManager {
             this.purchases.add(purchase);
         }
 
-        // Get total price of all purchases
+        // Get total price of all purchases. It includes fees
         public double getTotalCZKPriceOfAllPurchases() {
             double sum = 0;
             for (CompanyPurchaseInternal purchase : purchases) {
                 sum += purchase.getTotalPriceInCZK();
+            }
+            return sum;
+        }
+
+        // Get total price of all fees of all company purchases
+        public double getTotalCZKPriceOfAllFees() {
+            double sum = 0;
+            for (CompanyPurchaseInternal purchase : purchases) {
+                sum += purchase.getTotalFeeInCZK();
             }
             return sum;
         }
@@ -307,8 +338,11 @@ public class PurchaseManager {
         private final long dateNumber;
         private final int stocksCount;
         private final double pricePerStock;
+        private final double feeInOriginalCurrency;
 
         private double totalPriceInCZK;
+
+        private double totalFeeInCZK;
 
         private CompanyPurchaseInternal(String companyTicker, String currency, PurchaseRep purchase) {
             this.companyTicker = companyTicker;
@@ -316,6 +350,7 @@ public class PurchaseManager {
             this.date = purchase.getDate();
             this.stocksCount = purchase.getStocksCount();
             this.pricePerStock = purchase.getPricePerStock();
+            this.feeInOriginalCurrency = purchase.getFee();
 
             // Compute date
             this.dateNumber = DateUtil.dateToNumber(date);
@@ -325,9 +360,18 @@ public class PurchaseManager {
             this.totalPriceInCZK = totalPriceInCZK;
         }
 
-        // Get total price of this purchase in CZK
+        // Get total price of this purchase in CZK including fees
         public double getTotalPriceInCZK() {
             return this.totalPriceInCZK;
+        }
+
+        private void setTotalFeeInCZK(double totalFeeInCZK) {
+            this.totalFeeInCZK = totalFeeInCZK;
+        }
+
+        // Get price of this purchase in CZK including fees
+        public double getTotalFeeInCZK() {
+            return totalFeeInCZK;
         }
 
         @Override
@@ -365,11 +409,17 @@ public class PurchaseManager {
 
         private double czkDepositsTotal;
 
+        private double czkFeesTotal;
+
         // Key is currencyTicker. Value is the remaining amount of particular currency, which we have available
         private Map<String, Double> currencyRemainingAmount = new HashMap<>();
 
         public double getCzkDepositsTotal() {
             return czkDepositsTotal;
+        }
+
+        public double getCzkFeesTotal() {
+            return czkFeesTotal;
         }
 
         public Map<String, Double> getCurrencyRemainingAmount() {
@@ -393,13 +443,17 @@ public class PurchaseManager {
 
         private double czkAmountForOneToUnit;
 
-        private CurrencyPurchaseInternal(String date, String currencyFrom, double currencyFromAmount, String currencyTo, double currencyToAmount) {
+        private double feeInCZK;
+
+        private CurrencyPurchaseInternal(String date, String currencyFrom, double currencyFromAmount, String currencyTo,
+                                         double currencyToAmount, double feeInCZK) {
             this.currencyFrom = currencyFrom;
             this.currencyTo = currencyTo;
             this.date = date;
             this.dateNumber = DateUtil.dateToNumber(date);
             this.currencyFromAmount = currencyFromAmount;
             this.currencyToAmount = currencyToAmount;
+            this.feeInCZK = feeInCZK;
         }
 
         @Override

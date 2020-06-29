@@ -1,0 +1,73 @@
+{
+  "companies": [
+    {
+      "name": "Foo CAD Company",
+      "ticker": "FOOCAD",
+      "currency": "CAD",
+      "expectedBackflows": [
+        {
+          "date": "2020-03-06",
+          "price": 5.0,
+          "backflowInPercent": 25
+        }
+      ],
+      "purchases": [
+        {
+          "date": "2020-06-30",
+          "stocksCount": 150,
+          "pricePerStock":  10.00,
+          "fee": 5
+        },
+        {
+          "date": "2020-06-31",
+          "stocksCount": 48,
+          "pricePerStock":  10.00,
+          "fee": 5
+        }
+      ]
+    }
+  ],
+  "currencies": [
+    {
+      "ticker": "CZK",
+      "purchases": [],
+      "deposits": [
+        {
+          "date": "2020-05-27",
+          "countBought": 500000.0
+        }
+      ]
+    },
+    {
+      "ticker": "USD",
+      "purchases": [
+        {
+          "date": "2020-05-28",
+          "countBought": 1000.00,
+          "feeInCZK": 100,
+          "pricePerUnit":  20.0,
+          "currencyFrom": "CZK"
+        }
+      ]
+    },
+    {
+      "ticker": "CAD",
+      "purchases": [
+        {
+          "date": "2020-05-29",
+          "countBought": 1000.00,
+          "feeInCZK": 100,
+          "pricePerUnit":  0.5,
+          "currencyFrom": "USD"
+        },
+        {
+          "date": "2020-05-30",
+          "countBought": 1000.00,
+          "feeInCZK": 100,
+          "pricePerUnit":  0.1,
+          "currencyFrom": "USD"
+        }
+      ]
+    }
+  ]
+}
