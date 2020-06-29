@@ -84,13 +84,13 @@ public class CompanyInfoManager {
 
         QuoteRep quote = finhubClient.getQuoteRep(company.getTicker());
 
-        // Using open-day price for now. Using current price returned strange results for some companies (EG. 1.03 instead of 1.3)
-        // TODO:mposolda figure the issue if possible and eventually replace with current price
+        // Using current price for now.
         double currentPrice = quote.getCurrentPrice();
 
         result.setCurrentStockPrice(currentPrice);
         int totalStocksInHold = 0;
         double totalPricePayed = 0;
+        double totalFeesPayed = 0;
 
         // TODO:mposolda For now, use just always first expected backflow
         ExpectedBackflowRep expectedBackflow = company.getExpectedBackflows().get(0);
@@ -100,6 +100,11 @@ public class CompanyInfoManager {
             totalStocksInHold += purchase.getStocksCount();
             totalPricePayed += (purchase.getPricePerStock() * purchase.getStocksCount());
             int expectedBackflowInPercent = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / purchase.getPricePerStock());
+
+            // Apply fee in the "original" currency
+            double fee = purchase.getFee();
+            totalPricePayed -= fee;
+            totalFeesPayed += fee;
 
             CompanyFullRep.PurchaseFull purchaseFull = new CompanyFullRep.PurchaseFull(purchase);
             purchaseFull.setExpectedBackflowInPercent(expectedBackflowInPercent);
@@ -124,9 +129,10 @@ public class CompanyInfoManager {
         PurchaseManager purchaseManager = Services.instance().getPurchaseManager();
         PurchaseManager.CompanyPurchasesPrice companyPurchases = purchaseManager.getCompanyPurchases(company.getTicker());
         double totalPriceOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllPurchases();
+        double totalFeesOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllFees();
 
-        // result.setTotalPricePayedCZK(currencyConvertor.exchangeMoney(result.getTotalPricePayed(), result.getCurrency(), "CZK"));
         result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
+        result.setTotalFeesPayedCZK(totalFeesOfAllPurchasesCZK);
 
         result.setCurrentPriceOfAllStocksInHoldCZK(currencyConvertor.exchangeMoney(result.getCurrentPriceOfAllStocksInHold(), result.getCurrency(), "CZK"));
         result.setEarningCZK(result.getCurrentPriceOfAllStocksInHoldCZK() - result.getTotalPricePayedCZK());
@@ -155,17 +161,6 @@ public class CompanyInfoManager {
         CurrencyFullRep result = new CurrencyFullRep();
         result.setTicker(currency.getTicker());
 
-        //double totalCountBought = 0;
-        //double totalPrice = 0;
-
-//        double investedToStocks = 0;
-//        // Check how much money of particular currency we invested to stocks
-//        for (CompanyFullRep company : companies.getCompanies()) {
-//            if (company.getCurrency().equals(currency.getTicker())) {
-//                investedToStocks += company.getTotalPricePayed();
-//            }
-//        }
-
         PurchaseManager purchaseManager = Services.instance().getPurchaseManager();
         PurchaseManager.CurrenciesInfo currenciesInfo = purchaseManager.getCurrenciesInfo();
         double inHold = currenciesInfo.getCurrencyRemainingAmount().get(currency.getTicker());
@@ -174,9 +169,6 @@ public class CompanyInfoManager {
 
         double priceInHoldCZK = currencyConvertor.exchangeMoney(inHold, currency.getTicker(), "CZK");
 
-        //result.setBoughtTotal(totalCountBought);
-        //result.setBoughtTotalPriceInCZK(totalPrice);
-        //result.setInvestedTotal(investedToStocks);
         result.setTotalHold(inHold);
         result.setQuotation(quotation);
         result.setPriceInHoldCZK(priceInHoldCZK);

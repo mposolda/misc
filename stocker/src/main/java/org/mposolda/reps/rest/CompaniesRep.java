@@ -81,12 +81,15 @@ public class CompaniesRep extends BaseRep {
     }
 
     /**
-     * @return Total fees
+     * @return Total fees in CZK
      */
     @JsonProperty("totalFeesCZK")
     public Double getTotalFeesCZK() {
-        // TODO:mposolda compute...
-        return 0.0;
+        double result = 0;
+        for (CompanyFullRep company : companies) {
+            result += company.getTotalFeesPayedCZK();
+        }
+        return result;
     }
 
     // TODO:mposolda average year backflow in percent and expected year backflow in percent

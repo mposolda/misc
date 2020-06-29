@@ -24,8 +24,14 @@ public class CompanyFullRep extends CompanyRep {
     @JsonProperty("totalPricePayed")
     private double totalPricePayed;
 
+    @JsonProperty("totalFeesPayed")
+    private double totalFeesPayed;
+
     @JsonProperty("totalPricePayedCZK")
     private double totalPricePayedCZK;
+
+    @JsonProperty("totalFeesPayedCZK")
+    private double totalFeesPayedCZK;
 
     @JsonProperty("currentPriceOfAllStocksInHold")
     private double currentPriceOfAllStocksInHold;
@@ -84,12 +90,28 @@ public class CompanyFullRep extends CompanyRep {
         this.totalPricePayed = totalPricePayed;
     }
 
+    public double getTotalFeesPayed() {
+        return totalFeesPayed;
+    }
+
+    public void setTotalFeesPayed(double totalFeesPayed) {
+        this.totalFeesPayed = totalFeesPayed;
+    }
+
     public double getTotalPricePayedCZK() {
         return totalPricePayedCZK;
     }
 
     public void setTotalPricePayedCZK(double totalPricePayedCZK) {
         this.totalPricePayedCZK = totalPricePayedCZK;
+    }
+
+    public double getTotalFeesPayedCZK() {
+        return totalFeesPayedCZK;
+    }
+
+    public void setTotalFeesPayedCZK(double totalFeesPayedCZK) {
+        this.totalFeesPayedCZK = totalFeesPayedCZK;
     }
 
     public double getCurrentPriceOfAllStocksInHoldCZK() {
