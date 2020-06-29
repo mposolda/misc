@@ -1,10 +1,8 @@
 P1
 
-- Compute fees if possible in stocks.json (but maybe not strictly needed?)
+- Refresh button: refresh current stock prices
 
-- Unit test for PurchaseManager
-
-- Dividends support
+- Dividends support: add test for it to PurchaseManagerImpl
 
 
 P2: 
@@ -13,7 +11,5 @@ P2:
 -- Add more "sledovane" stocks?
 
 - TODOS: others
-
-- Refresh?
  
 - Charts - trend of the stocks in portfolio
