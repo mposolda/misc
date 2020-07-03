@@ -23,6 +23,30 @@
           "stocksCount": 48,
           "pricePerStock":  10.00,
           "fee": 5
+        },
+        {
+          "date": "2020-07-30",
+          "stocksCount": 1,
+          "pricePerStock":  10.00,
+          "fee": 0
+        },
+        {
+          "date": "2020-08-10",
+          "stocksCount": 2,
+          "pricePerStock":  10.00,
+          "fee": 10
+        }
+      ],
+      "dividends": [
+        {
+          "date": "2020-07-01",
+          "totalAmount": 20,
+          "totalAmountInCZK":  200.00
+        },
+        {
+          "date": "2020-07-20",
+          "totalAmount": 10,
+          "totalAmountInCZK":  80.00
         }
       ]
     }

@@ -2,7 +2,7 @@ P1
 
 - Refresh button: refresh current stock prices
 
-- Dividends support: add test for it to PurchaseManagerImpl
+- Dividends support in UI: Support added to PurchaseManager already. So add it to the UI layer.
 
 
 P2: 

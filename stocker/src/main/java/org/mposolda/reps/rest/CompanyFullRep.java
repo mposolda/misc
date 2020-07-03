@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mposolda.reps.CompanyRep;
+import org.mposolda.reps.DividendRep;
 import org.mposolda.reps.PurchaseRep;
 
 /**
@@ -187,6 +188,17 @@ public class CompanyFullRep extends CompanyRep {
 
     @Override
     public void setPurchases(List<PurchaseRep> purchases) {
+        // Do nothing. There is better solution to this...
+    }
+
+    @Override
+    public List<DividendRep> getDividends() {
+        // There is better solution to this...
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void setDividends(List<DividendRep> dividends) {
         // Do nothing. There is better solution to this...
     }
 

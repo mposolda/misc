@@ -1,5 +1,6 @@
 package org.mposolda.reps;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,6 +22,9 @@ public class CompanyRep {
 
     @JsonProperty("purchases")
     public List<PurchaseRep> purchases;
+
+    @JsonProperty("dividends")
+    public List<DividendRep> dividends;
 
     public String getName() {
         return name;
@@ -60,5 +64,13 @@ public class CompanyRep {
 
     public void setPurchases(List<PurchaseRep> purchases) {
         this.purchases = purchases;
+    }
+
+    public List<DividendRep> getDividends() {
+        return dividends == null ? Collections.emptyList() : dividends;
+    }
+
+    public void setDividends(List<DividendRep> dividends) {
+        this.dividends = dividends;
     }
 }
