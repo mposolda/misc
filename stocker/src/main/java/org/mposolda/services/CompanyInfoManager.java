@@ -121,11 +121,6 @@ public class CompanyInfoManager {
         double currentPriceOfAllStocksInHold = totalStocksInHold * currentPrice;
         result.setCurrentPriceOfAllStocksInHold(currentPriceOfAllStocksInHold);
 
-        double earning = currentPriceOfAllStocksInHold - totalPricePayed;
-        result.setEarning(earning);
-
-        // TODO:mposolda compute averageYearBackflowInPercent
-
         PurchaseManager purchaseManager = Services.instance().getPurchaseManager();
         PurchaseManager.CompanyPurchasesPrice companyPurchases = purchaseManager.getCompanyPurchases(company.getTicker());
         double totalPriceOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllPurchases();
@@ -134,10 +129,20 @@ public class CompanyInfoManager {
         result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
         result.setTotalFeesPayedCZK(totalFeesOfAllPurchasesCZK);
 
-        result.setCurrentPriceOfAllStocksInHoldCZK(currencyConvertor.exchangeMoney(result.getCurrentPriceOfAllStocksInHold(), result.getCurrency(), "CZK"));
-        result.setEarningCZK(result.getCurrentPriceOfAllStocksInHoldCZK() - result.getTotalPricePayedCZK());
+        double dividendsTotal = companyPurchases==null ? 0 : companyPurchases.getTotalDividendsPaymentsInOriginalCurrency();
+        double dividendsTotalCZK =  companyPurchases==null ? 0 : companyPurchases.getTotalDividendsPaymentsInCZK();
+        result.setTotalDividends(dividendsTotal);
+        result.setTotalDividendsCZK(dividendsTotalCZK);
 
-        double totalBackflowInPercent = ((result.getCurrentPriceOfAllStocksInHoldCZK() / totalPriceOfAllPurchasesCZK) - 1) * 100;
+        double earning = currentPriceOfAllStocksInHold - totalPricePayed + dividendsTotal;
+        result.setEarning(earning);
+
+        // TODO:mposolda compute averageYearBackflowInPercent
+
+        result.setCurrentPriceOfAllStocksInHoldCZK(currencyConvertor.exchangeMoney(result.getCurrentPriceOfAllStocksInHold(), result.getCurrency(), "CZK"));
+        result.setEarningCZK(result.getCurrentPriceOfAllStocksInHoldCZK() - result.getTotalPricePayedCZK() + dividendsTotalCZK);
+
+        double totalBackflowInPercent = (((result.getCurrentPriceOfAllStocksInHoldCZK() + dividendsTotalCZK ) / totalPriceOfAllPurchasesCZK) - 1) * 100;
         result.setTotalBackflowInPercent(totalBackflowInPercent);
 
         return result;

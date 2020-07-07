@@ -40,6 +40,12 @@ public class CompanyFullRep extends CompanyRep {
     @JsonProperty("currentPriceOfAllStocksInHoldCZK")
     private double currentPriceOfAllStocksInHoldCZK;
 
+    @JsonProperty("totalDividends")
+    private double totalDividends;
+
+    @JsonProperty("totalDividendsCZK")
+    private double totalDividendsCZK;
+
     // Can be negative in case of loss
     @JsonProperty("earning")
     private double earning;
@@ -121,6 +127,22 @@ public class CompanyFullRep extends CompanyRep {
 
     public void setCurrentPriceOfAllStocksInHoldCZK(double currentPriceOfAllStocksInHoldCZK) {
         this.currentPriceOfAllStocksInHoldCZK = currentPriceOfAllStocksInHoldCZK;
+    }
+
+    public double getTotalDividends() {
+        return totalDividends;
+    }
+
+    public void setTotalDividends(double totalDividends) {
+        this.totalDividends = totalDividends;
+    }
+
+    public double getTotalDividendsCZK() {
+        return totalDividendsCZK;
+    }
+
+    public void setTotalDividendsCZK(double totalDividendsCZK) {
+        this.totalDividendsCZK = totalDividendsCZK;
     }
 
     public double getEarningCZK() {

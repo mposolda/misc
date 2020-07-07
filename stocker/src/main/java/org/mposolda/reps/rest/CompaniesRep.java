@@ -61,6 +61,19 @@ public class CompaniesRep extends BaseRep {
 
     /**
      *
+     * @return Total dividends granted from all companies in CZK
+     */
+    @JsonProperty("totalDividendsCZK")
+    public Double getTotalDividendsCZK() {
+        double result = 0;
+        for (CompanyFullRep company : companies) {
+            result += company.getTotalDividendsCZK();
+        }
+        return result;
+    }
+
+    /**
+     *
      * @return Total earning in CZK
      */
     @JsonProperty("earningCZK")
@@ -77,7 +90,7 @@ public class CompaniesRep extends BaseRep {
      */
     @JsonProperty("totalBackflowInPercent")
     public Double getTotalBackflowInPercent() {
-        return ((getCurrentPriceOfAllStocksInHoldCZK() / getTotalPricePayedCZK()) - 1) * 100;
+        return (((getCurrentPriceOfAllStocksInHoldCZK() + getTotalDividendsCZK()) / getTotalPricePayedCZK()) - 1) * 100;
     }
 
     /**
