@@ -190,4 +190,32 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>stocker-run</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <configuration>
+                            <mainClass>org.mposolda.StockerRunner</mainClass>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>token</key>
+                                    <value>${token}</value>
+                                </systemProperty>
+                                <systemProperty>
+                                    <key>companiesJson</key>
+                                    <value>${companiesJson}</value>
+                                </systemProperty>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

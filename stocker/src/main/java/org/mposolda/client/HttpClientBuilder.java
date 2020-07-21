@@ -35,6 +35,7 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.StrictHostnameVerifier;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -221,7 +222,7 @@ public class HttpClientBuilder {
         }
     }
 
-    public HttpClient build() {
+    public CloseableHttpClient build() {
         X509HostnameVerifier verifier = null;
         if (this.verifier != null) verifier = new VerifierWrapper(this.verifier);
         else {

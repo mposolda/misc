@@ -1,5 +1,9 @@
 package org.mposolda.services;
 
+import java.io.Closeable;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.jboss.logging.Logger;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.client.FinnhubHttpClientImpl;
@@ -28,6 +32,8 @@ public class Services {
     private CurrencyConvertor currencyConvertor;
     private CompanyInfoManager companyInfoManager;
 
+    private List<Closeable> closeables = new LinkedList<>();
+
 
     public void start() {
         String token = System.getProperty("token");
@@ -44,6 +50,7 @@ public class Services {
         log.info("Created purchase manager");
 
         finhubClient = new FinnhubHttpClientWrapper(new FinnhubHttpClientImpl(token));
+        closeables.add(finhubClient);
         log.info("Created finnhub client");
 
         currencyConvertor = new CurrencyConvertor(finhubClient);
@@ -53,6 +60,17 @@ public class Services {
         companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, companiesJsonFileLocation);
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
+    }
+
+    // Called at the server shutdown
+    public void close() {
+        for (Closeable closeable : closeables) {
+            try {
+                closeable.close();
+            } catch (Exception e) {
+                log.warn("Exception when closing " + closeable, e);
+            }
+        }
     }
 
     public FinnhubHttpClient getFinhubClient() {

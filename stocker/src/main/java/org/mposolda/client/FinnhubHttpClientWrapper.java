@@ -1,5 +1,6 @@
 package org.mposolda.client;
 
+import java.io.IOException;
 import java.util.function.Function;
 
 import org.mposolda.reps.finhub.CompanyProfileRep;
@@ -37,6 +38,11 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     @Override
     public CurrenciesRep getCurrencies() {
         return waitAndCall(null, (str) -> delegate.getCurrencies());
+    }
+
+    @Override
+    public void close() throws IOException {
+        delegate.close();
     }
 
     private <INPUT, OUTPUT> OUTPUT waitAndCall(INPUT input, Function<INPUT, OUTPUT> function) {

@@ -86,6 +86,6 @@ public class StockerServer {
 
     public void stop() {
         server.stop();
-        logger.info("Stopped Keycloak");
+        logger.info("Stopped Stocker");
     }
 }

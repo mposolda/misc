@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.jboss.logging.Logger;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
@@ -19,7 +20,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     private static final String URL_PREFIX = "https://finnhub.io/api/v1";
 
     private final String token;
-    private final HttpClient httpClient;
+    private final CloseableHttpClient httpClient;
 
     public FinnhubHttpClientImpl(String token) {
         this.token = token;
@@ -62,5 +63,11 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
         } catch (IOException ioe) {
             throw new RuntimeException("Exception when loading currencies", ioe);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        log.info("Closing Finhub HTTP Client");
+        httpClient.close();
     }
 }

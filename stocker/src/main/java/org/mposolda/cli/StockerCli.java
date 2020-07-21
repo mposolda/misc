@@ -100,18 +100,9 @@ public class StockerCli {
         }
 
         @Override
-        public void runCommand() {
-            // no need to implement. Exit handled in parent
-        }
-
-        @Override
         protected void doRunCommand() {
-            // no need to implement
-        }
-
-        @Override
-        public String printUsage() {
-            return getName();
+            log.info("Exiting");
+            System.exit(0);
         }
     }
 
