@@ -9,6 +9,8 @@ import org.jboss.logging.Logger;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
+import org.mposolda.reps.finhub.StockCandleRep;
+import org.mposolda.util.DateUtil;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -54,6 +56,25 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
+    public StockCandleRep getStockCandle(String ticker, String startDate, String endDate) {
+        try {
+            log.infof("Loading stock candles for company: %s. From %s to %s", ticker, startDate, endDate);
+
+            long start = DateUtil.dateToNumberSeconds(startDate);
+            long end = DateUtil.dateToNumberSeconds(endDate);
+
+            log.infof("Timestamps %d to %d", start, end);
+
+            String url = URL_PREFIX + "/stock/candle?symbol=" + ticker + "&resolution=D&from=" + start + "&to=" + end + "&token=" + token;
+            return SimpleHttp.doGet(url, httpClient)
+                    .asJson(new TypeReference<StockCandleRep>() {
+                    });
+        } catch (IOException ioe) {
+            throw new RuntimeException("Exception getting stock candles rep for " + ticker, ioe);
+        }
+    }
+
+    @Override
     public CurrenciesRep getCurrencies() {
         try {
             String url = URL_PREFIX + "/forex/rates?token=" + token;
@@ -67,7 +88,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
 
     @Override
     public void close() throws IOException {
-        log.info("Closing Finhub HTTP Client");
+        log.info("Closing Finnhub HTTP Client");
         httpClient.close();
     }
 }

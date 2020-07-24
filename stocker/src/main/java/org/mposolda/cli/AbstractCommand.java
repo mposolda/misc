@@ -56,6 +56,16 @@ public abstract class AbstractCommand {
         }
     }
 
+    protected Long getLongArg(int index) {
+        String str = getArg(index);
+        try {
+            return Long.parseLong(str);
+        } catch (NumberFormatException nex) {
+            log.errorf("Usage: %s", printUsage());
+            throw new HandledException();
+        }
+    }
+
     protected Double getDoubleArg(int index) {
         String str = getArg(index);
         try {

@@ -22,7 +22,9 @@ public class StockerCli {
     private static final Class<?>[] BUILTIN_COMMANDS = {
             CompanyProfileCommand.class,
             DateConvertCommand.class,
+            TimestamptToDateCommand.class,
             QuoteCommand.class,
+            StockCandleCommand.class,
             CurrencyConvertCommand.class,
             ExitCommand.class,
             HelpCommand.class,

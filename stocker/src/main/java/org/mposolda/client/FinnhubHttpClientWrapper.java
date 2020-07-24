@@ -2,10 +2,14 @@ package org.mposolda.client;
 
 import java.io.IOException;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
+import org.jboss.logging.Logger;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
+import org.mposolda.reps.finhub.StockCandleRep;
+import org.mposolda.util.NumberUtil;
 
 /**
  * Just implements some "quotes" to not call Finhub API in big speed - like 10 calls in 1 second
@@ -13,6 +17,8 @@ import org.mposolda.reps.finhub.QuoteRep;
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
+
+    private static final Logger log = Logger.getLogger(FinnhubHttpClientWrapper.class);
 
     // Interval in miliseconds, which should be always spent among 2 calls
     private static final long INTERVAL = 1000;
@@ -32,7 +38,23 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
 
     @Override
     public QuoteRep getQuoteRep(String ticker) {
-        return waitAndCall(ticker, delegate::getQuoteRep);
+        return retry(
+                       ticker,
+                       ticker2 -> {
+                           return waitAndCall(ticker2, delegate::getQuoteRep);
+                       },
+                       quoteRep -> {
+                           return !NumberUtil.isZero(quoteRep.getCurrentPrice());
+                       },
+                       5,
+                       "getQuoteRep");
+    }
+
+    @Override
+    public StockCandleRep getStockCandle(String ticker, String startDate, String endDate) {
+        return waitAndCall(ticker, ticker2 -> {
+            return delegate.getStockCandle(ticker2, startDate, endDate);
+        });
     }
 
     @Override
@@ -50,6 +72,29 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
         OUTPUT o = function.apply(input);
         lastCallTimeMs = System.currentTimeMillis();
         return o;
+    }
+
+    // Retry particular "function" until the predicate is met OR until the maximum count of attempts is met
+    private <INPUT, OUTPUT> OUTPUT retry(INPUT input, Function<INPUT, OUTPUT> function, Predicate<OUTPUT> predicate,
+                                         int maxAttempts, String operationName) {
+        int attempts = maxAttempts;
+        while (attempts > 0) {
+            OUTPUT output = function.apply(input);
+            if (predicate.test(output)) {
+                return output;
+            } else {
+                attempts -= 1;
+                if (attempts > 0) {
+                    log.infof("Predicate failed when run operation '%s' for input '%s'. Will try another attempt", operationName, input);
+                } else {
+                    log.warnf("Unable to run operation '%s' for input '%s' for the maximum count of %d attempts", operationName, input, maxAttempts);
+                    return output;
+                }
+            }
+        }
+
+        // Should not happen
+        return null;
     }
 
     private void waitUntilCanCall() {

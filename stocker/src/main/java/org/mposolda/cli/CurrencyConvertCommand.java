@@ -2,7 +2,7 @@ package org.mposolda.cli;
 
 import java.io.IOException;
 
-import org.mposolda.util.NumberFormatUtil;
+import org.mposolda.util.NumberUtil;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -22,8 +22,8 @@ public class CurrencyConvertCommand extends AbstractCommand {
 
         double currencyToAmount = services.getCurrencyConvertor().exchangeMoney(currencyFromAmount, currencyFrom, currencyTo);
 
-        log.infof("%s %s = %s %s", NumberFormatUtil.format(currencyFromAmount), currencyFrom,
-                NumberFormatUtil.format(currencyToAmount), currencyTo);
+        log.infof("%s %s = %s %s", NumberUtil.format(currencyFromAmount), currencyFrom,
+                NumberUtil.format(currencyToAmount), currencyTo);
     }
 
     @Override
