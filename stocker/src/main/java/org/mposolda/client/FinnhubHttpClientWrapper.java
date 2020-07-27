@@ -23,6 +23,9 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     // Interval in miliseconds, which should be always spent among 2 calls
     private static final long INTERVAL = 1000;
 
+    // Max count of attempts for every HTTP request sent to Finnhub
+    private static final int MAX_ATTEMPTS = 10;
+
     private final FinnhubHttpClient delegate;
 
     private long lastCallTimeMs;
@@ -46,7 +49,7 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
                        quoteRep -> {
                            return !NumberUtil.isZero(quoteRep.getCurrentPrice());
                        },
-                       5,
+                MAX_ATTEMPTS,
                        "getQuoteRep");
     }
 
