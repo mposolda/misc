@@ -1,6 +1,7 @@
 package org.mposolda.services;
 
 import java.io.Closeable;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,9 +41,20 @@ public class Services {
         if (token == null) {
             throw new IllegalArgumentException("Need to provide system property 'token' with the finnhub API token");
         }
-        String companiesJsonFileLocation = System.getProperty("companiesJson");
-        if (companiesJsonFileLocation == null) {
-            throw new IllegalArgumentException("Need to provide system property 'companiesJson' with the JSON information about companies");
+        String stocksDirLocation = System.getProperty("stocksDir");
+        if (stocksDirLocation == null) {
+            throw new IllegalArgumentException("Need to provide system property 'stocksDir' with the directory, which will need" +
+                    "to contain stocks.json file with the data about companies and currencies");
+        }
+
+        File stocksDir = new File(stocksDirLocation);
+        if (!stocksDir.exists() || !stocksDir.isDirectory()) {
+            throw new IllegalArgumentException("Directory '" + stocksDirLocation +  "' does not exists or it is not a directory");
+        }
+        String companiesJsonFileLocation = stocksDir + File.separator + "stocks.json";
+        File companiesJsonFile = new File(companiesJsonFileLocation);
+        if (!companiesJsonFile.exists()) {
+            throw new IllegalArgumentException("File '" + companiesJsonFile +  "' does not exists");
         }
 
         purchaseManager = new PurchaseManager(companiesJsonFileLocation);
