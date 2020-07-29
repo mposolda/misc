@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mposolda.reps.BaseRep;
 
 /**
+ * Used for stock candles and also currency/forex candles
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class StockCandleRep extends BaseRep {
+public class CandleRep extends BaseRep {
 
     // Open price of the day
     @JsonProperty("o")

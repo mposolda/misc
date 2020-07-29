@@ -3,13 +3,12 @@ package org.mposolda.client;
 import java.io.IOException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jboss.logging.Logger;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
-import org.mposolda.reps.finhub.StockCandleRep;
+import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.util.DateUtil;
 
 /**
@@ -56,7 +55,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
-    public StockCandleRep getStockCandle(String ticker, String startDate, String endDate) {
+    public CandleRep getStockCandle(String ticker, String startDate, String endDate) {
         try {
             log.infof("Loading stock candles for company: %s. From %s to %s", ticker, startDate, endDate);
 
@@ -67,7 +66,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
 
             String url = URL_PREFIX + "/stock/candle?symbol=" + ticker + "&resolution=D&from=" + start + "&to=" + end + "&token=" + token;
             return SimpleHttp.doGet(url, httpClient)
-                    .asJson(new TypeReference<StockCandleRep>() {
+                    .asJson(new TypeReference<CandleRep>() {
                     });
         } catch (IOException ioe) {
             throw new RuntimeException("Exception getting stock candles rep for " + ticker, ioe);
@@ -83,6 +82,25 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
                     });
         } catch (IOException ioe) {
             throw new RuntimeException("Exception when loading currencies", ioe);
+        }
+    }
+
+    @Override
+    public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
+        try {
+            log.infof("Loading currency candles from USD to %s", targetCurrencyTicker, startDate, endDate);
+
+            long start = DateUtil.dateToNumberSeconds(startDate);
+            long end = DateUtil.dateToNumberSeconds(endDate);
+
+            log.infof("Timestamps %d to %d", start, end);
+
+            String url = URL_PREFIX + "/forex/candle?symbol=OANDA:USD_" + targetCurrencyTicker + "&resolution=D&from=" + start + "&to=" + end + "&token=" + token;
+            return SimpleHttp.doGet(url, httpClient)
+                    .asJson(new TypeReference<CandleRep>() {
+                    });
+        } catch (IOException ioe) {
+            throw new RuntimeException("Exception getting currency candles rep for " + targetCurrencyTicker, ioe);
         }
     }
 
