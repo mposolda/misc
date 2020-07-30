@@ -15,10 +15,13 @@ import org.mposolda.util.JsonUtil;
  */
 public class MockFinhubClient implements FinnhubHttpClient {
 
-    private final String targetDir;
+    private final String resourcesDir;
 
-    public MockFinhubClient(String targetDir) {
-        this.targetDir = targetDir;
+    private String lastStartDateUsed;
+    private String lastEndDateUsed;
+
+    public MockFinhubClient(String resourcesDir) {
+        this.resourcesDir = resourcesDir;
     }
 
     @Override
@@ -44,10 +47,13 @@ public class MockFinhubClient implements FinnhubHttpClient {
     @Override
     public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
         // Load dummy currency candle from the file
-        String file = targetDir + "/candles_" + targetCurrencyTicker + "_" + startDate + "_" + endDate;
+        String file = resourcesDir + "/candles_" + targetCurrencyTicker + "_" + startDate + "_" + endDate + ".json";
         if (!new File(file).exists()) {
             throw new IllegalArgumentException("File does not exists " + file);
         }
+
+        this.lastStartDateUsed = startDate;
+        this.lastEndDateUsed = endDate;
 
         return JsonUtil.loadFileToJson(file, CandleRep.class);
     }
@@ -57,5 +63,16 @@ public class MockFinhubClient implements FinnhubHttpClient {
 
     }
 
+    public String getLastStartDateUsed() {
+        return lastStartDateUsed;
+    }
 
+    public String getLastEndDateUsed() {
+        return lastEndDateUsed;
+    }
+
+    public void cleanupLastDatesUsed() {
+        this.lastStartDateUsed = null;
+        this.lastEndDateUsed = null;
+    }
 }

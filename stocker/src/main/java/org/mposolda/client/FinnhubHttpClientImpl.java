@@ -88,7 +88,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     @Override
     public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
         try {
-            log.infof("Loading currency candles from USD to %s", targetCurrencyTicker, startDate, endDate);
+            log.infof("Loading currency candles from USD to %s. From %s to %s", targetCurrencyTicker, startDate, endDate);
 
             long start = DateUtil.dateToNumberSeconds(startDate);
             long end = DateUtil.dateToNumberSeconds(endDate);

@@ -29,6 +29,10 @@ public class CandlesHistoryManager {
         return candlesDAO.getCurrencyCandles(currencyTicker, downloadNewest);
     }
 
+    public CandlesRep getCurrencyCandles(String currencyTicker, boolean downloadNewest, String startingDateStr, String endDateStr) {
+        return candlesDAO.getCurrencyCandles(currencyTicker, downloadNewest, startingDateStr, endDateStr);
+    }
+
     /**
      * Return currency candles to CZK (1 targetCurrency to X CZK where X will be the number displayed in the candles)
      *

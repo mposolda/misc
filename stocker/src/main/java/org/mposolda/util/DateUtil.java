@@ -31,7 +31,7 @@ public class DateUtil {
     }
 
     public static String numberInSecondsToDate(long timestamp) {
-        Date d = new Date(timestamp);
-        return dateFormat.format(dateFormat);
+        Date d = new Date(timestamp * 1000);
+        return dateFormat.format(d);
     }
 }

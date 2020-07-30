@@ -84,6 +84,16 @@ public class CandlesRep {
             return timestampInSeconds;
         }
 
+        @JsonProperty("d")
+        public String getDate() {
+            return DateUtil.numberInSecondsToDate(timestampInSeconds);
+        }
+
+        // Ignore
+        public void setDate(String date) {
+
+        }
+
         public void setTimestampInSeconds(long timestampInSeconds) {
             this.timestampInSeconds = timestampInSeconds;
         }
@@ -98,7 +108,7 @@ public class CandlesRep {
 
         @Override
         public String toString() {
-            return DateUtil.numberInSecondsToDate(timestampInSeconds) + " : " + NumberFormatUtil.format(value) + "\n";
+            return DateUtil.numberInSecondsToDate(timestampInSeconds) + " : " + NumberFormatUtil.format(value);
         }
     }
 
