@@ -12,8 +12,12 @@ import org.mposolda.reps.DatabaseRep;
 public class JsonUtil {
 
     public static DatabaseRep loadDatabase(String companiesJsonFileLocation) {
+        return loadFileToJson(companiesJsonFileLocation, DatabaseRep.class);
+    }
+
+    public static <T> T loadFileToJson(String fileLocation, Class<T> clazz) {
         try {
-            return JsonSerialization.readValue(new FileInputStream(companiesJsonFileLocation), DatabaseRep.class);
+            return JsonSerialization.readValue(new FileInputStream(fileLocation), clazz);
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }

@@ -29,4 +29,9 @@ public class DateUtil {
     public static long dateToNumberSeconds(String dateStr) {
         return dateToNumber(dateStr) / 1000;
     }
+
+    public static String numberInSecondsToDate(long timestamp) {
+        Date d = new Date(timestamp);
+        return dateFormat.format(dateFormat);
+    }
 }

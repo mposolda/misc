@@ -86,7 +86,7 @@ public class CandleRep extends BaseRep {
 
     @Override
     public String toString() {
-        return "StockCandle [ openDayPrice=" + openDayPrice + ", lowDayPrice=" + lowDayPrice + ", highDayPrice=" + highDayPrice
+        return "Candle [ openDayPrice=" + openDayPrice + ", lowDayPrice=" + lowDayPrice + ", highDayPrice=" + highDayPrice
                 + ", currentPrice=" + currentPrice + ", status=" + status + ", timestamps=" + timestamps + " ]";
     }
 }
