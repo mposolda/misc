@@ -1,19 +1,18 @@
 P1
 
-- Implement CandlesDAO. Manually check that it works (maybe have commands for it)
+- Manually check that CandlesDAO currencies command works as expected
 
-- Implement charts for currencies
+- Implement CandlesDAO for stocks. Implement command for stocks.
 
-- Implement charts for stocks
+- Implement charts (and other info) for currencies
+
+- Implement charts (and other info) for stocks
 
 - Implement CandlesHistoryManager CZK methods
 
 - Implement charts for currencies and stocks regarding CZK
 
-- Refresh button: refresh current stock prices
-
 P2: 
 
 - TODOS: others
  
-- Charts - trend of the stocks in portfolio

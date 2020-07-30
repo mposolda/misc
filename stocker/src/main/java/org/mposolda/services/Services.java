@@ -32,6 +32,7 @@ public class Services {
     private FinnhubHttpClient finhubClient;
     private CurrencyConvertor currencyConvertor;
     private CompanyInfoManager companyInfoManager;
+    private CandlesHistoryManager candlesManager;
 
     private List<Closeable> closeables = new LinkedList<>();
 
@@ -72,6 +73,9 @@ public class Services {
         companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, companiesJsonFileLocation);
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
+
+        candlesManager = new CandlesHistoryManager(stocksDirLocation, finhubClient);
+        log.info("Created candlesHistoryManager and loaded companies");
     }
 
     // Called at the server shutdown
@@ -99,5 +103,9 @@ public class Services {
 
     public CompanyInfoManager getCompanyInfoManager() {
         return companyInfoManager;
+    }
+
+    public CandlesHistoryManager getCandlesHistoryManager() {
+        return candlesManager;
     }
 }

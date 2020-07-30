@@ -27,6 +27,7 @@ public class StockerCli {
             StockCandleCommand.class,
             CurrencyConvertCommand.class,
             CurrencyCandleCommand.class,
+            CurrencyCandleDownloadCommand.class,
             ExitCommand.class,
             HelpCommand.class,
     };
