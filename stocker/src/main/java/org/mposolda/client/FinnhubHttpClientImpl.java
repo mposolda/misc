@@ -88,14 +88,14 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     @Override
     public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
         try {
-            log.infof("Loading currency candles from USD to %s. From %s to %s", targetCurrencyTicker, startDate, endDate);
+            log.infof("Loading currency candles from EUR to %s. From %s to %s", targetCurrencyTicker, startDate, endDate);
 
             long start = DateUtil.dateToNumberSeconds(startDate);
             long end = DateUtil.dateToNumberSeconds(endDate);
 
             log.infof("Timestamps %d to %d", start, end);
 
-            String url = URL_PREFIX + "/forex/candle?symbol=OANDA:USD_" + targetCurrencyTicker + "&resolution=D&from=" + start + "&to=" + end + "&token=" + token;
+            String url = URL_PREFIX + "/forex/candle?symbol=OANDA:EUR_" + targetCurrencyTicker + "&resolution=D&from=" + start + "&to=" + end + "&token=" + token;
             return SimpleHttp.doGet(url, httpClient)
                     .asJson(new TypeReference<CandleRep>() {
                     });

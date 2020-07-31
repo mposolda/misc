@@ -24,7 +24,7 @@ public interface FinnhubHttpClient extends Closeable {
     CurrenciesRep getCurrencies();
 
     /**
-     * Get currency candles from USD to the target currency (How much "currency" amount is needed for 1 USD)
+     * Get currency candles from EUR to the target currency (How much "currency" amount is needed for 1 EUR)
      *
      * Dates are in the format like "2020-10-20"
      *

@@ -21,7 +21,7 @@ public class CurrencyCandleDownloadCommand extends AbstractCommand {
 
         CandlesRep stockCandle = services.getCandlesHistoryManager().getCurrencyCandles(currencyTicker, true);
 
-        log.info("Info: " + JsonSerialization.writeValueAsPrettyString(stockCandle));
+        log.info("Downloaded candles representation from EUR to " + currencyTicker);
     }
 
     @Override
