@@ -2,7 +2,6 @@ package org.mposolda.cli;
 
 import java.io.IOException;
 
-import org.mposolda.client.JsonSerialization;
 import org.mposolda.reps.CandlesRep;
 
 /**
@@ -26,6 +25,6 @@ public class CurrencyCandleDownloadCommand extends AbstractCommand {
 
     @Override
     public String printUsage() {
-        return getName() + " <target-currency-ticker> <start-date yyyy-mm-dd> <end-date yyy-mm-dd>";
+        return getName() + " <target-currency-ticker>";
     }
 }

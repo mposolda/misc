@@ -20,6 +20,10 @@ public class CandlesHistoryManager {
         return candlesDAO.getStockCandles(stockTicker, downloadNewest);
     }
 
+    public CandlesRep getStockCandles(String stockTicker, boolean downloadNewest, String startingDateStr, String endDateStr) {
+        return candlesDAO.getStockCandles(stockTicker, downloadNewest, startingDateStr, endDateStr);
+    }
+
     public CandlesRep getStockCandlesInCZK(String stockTicker, boolean downloadNewest) {
         // TODO:mposolda
         return null;

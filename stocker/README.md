@@ -1,8 +1,6 @@
 P1
 
-- Manually check that CandlesDAO currencies command works as expected
-
-- Implement CandlesDAO for stocks. Implement command for stocks.
+- Figure candles downloading for 3 failed companies
 
 - Implement charts (and other info) for currencies
 

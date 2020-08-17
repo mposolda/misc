@@ -25,9 +25,11 @@ public class StockerCli {
             TimestamptToDateCommand.class,
             QuoteCommand.class,
             StockCandleCommand.class,
+            StockCandleDownloadCommand.class,
             CurrencyConvertCommand.class,
             CurrencyCandleCommand.class,
             CurrencyCandleDownloadCommand.class,
+            AllCandlesDownloadCommand.class,
             ExitCommand.class,
             HelpCommand.class,
     };

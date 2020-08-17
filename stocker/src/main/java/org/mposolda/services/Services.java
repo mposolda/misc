@@ -34,6 +34,8 @@ public class Services {
     private CompanyInfoManager companyInfoManager;
     private CandlesHistoryManager candlesManager;
 
+    private String companiesJsonFileLocation;
+
     private List<Closeable> closeables = new LinkedList<>();
 
 
@@ -52,7 +54,7 @@ public class Services {
         if (!stocksDir.exists() || !stocksDir.isDirectory()) {
             throw new IllegalArgumentException("Directory '" + stocksDirLocation +  "' does not exists or it is not a directory");
         }
-        String companiesJsonFileLocation = stocksDir + File.separator + "stocks.json";
+        this.companiesJsonFileLocation = stocksDir + File.separator + "stocks.json";
         File companiesJsonFile = new File(companiesJsonFileLocation);
         if (!companiesJsonFile.exists()) {
             throw new IllegalArgumentException("File '" + companiesJsonFile +  "' does not exists");
@@ -107,5 +109,9 @@ public class Services {
 
     public CandlesHistoryManager getCandlesHistoryManager() {
         return candlesManager;
+    }
+
+    public String getCompaniesJsonFileLocation() {
+        return companiesJsonFileLocation;
     }
 }

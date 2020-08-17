@@ -20,9 +20,9 @@ public class CurrencyCandleCommand extends AbstractCommand {
         String startDate = getArg(1);
         String endDate = getArg(2);
 
-        CandleRep stockCandle = services.getFinhubClient().getCurrencyCandle(currencyTicker, startDate, endDate);
+        CandleRep currencyCandle = services.getFinhubClient().getCurrencyCandle(currencyTicker, startDate, endDate);
 
-        log.info("Info: " + stockCandle);
+        log.info("Info: " + currencyCandle);
     }
 
     @Override
