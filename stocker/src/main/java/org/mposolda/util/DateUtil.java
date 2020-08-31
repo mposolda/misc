@@ -34,4 +34,11 @@ public class DateUtil {
         Date d = new Date(timestamp * 1000);
         return dateFormat.format(d);
     }
+
+    /**
+     * @return current unix timestamp (Count of seconds since 1.1.1970)
+     */
+    public static long getCurrentTimestamp() {
+        return new Date().getTime() / 1000;
+    }
 }

@@ -60,6 +60,9 @@ public class Services {
             throw new IllegalArgumentException("File '" + companiesJsonFile +  "' does not exists");
         }
 
+        // Just test if network host/port is available to be able to fail-fast
+        new QuickNetworkTestManager().test();
+
         purchaseManager = new PurchaseManager(companiesJsonFileLocation);
         purchaseManager.start();
         log.info("Created purchase manager");
@@ -76,7 +79,7 @@ public class Services {
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
 
-        candlesManager = new CandlesHistoryManager(stocksDirLocation, finhubClient);
+        candlesManager = new CandlesHistoryManager(companiesJsonFileLocation, stocksDirLocation, finhubClient);
         log.info("Created candlesHistoryManager and loaded companies");
     }
 

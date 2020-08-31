@@ -10,6 +10,7 @@ import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.util.NumberUtil;
+import org.mposolda.util.WaitUtil;
 
 /**
  * Just implements some "quotes" to not call Finhub API in big speed - like 10 calls in 1 second
@@ -19,9 +20,6 @@ import org.mposolda.util.NumberUtil;
 public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
 
     private static final Logger log = Logger.getLogger(FinnhubHttpClientWrapper.class);
-
-    // Interval in miliseconds, which should be always spent among 2 calls
-    private static final long INTERVAL = 1000;
 
     // Max count of attempts for every HTTP request sent to Finnhub
     private static final int MAX_ATTEMPTS = 10;
@@ -120,6 +118,6 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
 
     private boolean canCall() {
         long currentTime = System.currentTimeMillis();
-        return (currentTime - lastCallTimeMs > INTERVAL);
+        return (currentTime - lastCallTimeMs > WaitUtil.INTERVAL);
     }
 }
