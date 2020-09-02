@@ -23,6 +23,9 @@ public class CompanyRep {
     @JsonProperty("purchases")
     public List<PurchaseRep> purchases;
 
+    @JsonProperty("disposals")
+    public List<DisposalRep> disposals;
+
     @JsonProperty("dividends")
     public List<DividendRep> dividends;
 
@@ -64,6 +67,14 @@ public class CompanyRep {
 
     public void setPurchases(List<PurchaseRep> purchases) {
         this.purchases = purchases;
+    }
+
+    public List<DisposalRep> getDisposals() {
+        return disposals;
+    }
+
+    public void setDisposals(List<DisposalRep> disposals) {
+        this.disposals = disposals;
     }
 
     public List<DividendRep> getDividends() {

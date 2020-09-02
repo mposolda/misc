@@ -33,7 +33,7 @@ public class PurchaseManagerTest {
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
         assertPurchases(company, 4340, 2200, 2140);
-        assertPurchaseFees(company, 340, 200, 140);
+        assertPurchaseAndDisposalFees(company, 340, 200, 140);
 
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 1783);
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
@@ -50,7 +50,7 @@ public class PurchaseManagerTest {
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOOCAD");
         assertPurchases(company, 11960, 11000, 960);
-        assertPurchaseFees(company, 0, 0, 0);
+        assertPurchaseAndDisposalFees(company, 0, 0, 0);
 
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 480000);
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 400);
@@ -68,7 +68,7 @@ public class PurchaseManagerTest {
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOOCAD");
         assertPurchases(company, 11980, 11010, 970);
-        assertPurchaseFees(company, 46.58, 36.58, 10);
+        assertPurchaseAndDisposalFees(company, 46.58, 36.58, 10);
 
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 479700);
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 400);
@@ -86,7 +86,7 @@ public class PurchaseManagerTest {
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
         assertPurchases(company, 225000, 150000, 75000);
-        //assertPurchaseFees(companies, 46.58, 36.58, 10);
+        //assertPurchaseAndDisposalFees(companies, 46.58, 36.58, 10);
 
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 300000);
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 0);
@@ -107,7 +107,7 @@ public class PurchaseManagerTest {
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOOCAD");
         assertPurchases(company, 12280, 11010, 970, 20, 280);
-        assertPurchaseFees(company, 139.91, 36.58, 10, 0, 93.33);
+        assertPurchaseAndDisposalFees(company, 139.91, 36.58, 10, 0, 93.33);
 
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 479700);
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 400);
@@ -117,6 +117,26 @@ public class PurchaseManagerTest {
 
         Assert.assertEquals(30, company.getTotalDividendsPaymentsInOriginalCurrency(), 0.1);
         Assert.assertEquals(280, company.getTotalDividendsPaymentsInCZK(), 0.1);
+    }
+
+
+    @Test
+    public void testStocks7() {
+        String jsonFile = getJsonFilesDir() + "/stocks-7-usd-single-company-fees-sold.json";
+
+        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        mgr.start();
+
+        PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
+        assertPurchases(company, 4340, 2200, 2140);
+        assertPurchaseAndDisposalFees(company, 550, 200, 140, 210);
+
+        assertDisposals(company, 220, 4620, 4620);
+
+        assertCurrency(mgr.getCurrenciesInfo(), "USD", 1993);
+        assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
+
+        Assert.assertEquals(200, mgr.getCurrenciesInfo().getCzkFeesTotal(), 0.1);
     }
 
 
@@ -136,14 +156,34 @@ public class PurchaseManagerTest {
         }
     }
 
-    private void assertPurchaseFees(PurchaseManager.CompanyPurchasesPrice companies, double expectedTotalFeesCZK, double... expectedFeesCZK) {
+    private void assertDisposals(PurchaseManager.CompanyPurchasesPrice company, double expectedTotalInOrigCurrency,
+                                 double expectedTotalInCZK, double... expectedDisposalsCZK) {
+        Assert.assertEquals(expectedTotalInOrigCurrency, company.getTotalDisposalsPaymentsInOriginalCurrency(), 0.1);
+        Assert.assertEquals(expectedTotalInCZK, company.getTotalDisposalsPaymentsInCZK(), 0.1);
+
+        Assert.assertEquals(expectedDisposalsCZK.length, company.getDisposals().size());
+
+        int i = 0;
+        for (PurchaseManager.DisposalInternal stockDisposal : company.getDisposals()) {
+            Assert.assertEquals(expectedDisposalsCZK[i], stockDisposal.getTotalAmountInCZK(), 0.1);
+            i++;
+        }
+    }
+
+    private void assertPurchaseAndDisposalFees(PurchaseManager.CompanyPurchasesPrice companies, double expectedTotalFeesCZK, double... expectedFeesCZK) {
         Assert.assertEquals(expectedTotalFeesCZK, companies.getTotalCZKPriceOfAllFees(), 0.1);
 
-        Assert.assertEquals(expectedFeesCZK.length, companies.getPurchases().size());
+        Assert.assertEquals(expectedFeesCZK.length, companies.getPurchases().size() + companies.getDisposals().size());
 
+        // Test all purchases first. Then test all disposals. Hence it does not depend on the exact time
         int i = 0;
         for (PurchaseManager.CompanyPurchaseInternal companyPurchase : companies.getPurchases()) {
             Assert.assertEquals(expectedFeesCZK[i], companyPurchase.getTotalFeeInCZK(), 0.1);
+            i++;
+        }
+
+        for (PurchaseManager.DisposalInternal companyDisposal : companies.getDisposals()) {
+            Assert.assertEquals(expectedFeesCZK[i], companyDisposal.getTotalFeeInCZK(), 0.1);
             i++;
         }
     }

@@ -15,6 +15,7 @@ import org.jboss.logging.Logger;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
+import org.mposolda.reps.DisposalRep;
 import org.mposolda.reps.DividendRep;
 import org.mposolda.reps.PurchaseRep;
 import org.mposolda.util.DateUtil;
@@ -95,7 +96,7 @@ public class PurchaseManager {
 
         log.info("Created sorted purchases");
 
-        // 2 - Sort currency purchases. Add real currency purchases and dividends
+        // 2 - Sort currency purchases. Add real currency purchases and dividends and disposals
         Comparator<CurrencyPurchase> currencyPurchaseComparator = new Comparator<CurrencyPurchase>() {
 
             @Override
@@ -115,7 +116,7 @@ public class PurchaseManager {
                         if (diff3 != 0) {
                             return diff3;
                         } else {
-                            throw new IllegalStateException("Two purchases of the same currency in same day or two dividends in same day. " +
+                            throw new IllegalStateException("Two purchases of the same currency in same day or two dividends in same day or two company disposals at same day. " +
                                     "Day is " + o1.getDate() + ". Currency is " + o1.getCurrencyTo() + ". Type is " + o1.getTypePriority());
                         }
                     }
@@ -127,6 +128,7 @@ public class PurchaseManager {
         };
         Set<CurrencyPurchase> sortedCurrencyPurchases = new TreeSet<>(currencyPurchaseComparator);
         Set<DividendPaymentInternal> sortedDividendPayments = new TreeSet<>(currencyPurchaseComparator);
+        Set<StockDisposalInternal> sortedDisposals = new TreeSet<>(currencyPurchaseComparator);
 
         // 2.1 Add currencies
         for (CurrencyRep currency : database.getCurrencies()) {
@@ -148,6 +150,19 @@ public class PurchaseManager {
                         company.getCurrency(), dividend.getTotalAmount(), dividend.getTotalAmountInCZK());
                 sortedCurrencyPurchases.add(dividendInternal);
                 sortedDividendPayments.add(dividendInternal);
+            }
+        }
+
+        // 2.3 Add disposals to currencyPurchases
+        for (CompanyRep company : database.getCompanies()) {
+
+            for (DisposalRep disposal : company.getDisposals()) {
+                StockDisposalInternal disposalInternal = new StockDisposalInternal(disposal.getDate(), company.getTicker(),
+                        disposal.getStocksCount(),
+                        company.getCurrency(), disposal.getPricePerStock() * disposal.getStocksCount(),
+                        disposal.getCurrencyPriceToCZKAtTheDisposalTime(), disposal.getFee());
+                sortedCurrencyPurchases.add(disposalInternal);
+                sortedDisposals.add(disposalInternal);
             }
         }
 
@@ -286,6 +301,11 @@ public class PurchaseManager {
                 CurrencyStack stackTo = currencyStacks.get(dividendPurchase.getCurrencyTo());
 
                 stackTo.addCurrencyPurchase(dividendPurchase);
+            } else if (purchase instanceof StockDisposalInternal) {
+                CurrencyPurchase disposalPurchase = (StockDisposalInternal) purchase;
+                CurrencyStack stackTo = currencyStacks.get(disposalPurchase.getCurrencyTo());
+
+                stackTo.addCurrencyPurchase(disposalPurchase);
             } else {
                 // Should not happen
                 throw new IllegalStateException("Invalid purchase: " + purchase);
@@ -316,7 +336,17 @@ public class PurchaseManager {
             }
         }
 
-        // 8 - Create instance of CurrenciesInfo
+        // 8 - Add disposals payed by solding stock of some companies
+        for (CompanyPurchasesPrice company : companiesPurchases.values()) {
+
+            for (StockDisposalInternal disposal : sortedDisposals) {
+                if (disposal.companyTicker.equals(company.companyTicker)) {
+                    company.addDisposal(disposal);
+                }
+            }
+        }
+
+        // 9 - Create instance of CurrenciesInfo
         currenciesInfo.czkDepositsTotal = totalDepositCZK;
 
         for (CurrencyStack currencyStack : currencyStacks.values()) {
@@ -346,6 +376,8 @@ public class PurchaseManager {
 
         private final List<DividendPaymentInternal> dividends = new ArrayList<>();
 
+        private final List<DisposalInternal> disposals = new ArrayList<>();
+
         private CompanyPurchasesPrice(String companyTicker) {
             this.companyTicker = companyTicker;
         }
@@ -354,12 +386,20 @@ public class PurchaseManager {
             return purchases;
         }
 
+        public List<DisposalInternal> getDisposals() {
+            return new ArrayList<DisposalInternal>(disposals);
+        }
+
         private void addPurchase(CompanyPurchaseInternal purchase) {
             this.purchases.add(purchase);
         }
 
         private void addDividendPayment(DividendPaymentInternal dividend) {
             this.dividends.add(dividend);
+        }
+
+        private void addDisposal(StockDisposalInternal disposal) {
+            this.disposals.add(disposal);
         }
 
         // Get total price of all purchases. It includes fees
@@ -371,11 +411,14 @@ public class PurchaseManager {
             return sum;
         }
 
-        // Get total price of all fees of all company purchases
+        // Get total price of all fees of all company purchases and also of all disposals
         public double getTotalCZKPriceOfAllFees() {
             double sum = 0;
             for (CompanyPurchaseInternal purchase : purchases) {
                 sum += purchase.getTotalFeeInCZK();
+            }
+            for (DisposalInternal disposal : disposals) {
+                sum += disposal.getTotalFeeInCZK();
             }
             return sum;
         }
@@ -398,6 +441,28 @@ public class PurchaseManager {
             double sum = 0;
             for (DividendPaymentInternal dividend : dividends) {
                 sum += dividend.currencyToAmount * dividend.getCzkAmountForOneUnit();
+            }
+            return sum;
+        }
+
+        /**
+         * @return Sum of all moneys in original currency, which were payed to us for disposals of this company
+         */
+        public double getTotalDisposalsPaymentsInOriginalCurrency() {
+            double sum = 0;
+            for (DisposalInternal disposal : disposals) {
+                sum += disposal.getTotalAmountInOriginalCurrency();
+            }
+            return sum;
+        }
+
+        /**
+         * @return Sum of all moneys in CZK, which were payed to us for disposals of this company
+         */
+        public double getTotalDisposalsPaymentsInCZK() {
+            double sum = 0;
+            for (DisposalInternal disposal : disposals) {
+                sum += disposal.getTotalAmountInCZK();
             }
             return sum;
         }
@@ -516,7 +581,7 @@ public class PurchaseManager {
     }
 
 
-    // Represents everything, which gives us money of specified currency. It can be CurrencyPurchase or DividendPayment
+    // Represents everything, which gives us money of specified currency. It can be CurrencyPurchase or DividendPayment or StockDisposal
     private interface CurrencyPurchase extends PurchaseInternal {
 
         double getRemainingCurrencyToAmount();
@@ -528,13 +593,14 @@ public class PurchaseManager {
 
         String getCurrencyTo();
 
-        // Just a helper for sorting to ensure that dividends are after currency purchases.
+        // Just a helper for sorting to ensure that dividends are after currency purchases and stockDisposals are after dividends.
         int getTypePriority();
     }
 
     // Add currency purchases before dividends. But in reality, the order does not matter too much
     private static final int CURRENCY_PURCHASE_TYPE_PRIORITY = 1;
     private static final int DIVIDENT_PAYMENT_TYPE_PRIORITY = 2;
+    private static final int STOCK_DISPOSAL_PRIORITY = 3;
 
     private static class CurrencyPurchaseInternal implements CurrencyPurchase {
 
@@ -604,7 +670,7 @@ public class PurchaseManager {
     }
 
 
-    // Divident payment gives us money and hence
+    // Divident payment gives us money and hence it is considered as currencyPurchase
     private static class DividendPaymentInternal implements CurrencyPurchase {
 
         private final String date;
@@ -667,6 +733,139 @@ public class PurchaseManager {
         @Override
         public int getTypePriority() {
             return DIVIDENT_PAYMENT_TYPE_PRIORITY;
+        }
+    }
+
+    // Public interface, which allows some public parts of "Disposal" to be accessed
+    public interface DisposalInternal {
+
+        String getCompanyTicker();
+
+        String getCurrency();
+
+        int getSoldStocksCount();
+
+        double getTotalAmountInOriginalCurrency();
+
+        double getTotalAmountInCZK();
+
+        double getTotalFeeInOriginalCurrency();
+
+        double getTotalFeeInCZK();
+
+    }
+
+
+    // Disposal of some stock payment gives us money and hence it is considered as currencyPurchase
+    private static class StockDisposalInternal implements CurrencyPurchase, DisposalInternal {
+
+        private final String date;
+
+        private final long dateNumber;
+
+        private final String currencyTo;
+
+        private final String companyTicker;
+
+        private final int soldStocksCount;
+
+        private final double currencyToAmount;
+
+        private double remainingCurrencyToAmount;
+
+        private final double currencyToAmountInCZK;
+
+        private final double czkAmountForOneUnitOfOrigCurrency;
+
+        private final double totalFeeInOriginalCurrency;
+
+        private final double totalFeeInCZK;
+
+        private StockDisposalInternal(String date, String companyTicker, int soldStocksCount, String currencyTo, double currencyToAmount,
+                                     double czkAmountForOneUnitOfOrigCurrency, double totalFeeInOriginalCurrency) {
+            this.date = date;
+            this.dateNumber = DateUtil.dateToNumber(date);
+            this.companyTicker = companyTicker;
+            this.soldStocksCount = soldStocksCount;
+            this.currencyTo = currencyTo;
+            this.currencyToAmount = currencyToAmount;
+            // The gain from this CurrencyPurchase is total amount - totalFeeInOriginalCurrency
+            this.remainingCurrencyToAmount = currencyToAmount - totalFeeInOriginalCurrency;
+            this.currencyToAmountInCZK = czkAmountForOneUnitOfOrigCurrency * currencyToAmount;
+            this.czkAmountForOneUnitOfOrigCurrency = czkAmountForOneUnitOfOrigCurrency;
+            this.totalFeeInOriginalCurrency = totalFeeInOriginalCurrency;
+            this.totalFeeInCZK = totalFeeInOriginalCurrency * czkAmountForOneUnitOfOrigCurrency;
+        }
+
+        @Override
+        public String getDate() {
+            return date;
+        }
+
+        @Override
+        public long getDateNumber() {
+            return dateNumber;
+        }
+
+        @Override
+        public double getRemainingCurrencyToAmount() {
+            return remainingCurrencyToAmount;
+        }
+
+        @Override
+        public void setRemainingCurrencyToAmount(double remainingCurrencyToAmount) {
+            this.remainingCurrencyToAmount = remainingCurrencyToAmount;
+        }
+
+        @Override
+        public double getCzkAmountForOneUnit() {
+            return czkAmountForOneUnitOfOrigCurrency;
+        }
+
+        @Override
+        public String getCurrencyTo() {
+            return currencyTo;
+        }
+
+        @Override
+        public int getTypePriority() {
+            return DIVIDENT_PAYMENT_TYPE_PRIORITY;
+        }
+
+        public double getTotalFeeInCZK() {
+            return totalFeeInCZK;
+        }
+
+        public double getTotalAmountInCZK() {
+            return currencyToAmountInCZK;
+        }
+
+        // DISPOSAL INTERNAL METHODS
+
+
+        @Override
+        public String getCompanyTicker() {
+            return companyTicker;
+        }
+
+        @Override
+        public String getCurrency() {
+            return currencyTo;
+        }
+
+        @Override
+        public int getSoldStocksCount() {
+            return soldStocksCount;
+        }
+
+        @Override
+        public double getTotalAmountInOriginalCurrency() {
+            return currencyToAmount;
+        }
+
+        @Override
+        public double getTotalFeeInOriginalCurrency() {
+            return totalFeeInOriginalCurrency;
         }
     }
 }

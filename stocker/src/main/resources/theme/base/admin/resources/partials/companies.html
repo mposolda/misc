@@ -15,10 +15,12 @@
                 <th>{{:: 'expected-year-back-flow-in-percent-right-now' | translate}}</th>
                 <th>{{:: 'total-stocks-in-hold' | translate}}</th>
                 <th>{{:: 'total-price-payed' | translate}}</th>
+                <th>{{:: 'total-price-sold' | translate}}</th>
                 <th>{{:: 'current-price-of-all-stocks-in-hold' | translate}}</th>
                 <th>{{:: 'dividends' | translate}}</th>
                 <th>{{:: 'earning' | translate}}</th>
                 <th>{{:: 'total-price-payed-czk' | translate}}</th>
+                <th>{{:: 'total-price-sold-in-czk' | translate}}</th>
                 <th>{{:: 'current-price-of-all-stocks-in-hold-czk' | translate}}</th>
                 <th>{{:: 'dividends-czk' | translate}}</th>
                 <th>{{:: 'earning-czk' | translate}}</th>
@@ -34,10 +36,12 @@
                 <td>{{MyMath.round(company.expectedYearBackflowInPercentRightNow)}} %</td>
                 <td>{{company.totalStocksInHold}}</td>
                 <td>{{MyMath.round(company.totalPricePayed)}} {{company.currency}}</td>
+                <td>0 {{company.currency}}</td>
                 <td>{{MyMath.round(company.currentPriceOfAllStocksInHold)}} {{company.currency}}</td>
                 <td>{{MyMath.round(company.totalDividends)}} {{company.currency}}</td>
                 <td style="{{ColorMarker.mark(company.earning)}}">{{MyMath.round(company.earning)}} {{company.currency}}</td>
                 <td>{{MyMath.round(company.totalPricePayedCZK)}} CZK</td>
+                <td>0 CZK</td>
                 <td>{{MyMath.round(company.currentPriceOfAllStocksInHoldCZK)}} CZK</td>
                 <td>{{MyMath.round(company.totalDividendsCZK)}} CZK</td>
                 <td style="{{ColorMarker.mark(company.earningCZK)}}">{{MyMath.round(company.earningCZK)}} CZK</td>
