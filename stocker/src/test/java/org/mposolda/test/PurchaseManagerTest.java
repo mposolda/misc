@@ -140,6 +140,26 @@ public class PurchaseManagerTest {
     }
 
 
+    @Test
+    public void testStocks8() {
+        String jsonFile = getJsonFilesDir() + "/stocks-8-usd-single-company-fees-dividends-sold.json";
+
+        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        mgr.start();
+
+        PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
+        assertPurchases(company, 4340, 2200, 2140);
+        assertPurchaseAndDisposalFees(company, 550, 200, 140, 210);
+
+        assertDisposals(company, 220, 4620, 4620);
+
+        assertCurrency(mgr.getCurrenciesInfo(), "USD", 2013);
+        assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
+
+        Assert.assertEquals(200, mgr.getCurrenciesInfo().getCzkFeesTotal(), 0.1);
+    }
+
+
     private String getJsonFilesDir() {
         return System.getProperty("user.dir") + "/src/test/resources";
     }

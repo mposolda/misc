@@ -70,7 +70,7 @@ public class CompanyRep {
     }
 
     public List<DisposalRep> getDisposals() {
-        return disposals;
+        return disposals == null ? Collections.emptyList() : disposals;
     }
 
     public void setDisposals(List<DisposalRep> disposals) {
