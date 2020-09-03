@@ -48,6 +48,19 @@ public class CompaniesRep extends BaseRep {
     }
 
     /**
+     *
+     * @return Total price of all sold stocks in CZK
+     */
+    @JsonProperty("totalPriceSoldCZK")
+    public Double getTotalPriceSoldCZK() {
+        double result = 0;
+        for (CompanyFullRep company : companies) {
+            result += company.getTotalPriceSoldCZK();
+        }
+        return result;
+    }
+
+    /**
      * @return Current price of all currently holded stocks in CZK
      */
     @JsonProperty("currentPriceOfAllStocksInHoldCZK")
@@ -90,7 +103,7 @@ public class CompaniesRep extends BaseRep {
      */
     @JsonProperty("totalBackflowInPercent")
     public Double getTotalBackflowInPercent() {
-        return (((getCurrentPriceOfAllStocksInHoldCZK() + getTotalDividendsCZK()) / getTotalPricePayedCZK()) - 1) * 100;
+        return (((getCurrentPriceOfAllStocksInHoldCZK() + getTotalDividendsCZK() + getTotalPriceSoldCZK()) / getTotalPricePayedCZK()) - 1) * 100;
     }
 
     /**

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
+import org.mposolda.reps.DisposalRep;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.CompanyRep;
@@ -90,7 +91,6 @@ public class CompanyInfoManager {
         result.setCurrentStockPrice(currentPrice);
         int totalStocksInHold = 0;
         double totalPricePayed = 0;
-        double totalFeesPayed = 0;
 
         // TODO:mposolda For now, use just always first expected backflow
         ExpectedBackflowRep expectedBackflow = company.getExpectedBackflows().get(0);
@@ -103,12 +103,16 @@ public class CompanyInfoManager {
 
             // Apply fee in the "original" currency
             double fee = purchase.getFee();
-            totalPricePayed -= fee;
-            totalFeesPayed += fee;
+            totalPricePayed += fee;
 
             CompanyFullRep.PurchaseFull purchaseFull = new CompanyFullRep.PurchaseFull(purchase);
             purchaseFull.setExpectedBackflowInPercent(expectedBackflowInPercent);
             purchases.add(purchaseFull);
+        }
+
+        // Remove stocks in hold, which were already sold
+        for (DisposalRep disposal : company.getDisposals()) {
+            totalStocksInHold -= disposal.getStocksCount();
         }
 
         double expectedBackflowInPercentRightNow = (expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / currentPrice;
@@ -129,20 +133,23 @@ public class CompanyInfoManager {
         result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
         result.setTotalFeesPayedCZK(totalFeesOfAllPurchasesCZK);
 
+        result.setTotalPriceSold(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInOriginalCurrency());
+        result.setTotalPriceSoldCZK(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInCZK());
+
         double dividendsTotal = companyPurchases==null ? 0 : companyPurchases.getTotalDividendsPaymentsInOriginalCurrency();
         double dividendsTotalCZK =  companyPurchases==null ? 0 : companyPurchases.getTotalDividendsPaymentsInCZK();
         result.setTotalDividends(dividendsTotal);
         result.setTotalDividendsCZK(dividendsTotalCZK);
 
-        double earning = currentPriceOfAllStocksInHold - totalPricePayed + dividendsTotal;
+        double earning = currentPriceOfAllStocksInHold - totalPricePayed + dividendsTotal + result.getTotalPriceSold();
         result.setEarning(earning);
 
         // TODO:mposolda compute averageYearBackflowInPercent
 
         result.setCurrentPriceOfAllStocksInHoldCZK(currencyConvertor.exchangeMoney(result.getCurrentPriceOfAllStocksInHold(), result.getCurrency(), "CZK"));
-        result.setEarningCZK(result.getCurrentPriceOfAllStocksInHoldCZK() - result.getTotalPricePayedCZK() + dividendsTotalCZK);
+        result.setEarningCZK(result.getCurrentPriceOfAllStocksInHoldCZK() - result.getTotalPricePayedCZK() + dividendsTotalCZK + result.getTotalPriceSoldCZK());
 
-        double totalBackflowInPercent = (((result.getCurrentPriceOfAllStocksInHoldCZK() + dividendsTotalCZK ) / totalPriceOfAllPurchasesCZK) - 1) * 100;
+        double totalBackflowInPercent = (((result.getCurrentPriceOfAllStocksInHoldCZK() + dividendsTotalCZK + result.getTotalPriceSoldCZK()) / totalPriceOfAllPurchasesCZK) - 1) * 100;
         result.setTotalBackflowInPercent(totalBackflowInPercent);
 
         return result;
