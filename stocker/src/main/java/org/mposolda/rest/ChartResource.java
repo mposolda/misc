@@ -35,18 +35,6 @@ public class ChartResource {
 
     protected static final Logger logger = Logger.getLogger(ChartResource.class);
 
-
-    /**
-     * @return chart with displayed companies in the portfolio based on bought amount
-     */
-    @GET
-    @NoCache
-    @Path("/portfolio-bought")
-    @Produces("image/png")
-    public Response portfolioBought(@QueryParam("title") String chartTitle) {
-        return generateChart(chartTitle, company -> Math.round(company.getTotalPricePayedCZK() / 1000));
-    }
-
     /**
      * @return chart with displayed companies in the portfolio based on current value
      */
