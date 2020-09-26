@@ -14,8 +14,16 @@
                 <td>{{MyMath.round(currencies.depositTotalInCZK)}} CZK</td>
             </tr>
             <tr>
-                <th>{{:: 'invested-to-stocks' | translate}}</th>
+                <th>{{:: 'payed-for-stocks' | translate}}</th>
                 <td>{{MyMath.round(companies.totalPricePayedCZK)}} CZK</td>
+            </tr>
+            <tr>
+                <th>{{:: 'sold-for-stocks' | translate}}</th>
+                <td>{{MyMath.round(companies.totalPriceSoldCZK)}} CZK</td>
+            </tr>
+            <tr>
+                <th>{{:: 'invested-to-stocks-sum' | translate}}</th>
+                <td>{{MyMath.round(companies.totalPriceInvestedCZK)}} CZK</td>
             </tr>
             <tr>
                 <th>{{:: 'value-of-stocks' | translate}}</th>

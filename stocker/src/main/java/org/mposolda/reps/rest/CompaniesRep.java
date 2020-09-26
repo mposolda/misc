@@ -61,6 +61,15 @@ public class CompaniesRep extends BaseRep {
     }
 
     /**
+     *
+     * @return Total price invested to stocks in CZK. It is effectively totalPricePayed - totalPriceSold
+     */
+    @JsonProperty("totalPriceInvestedCZK")
+    public Double getTotalPriceInvestedCZK() {
+        return getTotalPricePayedCZK() - getTotalPriceSoldCZK();
+    }
+
+    /**
      * @return Current price of all currently holded stocks in CZK
      */
     @JsonProperty("currentPriceOfAllStocksInHoldCZK")
