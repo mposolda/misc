@@ -14,7 +14,7 @@
     <url>http://maven.apache.org</url>
 
     <properties>
-        <version.jetty>9.0.2.v20130417</version.jetty>
+        <version.jetty>9.4.34.v20201102</version.jetty>
     </properties>
 
     <dependencies>
