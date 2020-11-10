@@ -6,13 +6,18 @@ import java.util.Map;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.ItemLabelAnchor;
+import org.jfree.chart.labels.ItemLabelPosition;
+import org.jfree.chart.labels.StandardXYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
+import org.jfree.ui.TextAnchor;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -28,7 +33,7 @@ public class XYLineChart2 extends ApplicationFrame {
                 "Score",
                 createDataset(),
                 PlotOrientation.VERTICAL,
-                true, true, false);
+                true, true, true);
 
 
         ChartPanel chartPanel = new ChartPanel( xylineChart );
@@ -45,6 +50,15 @@ public class XYLineChart2 extends ApplicationFrame {
         renderer.setSeriesStroke( 1 , new BasicStroke( 2.0f ) );
         renderer.setSeriesStroke( 2 , new BasicStroke( 2.0f ) );
         renderer.setSeriesStroke( 3 , new BasicStroke( 5.0f ) );
+
+        // Set whether the curve shows data points
+        renderer.setBaseShapesVisible(true);
+        // Set the curve to display the value of each data point
+        //XYItemRenderer xyitem = plot.getRenderer();
+        renderer.setBaseItemLabelsVisible(true);
+        renderer.setBasePositiveItemLabelPosition(new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BASELINE_CENTER));
+        renderer.setBaseItemLabelGenerator(new StandardXYItemLabelGenerator());
+        renderer.setBaseItemLabelFont(new Font("Dialog", 1, 12));
 
         plot.setRenderer( renderer );
 

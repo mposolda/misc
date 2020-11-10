@@ -1,11 +1,16 @@
 package org.mposolda;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
+import org.infinispan.client.hotrod.ProtocolVersion;
 import org.infinispan.client.hotrod.RemoteCache;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.client.hotrod.configuration.ExhaustedAction;
+import org.infinispan.client.hotrod.configuration.SaslQop;
 import org.infinispan.executors.DefaultExecutorFactory;
 
 /**
@@ -13,18 +18,32 @@ import org.infinispan.executors.DefaultExecutorFactory;
  */
 public class SimpleRemoteCacheProvider {
 
-    public RemoteCache getRemoteCache() {
+    public RemoteCache getRemoteCache(String cacheName) {
+//        Map<String, String> config = new HashMap<>();
+//        config.put("com.sun.security.sasl.digest.utf8", "true");
+
         ConfigurationBuilder builder = new ConfigurationBuilder();
         builder
                 .addServer()
                     .host("127.0.0.1")
                     .port(11222)
                 .forceReturnValues(false)
+                .security()
+                    .authentication()
+                        .enable()
+                        .realm("default")
+                        .serverName("infinispan")
+                        .username("myuser")
+                        .password("qwer1234!")
+                        .saslMechanism("DIGEST-MD5")
+                        //.saslProperties(config)
+                        //.saslQop(SaslQop.AUTH)
+                .version(ProtocolVersion.PROTOCOL_VERSION_29)
                 .connectionPool()
                     .maxActive(20)
                     .exhaustedAction(ExhaustedAction.CREATE_NEW);
 
-        return new RemoteCacheManager(builder.build()).getCache("default");
+        return new RemoteCacheManager(builder.build()).getCache(cacheName);
     }
 
 

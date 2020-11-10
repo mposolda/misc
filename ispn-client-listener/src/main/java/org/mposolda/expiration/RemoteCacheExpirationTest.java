@@ -19,36 +19,37 @@ import org.infinispan.metadata.Metadata;
 import org.infinispan.metadata.impl.InternalMetadataImpl;
 import org.infinispan.persistence.remote.configuration.ExhaustedAction;
 import org.infinispan.persistence.remote.configuration.RemoteStoreConfigurationBuilder;
+import org.mposolda.SimpleRemoteCacheProvider;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class RemoteCacheExpirationTest {
 
-    public static void main(String[] args) {
-        ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.addServer().host("127.0.0.1").port(ConfigurationProperties.DEFAULT_HOTROD_PORT);
-        RemoteCacheManager cacheManager = new RemoteCacheManager(builder.build());
+    public static void main(String[] args) throws Exception {
+//        ConfigurationBuilder builder = new ConfigurationBuilder();
+//        builder.addServer().host("127.0.0.1").port(ConfigurationProperties.DEFAULT_HOTROD_PORT);
+//        RemoteCacheManager cacheManager = new RemoteCacheManager(builder.build());
 
-        RemoteCache<String, String> remoteCache = cacheManager.getCache("trans");
+        RemoteCache<String, String> remoteCache = new SimpleRemoteCacheProvider().getRemoteCache("sessions");
 
         remoteCache.put("key1", "value1");
         // This val1 item is fine and it's metadata are not expired
         MetadataValue val1 = remoteCache.getWithMetadata("key1");
 
-        remoteCache.put("key2", "value2", 1000, TimeUnit.SECONDS, 100, TimeUnit.SECONDS);
-
-        // ERROR HERE: val2 metadata has "created" and "lastUsed" set to 0
-        MetadataValue val2 = remoteCache.getWithMetadata("key2");
-        System.out.println("val2.created: " + val2.getCreated() + ", val2.lastUsed: " + val2.getLastUsed());
-
-        // Retrieve info through remoteStore
-        Cache<String, String> remoteStoreBackedCache = getCacheWithRemoteStore();
-        String cacheVal1 = remoteStoreBackedCache.get("key1");
-        String cacheVal2 = remoteStoreBackedCache.get("key2");
-
-        System.out.println(cacheVal1);
-        System.out.println(cacheVal2);
+//        remoteCache.put("key2", "value2", 1000, TimeUnit.SECONDS, 100, TimeUnit.SECONDS);
+//
+//        // ERROR HERE: val2 metadata has "created" and "lastUsed" set to 0
+//        MetadataValue val2 = remoteCache.getWithMetadata("key2");
+//        System.out.println("val2.created: " + val2.getCreated() + ", val2.lastUsed: " + val2.getLastUsed());
+//
+//        // Retrieve info through remoteStore
+//        Cache<String, String> remoteStoreBackedCache = getCacheWithRemoteStore();
+//        String cacheVal1 = remoteStoreBackedCache.get("key1");
+//        String cacheVal2 = remoteStoreBackedCache.get("key2");
+//
+//        System.out.println(cacheVal1);
+//        System.out.println(cacheVal2);
 
 
 //        long currentTimeMs = System.currentTimeMillis();
@@ -62,8 +63,8 @@ public class RemoteCacheExpirationTest {
 //            System.err.println("ERROR: val2 is expired!");
 //        }
 
-        cacheManager.stop();
-        remoteStoreBackedCache.getCacheManager().stop();
+        remoteCache.getRemoteCacheManager().close();
+//        remoteStoreBackedCache.getCacheManager().stop();
     }
 
 

@@ -43,7 +43,7 @@ public class StoreRemoteCacheProvider {
             gcb.transport().clusterName("test-clustering");
         }
 
-        gcb.globalJmxStatistics().allowDuplicateDomains(allowDuplicateJMXDomains);
+        //gcb.globalJmxStatistics().allowDuplicateDomains(allowDuplicateJMXDomains);
 
         EmbeddedCacheManager cacheManager = new DefaultCacheManager(gcb.build());
 
