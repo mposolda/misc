@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
@@ -30,12 +31,13 @@ public class MockFinhubClient implements FinnhubHttpClient {
     }
 
     @Override
-    public QuoteRep getQuoteRep(String ticker) {
+    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, boolean retryIfNeeded) {
         return null;
     }
 
     @Override
-    public CandleRep getStockCandle(String ticker, String startDate, String endDate) {
+
+    public CandleRep getStockCandle(QuoteLoaderRep quoteLoader, String startDate, String endDate) {
         return null;
     }
 

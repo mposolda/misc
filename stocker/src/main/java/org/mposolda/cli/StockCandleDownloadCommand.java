@@ -3,6 +3,7 @@ package org.mposolda.cli;
 import java.io.IOException;
 
 import org.mposolda.reps.CandlesRep;
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.services.FailedCandleDownloadException;
 
 /**
@@ -18,9 +19,9 @@ public class StockCandleDownloadCommand extends AbstractCommand {
     @Override
     protected void doRunCommand() throws IOException {
         String stockTicker = getArg(0);
-
+        QuoteLoaderRep loader = QuoteLoaderRep.fromTicker(stockTicker);
         try {
-            CandlesRep stockCandle = services.getCandlesHistoryManager().getStockCandles(stockTicker, true);
+            CandlesRep stockCandle = services.getCandlesHistoryManager().getStockCandles(loader, true);
         } catch (FailedCandleDownloadException fcde) {
             log.warn("Failed to download candle for company " + stockTicker);
         }

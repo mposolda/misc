@@ -9,6 +9,7 @@ import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.util.JsonUtil;
 
 /**
@@ -46,7 +47,7 @@ public class CandlesHistoryManager {
         List<String> failedCompanies = new LinkedList<>();
         for (CompanyRep company : database.getCompanies()) {
             try {
-                CandlesRep stockCandle = getStockCandles(company.getTicker(), true);
+                CandlesRep stockCandle = getStockCandles(company, true);
                 log.info("Loaded candles representation for company " + company.getTicker());
             } catch (FailedCandleDownloadException e) {
                 log.warn("Failed to download candles representation for company " + company.getTicker() + ". Fallback was needed to download only quote for current day.");
@@ -57,12 +58,12 @@ public class CandlesHistoryManager {
         log.infof("All failed company tickers where fallback was needed " + failedCompanies);
     }
 
-    public CandlesRep getStockCandles(String stockTicker, boolean downloadNewest) throws FailedCandleDownloadException {
-        return candlesDAO.getStockCandles(stockTicker, downloadNewest);
+    public CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest) throws FailedCandleDownloadException {
+        return candlesDAO.getStockCandles(company, downloadNewest);
     }
 
-    public CandlesRep getStockCandles(String stockTicker, boolean downloadNewest, String startingDateStr, String endDateStr) throws FailedCandleDownloadException {
-        return candlesDAO.getStockCandles(stockTicker, downloadNewest, startingDateStr, endDateStr);
+    public CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest, String startingDateStr, String endDateStr) throws FailedCandleDownloadException {
+        return candlesDAO.getStockCandles(company, downloadNewest, startingDateStr, endDateStr);
     }
 
     public CandlesRep getStockCandlesInCZK(String stockTicker, boolean downloadNewest) {

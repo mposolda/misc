@@ -1,5 +1,13 @@
 P1
 
+- Add fees for dividends and other things (See screenshots for more details and delete those screenshots)
+
+- Change QUOTE command to use single attempt
+
+- Add "Cash" to the chart on the title page
+
+- Implement the individual companies to be able to click on them and see purchases, dividends etc.
+
 - Implement charts (and other info) for currencies
 
 - Implement charts (and other info) for stocks

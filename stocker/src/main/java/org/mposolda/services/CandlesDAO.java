@@ -3,13 +3,13 @@ package org.mposolda.services;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.mposolda.client.FinnhubHttpClient;
-import org.mposolda.client.JsonSerialization;
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.CandlesRep;
+import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.util.DateUtil;
@@ -36,13 +36,13 @@ class CandlesDAO {
         this.finhubClient = finhubClient;
     }
 
-    CandlesRep getStockCandles(String stockTicker, boolean downloadNewest) throws FailedCandleDownloadException {
+    CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest) throws FailedCandleDownloadException {
         String currentDate = DateUtil.numberInSecondsToDate(DateUtil.getCurrentTimestamp());
-        return getStockCandles(stockTicker, downloadNewest, DEFAULT_STARTING_DATE, currentDate);
+        return getStockCandles(company, downloadNewest, DEFAULT_STARTING_DATE, currentDate);
     }
 
-    CandlesRep getStockCandles(String stockTicker, boolean downloadNewest, String startingDateStr, String endDateStr) throws FailedCandleDownloadException {
-        return getCandles(stockTicker, downloadNewest, startingDateStr, endDateStr, false);
+    CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest, String startingDateStr, String endDateStr) throws FailedCandleDownloadException {
+        return getCandles(company, downloadNewest, startingDateStr, endDateStr, false);
     }
 
     CandlesRep getCurrencyCandles(String currencyTicker, boolean downloadNewest) {
@@ -52,7 +52,8 @@ class CandlesDAO {
 
     CandlesRep getCurrencyCandles(String currencyTicker, boolean downloadNewest, String startingDateStr, String endDateStr) {
         try {
-            return getCandles(currencyTicker, downloadNewest, startingDateStr, endDateStr, true);
+            QuoteLoaderRep candlesLoaderRep = QuoteLoaderRep.fromTicker(currencyTicker);
+            return getCandles(candlesLoaderRep, downloadNewest, startingDateStr, endDateStr, true);
         } catch (FailedCandleDownloadException fcde) {
             // This should not happen. We rethrow the exception if it happens
             throw new RuntimeException("Failed to download currency candle. No fallback available for currency candles", fcde);
@@ -60,7 +61,9 @@ class CandlesDAO {
     }
 
     // "isCurrencyCandle" is true when downloading currency candles. It is false when downloading stock candles
-    private CandlesRep getCandles(String ticker, boolean downloadNewest, String startingDateStr, String endDateStr, boolean isCurrencyCandle) throws FailedCandleDownloadException {
+    private CandlesRep getCandles(QuoteLoaderRep quoteLoaderInputRep, boolean downloadNewest, String startingDateStr, String endDateStr, boolean isCurrencyCandle) throws FailedCandleDownloadException {
+        String ticker = quoteLoaderInputRep.getTicker();
+
         long startDate = DateUtil.dateToNumberSeconds(startingDateStr);
         long endDate = DateUtil.dateToNumberSeconds(endDateStr);
 
@@ -93,13 +96,13 @@ class CandlesDAO {
         long startDateToUse = Math.max(startDate, lastComputedTimestamp);
         String startDateToUseStr = DateUtil.numberInSecondsToDate(startDateToUse);
         CandleRep finhubCandle = isCurrencyCandle ? finhubClient.getCurrencyCandle(ticker, startDateToUseStr, endDateStr)
-                : finhubClient.getStockCandle(ticker, startDateToUseStr, endDateStr);
+                : finhubClient.getStockCandle(quoteLoaderInputRep, startDateToUseStr, endDateStr);
 
         // 7 For failed company candles, we will fallback to download current quote and just use the quote from the current day
         boolean fallbackNeeded = false;
         if (!isCurrencyCandle && finhubCandle.getOpenDayPrice() == null) {
             fallbackNeeded = true;
-            QuoteRep quote = finhubClient.getQuoteRep(ticker);
+            QuoteRep quote = finhubClient.getQuoteRep(quoteLoaderInputRep, true);
 
             // Just manually create candlesRep from the quote
             finhubCandle = new CandleRep();

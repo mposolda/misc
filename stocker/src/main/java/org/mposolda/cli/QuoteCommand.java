@@ -2,6 +2,7 @@ package org.mposolda.cli;
 
 import java.io.IOException;
 
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.QuoteRep;
 
 /**
@@ -17,8 +18,9 @@ public class QuoteCommand extends AbstractCommand {
     @Override
     protected void doRunCommand() throws IOException {
         String ticker = getArg(0);
+        QuoteLoaderRep quoteLoader = QuoteLoaderRep.fromTicker(ticker);
 
-        QuoteRep quote = services.getFinhubClient().getQuoteRep(ticker);
+        QuoteRep quote = services.getFinhubClient().getQuoteRep(quoteLoader, false);
 
         log.info("Info: " + quote);
     }

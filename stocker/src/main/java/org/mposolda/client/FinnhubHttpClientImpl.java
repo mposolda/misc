@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.jboss.logging.Logger;
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
@@ -42,7 +43,8 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
-    public QuoteRep getQuoteRep(String ticker) {
+    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, boolean retryIfNeeded) {
+        String ticker = quoteLoader.getTicker();
         try {
             log.infof("Loading quote for company: %s", ticker);
             String url = URL_PREFIX + "/quote?symbol=" + ticker + "&token=" + token;
@@ -55,7 +57,8 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
-    public CandleRep getStockCandle(String ticker, String startDate, String endDate) {
+    public CandleRep getStockCandle(QuoteLoaderRep quoteLoaderRep, String startDate, String endDate) {
+        String ticker = quoteLoaderRep.getTicker();
         try {
             log.infof("Loading stock candles for company: %s. From %s to %s", ticker, startDate, endDate);
 

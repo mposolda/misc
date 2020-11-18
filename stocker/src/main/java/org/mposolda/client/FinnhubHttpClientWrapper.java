@@ -5,11 +5,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jboss.logging.Logger;
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.util.NumberUtil;
+import org.mposolda.util.FinhubOutputUtil;
 import org.mposolda.util.WaitUtil;
 
 /**
@@ -38,24 +40,29 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     }
 
     @Override
-    public QuoteRep getQuoteRep(String ticker) {
-        return retry(
-                       ticker,
-                       ticker2 -> {
-                           return waitAndCall(ticker2, delegate::getQuoteRep);
+    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, boolean retryIfNeeded) {
+        int maxAttempts = retryIfNeeded ? MAX_ATTEMPTS : 1;
+        QuoteRep result = retry(
+                       quoteLoader,
+                        quoteLoader2 -> {
+                           return waitAndCall(quoteLoader2, (quoteLoaderr) -> delegate.getQuoteRep(quoteLoaderr, false));
                        },
                        quoteRep -> {
                            return !NumberUtil.isZero(quoteRep.getCurrentPrice());
                        },
-                MAX_ATTEMPTS,
+                maxAttempts,
                        "getQuoteRep");
+
+        return FinhubOutputUtil.convertQuoteRep(quoteLoader, result);
     }
 
     @Override
-    public CandleRep getStockCandle(String ticker, String startDate, String endDate) {
-        return waitAndCall(ticker, ticker2 -> {
-            return delegate.getStockCandle(ticker2, startDate, endDate);
+    public CandleRep getStockCandle(QuoteLoaderRep quoteLoader, String startDate, String endDate) {
+        CandleRep result = waitAndCall(quoteLoader, quoteLoader2 -> {
+            return delegate.getStockCandle(quoteLoader2, startDate, endDate);
         });
+
+        return FinhubOutputUtil.convertCandleRep(quoteLoader, result);
     }
 
     @Override

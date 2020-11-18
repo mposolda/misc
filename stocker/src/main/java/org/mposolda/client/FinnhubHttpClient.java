@@ -2,6 +2,7 @@ package org.mposolda.client;
 
 import java.io.Closeable;
 
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
@@ -14,12 +15,12 @@ public interface FinnhubHttpClient extends Closeable {
 
     CompanyProfileRep getCompanyProfile(String ticker);
 
-    QuoteRep getQuoteRep(String ticker);
+    QuoteRep getQuoteRep(QuoteLoaderRep company, boolean retryIfFailure);
 
     /**
      * Dates are in the format like "2020-10-20"
      */
-    CandleRep getStockCandle(String ticker, String startDate, String endDate);
+    CandleRep getStockCandle(QuoteLoaderRep company, String startDate, String endDate);
 
     CurrenciesRep getCurrencies();
 

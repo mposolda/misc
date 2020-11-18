@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class CompanyRep {
+public class CompanyRep implements QuoteLoaderRep {
 
     @JsonProperty("name")
     protected String name;
@@ -16,6 +16,10 @@ public class CompanyRep {
     protected String ticker;
     @JsonProperty("currency")
     public String currency;
+
+    // This is used when we want to use currency like GBP, however the quote price is sent in the currency like GBX. For this example, the ratio would be 100.
+    @JsonProperty("currencyFromQuoteRatio")
+    public Integer currencyFromQuoteRatio;
 
     @JsonProperty("expectedBackflows")
     public List<ExpectedBackflowRep> expectedBackflows;
@@ -37,6 +41,7 @@ public class CompanyRep {
         this.name = name;
     }
 
+    @Override
     public String getTicker() {
         return ticker;
     }
@@ -51,6 +56,15 @@ public class CompanyRep {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    @Override
+    public Integer getCurrencyFromQuoteRatio() {
+        return currencyFromQuoteRatio;
+    }
+
+    public void setCurrencyFromQuoteRatio(Integer currencyFromQuoteRatio) {
+        this.currencyFromQuoteRatio = currencyFromQuoteRatio;
     }
 
     public List<ExpectedBackflowRep> getExpectedBackflows() {

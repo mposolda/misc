@@ -83,7 +83,7 @@ public class CompanyInfoManager {
     private CompanyFullRep computeCompanyFull(CompanyRep company) {
         CompanyFullRep result = new CompanyFullRep(company);
 
-        QuoteRep quote = finhubClient.getQuoteRep(company.getTicker());
+        QuoteRep quote = finhubClient.getQuoteRep(company, true);
 
         // Using current price for now.
         double currentPrice = quote.getCurrentPrice();

@@ -2,6 +2,7 @@ package org.mposolda.cli;
 
 import java.io.IOException;
 
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CandleRep;
 
 /**
@@ -20,7 +21,8 @@ public class StockCandleCommand extends AbstractCommand {
         String startDate = getArg(1);
         String endDate = getArg(2);
 
-        CandleRep stockCandle = services.getFinhubClient().getStockCandle(ticker, startDate, endDate);
+        QuoteLoaderRep quoteLoader = QuoteLoaderRep.fromTicker(ticker);
+        CandleRep stockCandle = services.getFinhubClient().getStockCandle(quoteLoader, startDate, endDate);
 
         log.info("Info: " + stockCandle);
     }
