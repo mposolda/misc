@@ -25,6 +25,7 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
+import org.mposolda.reps.rest.CurrenciesRep;
 import org.mposolda.services.Services;
 
 /**
@@ -49,13 +50,17 @@ public class ChartResource {
     private Response generateChart(String chartTitle, Function<CompanyFullRep, Long> valueFromCompanyFunction) {
         try {
             CompaniesRep companies = Services.instance().getCompanyInfoManager().getCompanies();
+            CurrenciesRep currencies = Services.instance().getCompanyInfoManager().getCurrencies();
 
-            // Create dataset
+            // Create dataset from companies
             DefaultPieDataset dataset = new DefaultPieDataset();
             for (CompanyFullRep company : companies.getCompanies()) {
                 Long value = valueFromCompanyFunction.apply(company);
                 dataset.setValue(company.getName(), value);
             }
+
+            // Add cash
+            dataset.setValue("CASH", Math.round(currencies.getPriceInHoldCZK() / 1000));
 
             JFreeChart chart = createChart(dataset, chartTitle);
 
