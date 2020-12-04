@@ -1,0 +1,45 @@
+<div class="col-sm-9 col-md-12 col-sm-push-0 col-md-push-0">
+
+    <ol class="breadcrumb">
+        <li><a href="#/companies">{{:: 'companies' | translate}}</a></li>
+        <li class="active">{{company.ticker}}</li>
+    </ol>
+
+    <fieldset>
+        <div class="form-group clearfix">
+            <label class="col-md-1 control-label">{{:: 'company-name' | translate}}</label>
+            <div class="col-md-6">
+                {{company.name}}
+            </div>
+        </div>
+        <div class="form-group clearfix">
+            <label class="col-md-1 control-label">{{:: 'company-ticker' | translate}} </label>
+            <div class="col-md-6">
+                {{company.ticker}}
+            </div>
+        </div>
+    </fieldset>
+
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'company-purchases' | translate}}</span>
+        </legend>
+        <table class="datatable table table-bordered dataTable no-footer credentials-table">
+            <thead>
+            <tr>
+                <th>{{:: 'date' | translate}}</th>
+                <th>{{:: 'stocks-count' | translate}}</th>
+                <th>{{:: 'price-per-stock' | translate}}</th>
+                <th>{{:: 'fee' | translate}}</th>
+            </tr>
+            </thead>
+            <tr ng-repeat="purchase in company.purchasesFull">
+                <td>{{purchase.date}}</td>
+                <td>{{purchase.stocksCount}}</td>
+                <td>{{purchase.pricePerStock}}</td>
+                <td>{{purchase.fee}}</td>
+            </tr>
+        </table>
+    </fieldset>
+
+</div>

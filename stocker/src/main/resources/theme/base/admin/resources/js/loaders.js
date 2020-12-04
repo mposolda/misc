@@ -32,7 +32,7 @@ module.factory('Loader', function($q) {
 });
 
 
-module.factory('CompaniesLoader', function(Loader, Companies, $route, $q) {
+module.factory('CompaniesLoader', function(Loader, Companies, $route) {
     console.log("CompaniesLoader executed");
 
     return Loader.get(Companies, function() {
@@ -41,7 +41,17 @@ module.factory('CompaniesLoader', function(Loader, Companies, $route, $q) {
     });
 });
 
-module.factory('CurrenciesLoader', function(Loader, Currencies, $route, $q) {
+module.factory('CompanyLoader', function(Loader, Company, $route) {
+    console.log("CompanyLoader executed");
+
+    return Loader.get(Company, function() {
+        return {
+            ticker : $route.current.params.ticker
+        }
+    });
+});
+
+module.factory('CurrenciesLoader', function(Loader, Currencies, $route) {
     console.log("CurrenciesLoader executed");
     return Loader.get(Currencies, function() {
         return {

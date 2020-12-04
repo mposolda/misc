@@ -225,11 +225,11 @@ module.factory('Companies', function($resource) {
     });
 });
 
-//module.factory('Company', function($resource) {
-//    return $resource(authUrl + '/rest/companies/:id', {
-//        id : '@company'
-//    });
-//});
+module.factory('Company', function($resource) {
+    return $resource(authUrl + '/rest/companies/:ticker', {
+        ticker : '@ticker'
+    });
+});
 
 module.factory('Currencies', function($resource) {
     return $resource(authUrl + '/rest/currencies', {

@@ -70,6 +70,15 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'CompaniesCtrl'
         })
+        .when('/companies/:ticker', {
+            templateUrl : resourceUrl + '/partials/company.html',
+            resolve : {
+                company : function(CompanyLoader) {
+                    return CompanyLoader();
+                }
+            },
+            controller : 'CompanyCtrl'
+        })
         .when('/currencies', {
             templateUrl : resourceUrl + '/partials/currencies.html',
             resolve : {

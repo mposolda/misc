@@ -23,23 +23,13 @@ module.controller('CompaniesCtrl', function($scope, Companies, companies, MyMath
     $scope.companies = companies;
     $scope.MyMath = MyMath;
     $scope.ColorMarker = ColorMarker;
+});
 
-//    ServerInfo.reload();
-//
-//    $scope.serverInfo = ServerInfo.get();
-//
-//    $scope.$watch($scope.serverInfo, function() {
-//        $scope.providers = [];
-//        for(var spi in $scope.serverInfo.providers) {
-//            var p = angular.copy($scope.serverInfo.providers[spi]);
-//            p.name = spi;
-//            $scope.providers.push(p)
-//        }
-//    });
-//
-//    $scope.serverInfoReload = function() {
-//        ServerInfo.reload();
-//    }
+module.controller('CompanyCtrl', function($scope, Company, company, MyMath, ColorMarker) {
+    console.log('CompanyCtrl executed');
+    $scope.company = company;
+    $scope.MyMath = MyMath;
+    $scope.ColorMarker = ColorMarker;
 });
 
 module.controller('CurrenciesCtrl', function($scope, Currencies, currencies, MyMath, ColorMarker) {
