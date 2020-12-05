@@ -59,8 +59,7 @@ public class StockResource {
     @Path("companies/{ticker}")
     @Produces(MediaType.APPLICATION_JSON)
     public CompanyFullRep getMapperById(@PathParam("ticker") String ticker) {
-        // TODO:mposolda likely debug
-        log.infof("getCompany called for ticker %s", ticker);
+        log.debugf("getCompany called for ticker %s", ticker);
 
         CompaniesRep companies = Services.instance().getCompanyInfoManager().getCompanies();
         CompanyFullRep companyFound = companies.getCompanies().stream()

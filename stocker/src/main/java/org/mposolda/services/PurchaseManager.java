@@ -522,6 +522,18 @@ public class PurchaseManager {
             return totalFeeInCZK;
         }
 
+        public double getFeeInOriginalCurrency() {
+            return feeInOriginalCurrency;
+        }
+
+        public int getStocksCount() {
+            return stocksCount;
+        }
+
+        public double getPricePerStock() {
+            return pricePerStock;
+        }
+
         @Override
         public String getDate() {
             return date;

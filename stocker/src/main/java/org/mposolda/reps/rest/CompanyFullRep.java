@@ -88,12 +88,25 @@ public class CompanyFullRep extends CompanyRep {
         this.currentStockPrice = currentStockPrice;
     }
 
+    // Count of total stocksBought - total stocksSold (So current count of stocks in hold) TODO:mposolda maybe also compute this dynamically when we have both purchases and disposals here?
     public int getTotalStocksInHold() {
         return totalStocksInHold;
     }
 
     public void setTotalStocksInHold(int totalStocksInHold) {
         this.totalStocksInHold = totalStocksInHold;
+    }
+
+    // Count of total stocksBought
+    @JsonProperty("totalStocksBought")
+    public int getTotalStocksBought() {
+        int sum = 0;
+        if (purchasesFull != null) {
+            for (PurchaseFull purchase : purchasesFull) {
+                sum += purchase.getStocksCount();
+            }
+        }
+        return sum;
     }
 
     public double getTotalPricePayed() {
@@ -136,12 +149,37 @@ public class CompanyFullRep extends CompanyRep {
         this.totalPriceSoldCZK = totalPriceSoldCZK;
     }
 
+    // Total fees of all purchases and disposals in CZK TODO:mposolda maybe compute this here instead of set it?
     public double getTotalFeesPayedCZK() {
         return totalFeesPayedCZK;
     }
 
     public void setTotalFeesPayedCZK(double totalFeesPayedCZK) {
         this.totalFeesPayedCZK = totalFeesPayedCZK;
+    }
+
+    // Total fees of all purchases in the original currency (not disposals)+
+    @JsonProperty("totalFeesOfPurchasesCZK")
+    public double getTotalFeesOfPurchasesCZK() {
+        double sum = 0;
+        if (purchasesFull != null) {
+            for (PurchaseFull purchase : purchasesFull) {
+                sum += purchase.getFeeCZK();
+            }
+        }
+        return sum;
+    }
+
+    // Total fees of all purchases in the original currency
+    @JsonProperty("totalFeesOfPurchases")
+    public double getTotalFeesOfPurchases() {
+        double sum = 0;
+        if (purchasesFull != null) {
+            for (PurchaseFull purchase : purchasesFull) {
+                sum += purchase.getFee();
+            }
+        }
+        return sum;
     }
 
     public double getCurrentPriceOfAllStocksInHoldCZK() {
@@ -258,14 +296,10 @@ public class CompanyFullRep extends CompanyRep {
 
     public static class PurchaseFull extends PurchaseRep {
 
-        public PurchaseFull(PurchaseRep purchase) {
-            this.date = purchase.getDate();
-            this.pricePerStock = purchase.getPricePerStock();
-            this.stocksCount = purchase.getStocksCount();
-        }
-
         // Expected backflow at the time of purchase
         private int expectedBackflowInPercent;
+        private double priceTotalCZK;
+        private double feeCZK;
 
         public int getExpectedBackflowInPercent() {
             return expectedBackflowInPercent;
@@ -273,6 +307,30 @@ public class CompanyFullRep extends CompanyRep {
 
         public void setExpectedBackflowInPercent(int expectedBackflowInPercent) {
             this.expectedBackflowInPercent = expectedBackflowInPercent;
+        }
+
+        public double getPriceTotal() {
+            return (this.stocksCount * this.pricePerStock) + getFee();
+        }
+
+        public double getPriceTotalCZK() {
+            return this.priceTotalCZK;
+        }
+
+        public void setPriceTotalCZK(double priceTotalCZK) {
+            this.priceTotalCZK = priceTotalCZK;
+        }
+
+        public double getFeeCZK() {
+            return this.feeCZK;
+        }
+
+        public void setFeeCZK(double feeCZK) {
+            this.feeCZK = feeCZK;
+        }
+
+        public double getCurrencyQuotationDuringTransaction() {
+            return this.priceTotalCZK / this.getPriceTotal();
         }
     }
 

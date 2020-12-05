@@ -95,19 +95,13 @@ public class CompanyInfoManager {
         // TODO:mposolda For now, use just always first expected backflow
         ExpectedBackflowRep expectedBackflow = company.getExpectedBackflows().get(0);
 
-        List<CompanyFullRep.PurchaseFull> purchases = new LinkedList<>();
         for (PurchaseRep purchase : company.getPurchases()) {
             totalStocksInHold += purchase.getStocksCount();
             totalPricePayed += (purchase.getPricePerStock() * purchase.getStocksCount());
-            int expectedBackflowInPercent = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / purchase.getPricePerStock());
 
             // Apply fee in the "original" currency
             double fee = purchase.getFee();
             totalPricePayed += fee;
-
-            CompanyFullRep.PurchaseFull purchaseFull = new CompanyFullRep.PurchaseFull(purchase);
-            purchaseFull.setExpectedBackflowInPercent(expectedBackflowInPercent);
-            purchases.add(purchaseFull);
         }
 
         // Remove stocks in hold, which were already sold
@@ -120,7 +114,6 @@ public class CompanyInfoManager {
 
         result.setTotalStocksInHold(totalStocksInHold);
         result.setTotalPricePayed(totalPricePayed);
-        result.setPurchasesFull(purchases);
 
         double currentPriceOfAllStocksInHold = totalStocksInHold * currentPrice;
         result.setCurrentPriceOfAllStocksInHold(currentPriceOfAllStocksInHold);
@@ -130,6 +123,7 @@ public class CompanyInfoManager {
         double totalPriceOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllPurchases();
         double totalFeesOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllFees();
 
+        result.setPurchasesFull(convertCompanyPurchasesToUIFormat(companyPurchases, expectedBackflow));
         result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
         result.setTotalFeesPayedCZK(totalFeesOfAllPurchasesCZK);
 
@@ -186,6 +180,30 @@ public class CompanyInfoManager {
         result.setPriceInHoldCZK(priceInHoldCZK);
 
         return result;
+    }
+
+    private List<CompanyFullRep.PurchaseFull> convertCompanyPurchasesToUIFormat(PurchaseManager.CompanyPurchasesPrice internalPurchases, ExpectedBackflowRep expectedBackflow) {
+        List<CompanyFullRep.PurchaseFull> purchases = internalPurchases.getPurchases()
+                .stream()
+                .map(purchaseInternal -> purchaseFromInternalPurchase(purchaseInternal, expectedBackflow))
+                .collect(Collectors.toList());
+
+        return purchases;
+    }
+
+    private CompanyFullRep.PurchaseFull purchaseFromInternalPurchase(PurchaseManager.CompanyPurchaseInternal purchaseInternal, ExpectedBackflowRep expectedBackflow) {
+        CompanyFullRep.PurchaseFull purchaseFull = new CompanyFullRep.PurchaseFull();
+
+        int expectedBackflowInPercent = (int) Math.round((expectedBackflow.getPrice() * expectedBackflow.getBackflowInPercent()) / purchaseInternal.getPricePerStock());
+        purchaseFull.setExpectedBackflowInPercent(expectedBackflowInPercent);
+
+        purchaseFull.setDate(purchaseInternal.getDate());
+        purchaseFull.setStocksCount(purchaseInternal.getStocksCount());
+        purchaseFull.setPricePerStock(purchaseInternal.getPricePerStock());
+        purchaseFull.setPriceTotalCZK(purchaseInternal.getTotalPriceInCZK());
+        purchaseFull.setFee(purchaseInternal.getFeeInOriginalCurrency());
+        purchaseFull.setFeeCZK(purchaseInternal.getTotalFeeInCZK());
+        return purchaseFull;
     }
 
 }

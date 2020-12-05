@@ -27,17 +27,38 @@
         <table class="datatable table table-bordered dataTable no-footer credentials-table">
             <thead>
             <tr>
+                <th></th>
                 <th>{{:: 'date' | translate}}</th>
                 <th>{{:: 'stocks-count' | translate}}</th>
                 <th>{{:: 'price-per-stock' | translate}}</th>
+                <th>{{:: 'price-total' | translate}}</th>
+                <th>{{:: 'price-total-czk' | translate}}</th>
+                <th>{{:: 'currency-quotation-during-transaction' | translate}}</th>
                 <th>{{:: 'fee' | translate}}</th>
+                <th>{{:: 'fee-czk' | translate}}</th>
             </tr>
             </thead>
             <tr ng-repeat="purchase in company.purchasesFull">
+                <td></td>
                 <td>{{purchase.date}}</td>
                 <td>{{purchase.stocksCount}}</td>
-                <td>{{purchase.pricePerStock}}</td>
-                <td>{{purchase.fee}}</td>
+                <td>{{MyMath.round(purchase.pricePerStock)}} {{company.currency}}</td>
+                <td>{{MyMath.round(purchase.priceTotal)}} {{company.currency}}</td>
+                <td>{{MyMath.round(purchase.priceTotalCZK)}} CZK</td>
+                <td>{{MyMath.round(purchase.currencyQuotationDuringTransaction)}}</td>
+                <td>{{MyMath.round(purchase.fee)}} {{company.currency}}</td>
+                <td>{{MyMath.round(purchase.feeCZK)}} CZK</td>
+            </tr>
+            <tr>
+                <td>{{:: 'total' | translate}}</td>
+                <td></td>
+                <td>{{company.totalStocksBought}}</td>
+                <td></td>
+                <td>{{MyMath.round(company.totalPricePayed)}} {{company.currency}}</td>
+                <td>{{MyMath.round(company.totalPricePayedCZK)}} CZK</td>
+                <td></td>
+                <td>{{MyMath.round(company.totalFeesOfPurchases)}} {{company.currency}}</td>
+                <td>{{MyMath.round(company.totalFeesOfPurchasesCZK)}} CZK</td>
             </tr>
         </table>
     </fieldset>
