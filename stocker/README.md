@@ -1,8 +1,8 @@
 P1
 
-- Add fees for dividends and other things (See screenshots for more details and delete those screenshots)
+- Add disposals, dividends and current state to the report of individual companies.
 
-- Implement the individual companies to be able to click on them and see purchases, dividends etc.
+- Add fees for dividends and other things (See screenshots for more details and delete those screenshots)
 
 - Implement charts (and other info) for currencies
 

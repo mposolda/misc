@@ -1,5 +1,6 @@
 package org.mposolda.services;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -123,7 +124,7 @@ public class CompanyInfoManager {
         double totalPriceOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllPurchases();
         double totalFeesOfAllPurchasesCZK = companyPurchases==null ? 0 : companyPurchases.getTotalCZKPriceOfAllFees();
 
-        result.setPurchasesFull(convertCompanyPurchasesToUIFormat(companyPurchases, expectedBackflow));
+        result.setPurchasesFull(companyPurchases==null ? Collections.emptyList() : convertCompanyPurchasesToUIFormat(companyPurchases, expectedBackflow));
         result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
         result.setTotalFeesPayedCZK(totalFeesOfAllPurchasesCZK);
 
