@@ -72,6 +72,9 @@ public class CompanyFullRep extends CompanyRep {
     @JsonProperty("purchasesFull")
     private List<PurchaseFull> purchasesFull;
 
+    @JsonProperty("disposalsFull")
+    private List<DisposalFull> disposalsFull;
+
     // This probably should be handled better... Having constructor this way is not so great...
     public CompanyFullRep(CompanyRep companyRep) {
         this.name = companyRep.getName();
@@ -104,6 +107,18 @@ public class CompanyFullRep extends CompanyRep {
         if (purchasesFull != null) {
             for (PurchaseFull purchase : purchasesFull) {
                 sum += purchase.getStocksCount();
+            }
+        }
+        return sum;
+    }
+
+    // Count of total stocksSold
+    @JsonProperty("totalStocksSold")
+    public int getTotalStocksSold() {
+        int sum = 0;
+        if (disposalsFull != null) {
+            for (DisposalFull disposal : disposalsFull) {
+                sum += disposal.getStocksCount();
             }
         }
         return sum;
@@ -177,6 +192,30 @@ public class CompanyFullRep extends CompanyRep {
         if (purchasesFull != null) {
             for (PurchaseFull purchase : purchasesFull) {
                 sum += purchase.getFee();
+            }
+        }
+        return sum;
+    }
+
+    // Total fees of all disposals in the original currency (not purchases)
+    @JsonProperty("totalFeesOfDisposals")
+    public double getTotalFeesOfDisposals() {
+        double sum = 0;
+        if (disposalsFull != null) {
+            for (DisposalFull disposal : disposalsFull) {
+                sum += disposal.getFee();
+            }
+        }
+        return sum;
+    }
+
+    // Total fees of all disposals in the CZK (not purchases)
+    @JsonProperty("totalFeesOfDisposalsCZK")
+    public double getTotalFeesOfDisposalsCZK() {
+        double sum = 0;
+        if (disposalsFull != null) {
+            for (DisposalFull disposal : disposalsFull) {
+                sum += disposal.getFeeCZK();
             }
         }
         return sum;
@@ -262,6 +301,13 @@ public class CompanyFullRep extends CompanyRep {
         this.purchasesFull = purchasesFull;
     }
 
+    public List<DisposalFull> getDisposalsFull() {
+        return disposalsFull;
+    }
+
+    public void setDisposalsFull(List<DisposalFull> disposalsFull) {
+        this.disposalsFull = disposalsFull;
+    }
 
     @Override
     public List<PurchaseRep> getPurchases() {
@@ -331,6 +377,47 @@ public class CompanyFullRep extends CompanyRep {
 
         public double getCurrencyQuotationDuringTransaction() {
             return this.priceTotalCZK / this.getPriceTotal();
+        }
+    }
+
+    public static class DisposalFull extends DisposalRep {
+
+        private double priceTotal;
+        private double priceTotalCZK;
+        private double feeCZK;
+
+        @Override
+        public double getPricePerStock() {
+            return this.priceTotal / this.getStocksCount();
+        }
+
+        @Override
+        public double getCurrencyPriceToCZKAtTheDisposalTime() {
+            return this.priceTotalCZK / this.getPriceTotal();
+        }
+
+        public double getPriceTotal() {
+            return priceTotal;
+        }
+
+        public void setPriceTotal(double priceTotal) {
+            this.priceTotal = priceTotal;
+        }
+
+        public double getPriceTotalCZK() {
+            return priceTotalCZK;
+        }
+
+        public void setPriceTotalCZK(double priceTotalCZK) {
+            this.priceTotalCZK = priceTotalCZK;
+        }
+
+        public void setFeeCZK(double feeCZK) {
+            this.feeCZK = feeCZK;
+        }
+
+        public double getFeeCZK() {
+            return this.feeCZK;
         }
     }
 

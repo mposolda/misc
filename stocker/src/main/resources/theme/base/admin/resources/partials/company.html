@@ -63,4 +63,47 @@
         </table>
     </fieldset>
 
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'company-disposals' | translate}}</span>
+        </legend>
+        <table class="datatable table table-bordered dataTable no-footer credentials-table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>{{:: 'date' | translate}}</th>
+                <th>{{:: 'stocks-count' | translate}}</th>
+                <th>{{:: 'price-per-stock' | translate}}</th>
+                <th>{{:: 'price-total' | translate}}</th>
+                <th>{{:: 'price-total-czk' | translate}}</th>
+                <th>{{:: 'currency-quotation-during-transaction' | translate}}</th>
+                <th>{{:: 'fee' | translate}}</th>
+                <th>{{:: 'fee-czk' | translate}}</th>
+            </tr>
+            </thead>
+            <tr ng-repeat="disposal in company.disposalsFull">
+                <td></td>
+                <td>{{disposal.date}}</td>
+                <td>{{disposal.stocksCount}}</td>
+                <td>{{MyMath.round(disposal.pricePerStock)}} {{company.currency}}</td>
+                <td>{{MyMath.round(disposal.priceTotal)}} {{company.currency}}</td>
+                <td>{{MyMath.round(disposal.priceTotalCZK)}} CZK</td>
+                <td>{{MyMath.round(disposal.currencyPriceToCZKAtTheDisposalTime)}}</td>
+                <td>{{MyMath.round(disposal.fee)}} {{company.currency}}</td>
+                <td>{{MyMath.round(disposal.feeCZK)}} CZK</td>
+            </tr>
+            <tr>
+                <td><b>{{:: 'total' | translate}}</b></td>
+                <td></td>
+                <td>{{company.totalStocksSold}}</td>
+                <td></td>
+                <td>{{MyMath.round(company.totalPriceSold)}} {{company.currency}}</td>
+                <td>{{MyMath.round(company.totalPriceSoldCZK)}} CZK</td>
+                <td></td>
+                <td>{{MyMath.round(company.totalFeesOfDisposals)}} {{company.currency}}</td>
+                <td>{{MyMath.round(company.totalFeesOfDisposalsCZK)}} CZK</td>
+            </tr>
+        </table>
+    </fieldset>
+
 </div>

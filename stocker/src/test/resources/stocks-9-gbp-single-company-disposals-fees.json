@@ -1,0 +1,69 @@
+{
+  "companies": [
+    {
+      "name": "Dreccel",
+      "ticker": "DREC.L",
+      "currency": "GBP",
+      "currencyFromQuoteRatio": 100,
+      "expectedBackflows": [
+        {
+          "date": "2020-11-18",
+          "price": 1.12,
+          "backflowInPercent": 18
+        }
+      ],
+      "purchases": [
+        {
+          "date": "2020-11-18",
+          "stocksCount": 1000,
+          "pricePerStock":  1.5,
+          "fee": 5
+        }
+      ],
+      "disposals": [
+        {
+          "date": "2020-11-19",
+          "stocksCount": 500,
+          "pricePerStock":  1.6,
+          "currencyPriceToCZKAtTheDisposalTime": 30.0,
+          "fee": 50
+        },
+        {
+          "date": "2020-11-20",
+          "stocksCount": 500,
+          "pricePerStock":  1.7,
+          "currencyPriceToCZKAtTheDisposalTime": 30.0,
+          "fee": 50
+        }
+      ]
+    }
+  ],
+  "currencies": [
+    {
+      "ticker": "CZK",
+      "purchases": [],
+      "deposits": [
+        {
+          "date": "2020-05-27",
+          "countBought": 200000.0
+        },
+        {
+          "date": "2020-05-28",
+          "countBought": 300000.0
+        }
+      ]
+    },
+    {
+      "ticker": "GBP",
+      "purchases": [
+        {
+          "date": "2020-11-18",
+          "countBought": 2000,
+          "feeInCZK": 100,
+          "pricePerUnit":  30.00,
+          "currencyFrom": "CZK"
+        }
+      ]
+    }
+  ]
+}

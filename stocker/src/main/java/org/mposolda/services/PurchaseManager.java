@@ -159,7 +159,7 @@ public class PurchaseManager {
             for (DisposalRep disposal : company.getDisposals()) {
                 StockDisposalInternal disposalInternal = new StockDisposalInternal(disposal.getDate(), company.getTicker(),
                         disposal.getStocksCount(),
-                        company.getCurrency(), disposal.getPricePerStock() * disposal.getStocksCount(),
+                        company.getCurrency(), (disposal.getPricePerStock() * disposal.getStocksCount()) - disposal.getFee(),
                         disposal.getCurrencyPriceToCZKAtTheDisposalTime(), disposal.getFee());
                 sortedCurrencyPurchases.add(disposalInternal);
                 sortedDisposals.add(disposalInternal);
@@ -751,6 +751,8 @@ public class PurchaseManager {
     // Public interface, which allows some public parts of "Disposal" to be accessed
     public interface DisposalInternal {
 
+        String getDate();
+
         String getCompanyTicker();
 
         String getCurrency();
@@ -801,8 +803,8 @@ public class PurchaseManager {
             this.soldStocksCount = soldStocksCount;
             this.currencyTo = currencyTo;
             this.currencyToAmount = currencyToAmount;
-            // The gain from this CurrencyPurchase is total amount - totalFeeInOriginalCurrency
-            this.remainingCurrencyToAmount = currencyToAmount - totalFeeInOriginalCurrency;
+            // The gain from this CurrencyPurchase is total amount (The fee is clready included in that)
+            this.remainingCurrencyToAmount = currencyToAmount;
             this.currencyToAmountInCZK = czkAmountForOneUnitOfOrigCurrency * currencyToAmount;
             this.czkAmountForOneUnitOfOrigCurrency = czkAmountForOneUnitOfOrigCurrency;
             this.totalFeeInOriginalCurrency = totalFeeInOriginalCurrency;

@@ -131,7 +131,7 @@ public class PurchaseManagerTest {
         assertPurchases(company, 4340, 2200, 2140);
         assertPurchaseAndDisposalFees(company, 550, 200, 140, 210);
 
-        assertDisposals(company, 220, 4620, 4620);
+        assertDisposals(company, 210, 4410, 4410);
 
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 1993);
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
@@ -151,12 +151,31 @@ public class PurchaseManagerTest {
         assertPurchases(company, 4340, 2200, 2140);
         assertPurchaseAndDisposalFees(company, 550, 200, 140, 210);
 
-        assertDisposals(company, 220, 4620, 4620);
+        assertDisposals(company, 210, 4410, 4410);
 
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 2013);
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
 
         Assert.assertEquals(200, mgr.getCurrenciesInfo().getCzkFeesTotal(), 0.1);
+    }
+
+    @Test
+    public void testStocks9() {
+        String jsonFile = getJsonFilesDir() + "/stocks-9-gbp-single-company-disposals-fees.json";
+
+        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        mgr.start();
+
+        PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("DREC.L");
+        assertPurchases(company, 45150, 45150);
+        assertPurchaseAndDisposalFees(company, 3150, 150, 1500, 1500);
+
+        assertDisposals(company, 1550, 46500, 22500, 24000);
+
+        assertCurrency(mgr.getCurrenciesInfo(), "GBP", 2045);
+        assertCurrency(mgr.getCurrenciesInfo(), "CZK", 439900);
+
+        Assert.assertEquals(100, mgr.getCurrenciesInfo().getCzkFeesTotal(), 0.1);
     }
 
 

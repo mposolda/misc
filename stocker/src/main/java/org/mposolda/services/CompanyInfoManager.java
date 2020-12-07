@@ -127,7 +127,8 @@ public class CompanyInfoManager {
         result.setPurchasesFull(companyPurchases==null ? Collections.emptyList() : convertCompanyPurchasesToUIFormat(companyPurchases, expectedBackflow));
         result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
         result.setTotalFeesPayedCZK(totalFeesOfAllPurchasesCZK);
-
+        
+        result.setDisposalsFull(companyPurchases==null || companyPurchases.getDisposals()==null ? Collections.emptyList() : convertCompanyDisposalsToUIFormat(companyPurchases.getDisposals()));
         result.setTotalPriceSold(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInOriginalCurrency());
         result.setTotalPriceSoldCZK(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInCZK());
 
@@ -205,6 +206,26 @@ public class CompanyInfoManager {
         purchaseFull.setFee(purchaseInternal.getFeeInOriginalCurrency());
         purchaseFull.setFeeCZK(purchaseInternal.getTotalFeeInCZK());
         return purchaseFull;
+    }
+
+    private List<CompanyFullRep.DisposalFull> convertCompanyDisposalsToUIFormat(List<PurchaseManager.DisposalInternal> internalDisposals) {
+        List<CompanyFullRep.DisposalFull> disposals = internalDisposals
+                .stream()
+                .map(this::disposalFromInternalDisposal)
+                .collect(Collectors.toList());
+
+        return disposals;
+    }
+
+    private CompanyFullRep.DisposalFull disposalFromInternalDisposal(PurchaseManager.DisposalInternal disposalInternal) {
+        CompanyFullRep.DisposalFull disposalFull = new CompanyFullRep.DisposalFull();
+        disposalFull.setDate(disposalInternal.getDate());
+        disposalFull.setStocksCount(disposalInternal.getSoldStocksCount());
+        disposalFull.setPriceTotal(disposalInternal.getTotalAmountInOriginalCurrency());
+        disposalFull.setPriceTotalCZK(disposalInternal.getTotalAmountInCZK());
+        disposalFull.setFee(disposalInternal.getTotalFeeInOriginalCurrency());
+        disposalFull.setFeeCZK(disposalInternal.getTotalFeeInCZK());
+        return disposalFull;
     }
 
 }
