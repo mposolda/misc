@@ -127,7 +127,7 @@ public class CompanyInfoManager {
         result.setPurchasesFull(companyPurchases==null ? Collections.emptyList() : convertCompanyPurchasesToUIFormat(companyPurchases, expectedBackflow));
         result.setTotalPricePayedCZK(totalPriceOfAllPurchasesCZK);
         result.setTotalFeesPayedCZK(totalFeesOfAllPurchasesCZK);
-        
+
         result.setDisposalsFull(companyPurchases==null || companyPurchases.getDisposals()==null ? Collections.emptyList() : convertCompanyDisposalsToUIFormat(companyPurchases.getDisposals()));
         result.setTotalPriceSold(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInOriginalCurrency());
         result.setTotalPriceSoldCZK(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInCZK());

@@ -388,7 +388,7 @@ public class CompanyFullRep extends CompanyRep {
 
         @Override
         public double getPricePerStock() {
-            return this.priceTotal / this.getStocksCount();
+            return (this.getPriceTotal() + this.getFee()) / this.getStocksCount();
         }
 
         @Override
