@@ -6,7 +6,7 @@ package org.mposolda.util;
 public class WaitUtil {
 
     // Interval in milliseconds to wait among Finhub calls
-    public static final long INTERVAL = 1000;
+    public static final long INTERVAL = 100;
 
     public static void pause(long intervalMillis) {
         try {
