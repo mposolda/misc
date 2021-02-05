@@ -132,6 +132,7 @@ public class CompanyInfoManager {
         result.setTotalPriceSold(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInOriginalCurrency());
         result.setTotalPriceSoldCZK(companyPurchases==null ? 0 : companyPurchases.getTotalDisposalsPaymentsInCZK());
 
+        result.setDividendsSumPerYear(companyPurchases==null ? Collections.emptyList() : companyPurchases.getDividendsSumsPerYear());
         double dividendsTotal = companyPurchases==null ? 0 : companyPurchases.getTotalDividendsPaymentsInOriginalCurrency();
         double dividendsTotalCZK =  companyPurchases==null ? 0 : companyPurchases.getTotalDividendsPaymentsInCZK();
         result.setTotalDividends(dividendsTotal);

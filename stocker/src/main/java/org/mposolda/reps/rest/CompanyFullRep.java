@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.DisposalRep;
 import org.mposolda.reps.DividendRep;
+import org.mposolda.reps.DividendsSumPerYear;
 import org.mposolda.reps.PurchaseRep;
 
 /**
@@ -74,6 +75,9 @@ public class CompanyFullRep extends CompanyRep {
 
     @JsonProperty("disposalsFull")
     private List<DisposalFull> disposalsFull;
+
+    @JsonProperty("dividendsSumPerYear")
+    private List<DividendsSumPerYear> dividendsSumPerYear;
 
     // This probably should be handled better... Having constructor this way is not so great...
     public CompanyFullRep(CompanyRep companyRep) {
@@ -307,6 +311,14 @@ public class CompanyFullRep extends CompanyRep {
 
     public void setDisposalsFull(List<DisposalFull> disposalsFull) {
         this.disposalsFull = disposalsFull;
+    }
+
+    public List<DividendsSumPerYear> getDividendsSumPerYear() {
+        return dividendsSumPerYear;
+    }
+
+    public void setDividendsSumPerYear(List<DividendsSumPerYear> dividendsSumPerYear) {
+        this.dividendsSumPerYear = dividendsSumPerYear;
     }
 
     @Override

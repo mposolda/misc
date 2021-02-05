@@ -1,8 +1,11 @@
 package org.mposolda.test;
 
 
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
+import org.mposolda.reps.DividendsSumPerYear;
 import org.mposolda.services.PurchaseManager;
 
 /**
@@ -157,6 +160,11 @@ public class PurchaseManagerTest {
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
 
         Assert.assertEquals(200, mgr.getCurrenciesInfo().getCzkFeesTotal(), 0.1);
+
+        List<DividendsSumPerYear> dividendSums = company.getDividendsSumsPerYear();
+        Assert.assertEquals(2, dividendSums.size());
+        assertDividendsSum(dividendSums.get(0), 2020, 15, 150, 10);
+        assertDividendsSum(dividendSums.get(1), 2021, 5, 50, 10);
     }
 
     @Test
@@ -230,5 +238,12 @@ public class PurchaseManagerTest {
     private void assertCurrency(PurchaseManager.CurrenciesInfo currencies, String currencyTicker, double expectedRemaining) {
         double remaining = currencies.getCurrencyRemainingAmount().get(currencyTicker);
         Assert.assertEquals(remaining, expectedRemaining, 0.1);
+    }
+
+    private void assertDividendsSum(DividendsSumPerYear dividendsSum, int expectedYear, double expectedOrigCurrencySum, double expectedCZKSum, double expectedQuotationToCZK) {
+        Assert.assertEquals(dividendsSum.getYear(), expectedYear);
+        Assert.assertEquals(dividendsSum.getTotalDividendsPaymentsInOriginalCurrency(), expectedOrigCurrencySum, 0.1);
+        Assert.assertEquals(dividendsSum.getTotalDividendsPaymentsInCZK(), expectedCZKSum, 0.1);
+        Assert.assertEquals(dividendsSum.getAverageQuotationToCZK(), expectedQuotationToCZK, 0.1);
     }
 }

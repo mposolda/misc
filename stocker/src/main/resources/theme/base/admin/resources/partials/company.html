@@ -106,4 +106,35 @@
         </table>
     </fieldset>
 
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'dividends' | translate}}</span>
+        </legend>
+        <table class="datatable table table-bordered dataTable no-footer credentials-table">
+            <thead>
+            <tr>
+                <th></th>
+                <th>{{:: 'year' | translate}}</th>
+                <th>{{:: 'dividends-orig-currency' | translate}}</th>
+                <th>{{:: 'dividends-czk' | translate}}</th>
+                <th>{{:: 'average-quotation' | translate}}</th>
+            </tr>
+            </thead>
+            <tr ng-repeat="dividendSum in company.dividendsSumPerYear">
+                <td></td>
+                <td>{{dividendSum.year}}</td>
+                <td>{{MyMath.round(dividendSum.totalDividendsPaymentsInOriginalCurrency)}} {{company.currency}}</td>
+                <td>{{MyMath.round(dividendSum.totalDividendsPaymentsInCZK)}} CZK</td>
+                <td>{{MyMath.round(dividendSum.averageQuotationToCZK)}}</td>
+            </tr>
+            <tr>
+                <td><b>{{:: 'total' | translate}}</b></td>
+                <td></td>
+                <td>{{MyMath.round(company.totalDividends)}} {{company.currency}}</td>
+                <td>{{MyMath.round(company.totalDividendsCZK)}} CZK</td>
+                <td></td>
+            </tr>
+        </table>
+    </fieldset>
+
 </div>

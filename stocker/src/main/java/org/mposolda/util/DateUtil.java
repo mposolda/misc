@@ -41,4 +41,12 @@ public class DateUtil {
     public static long getCurrentTimestamp() {
         return new Date().getTime() / 1000;
     }
+
+    /**
+     * @param dateStr dateStr like "2023-10-11"
+     * @return the year like "2023" from the dateStr above
+     */
+    public static int getYearFromDate(String dateStr) {
+        return Integer.parseInt(dateStr.substring(0, dateStr.indexOf("-")));
+    }
 }
