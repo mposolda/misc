@@ -1,5 +1,7 @@
 P1
 
+- Update from latest dividends from Lynx (activity statement)
+
 - Add fees for dividends, taxes and other things (See screenshots for more details and delete those screenshots)
 
 - Implement charts (and other info) for currencies
