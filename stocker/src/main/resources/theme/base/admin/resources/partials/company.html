@@ -115,20 +115,30 @@
             <tr>
                 <th></th>
                 <th>{{:: 'year' | translate}}</th>
+                <th>{{:: 'dividend-date' | translate}}</th>
                 <th>{{:: 'dividends-orig-currency' | translate}}</th>
                 <th>{{:: 'dividends-czk' | translate}}</th>
                 <th>{{:: 'average-quotation' | translate}}</th>
             </tr>
             </thead>
-            <tr ng-repeat="dividendSum in company.dividendsSumPerYear">
+            <tr ng-repeat="dividend in dividends" data-ng-show="dividend.visible">
                 <td></td>
-                <td>{{dividendSum.year}}</td>
-                <td>{{MyMath.round(dividendSum.totalDividendsPaymentsInOriginalCurrency)}} {{company.currency}}</td>
-                <td>{{MyMath.round(dividendSum.totalDividendsPaymentsInCZK)}} CZK</td>
-                <td>{{MyMath.round(dividendSum.averageQuotationToCZK)}}</td>
+                <td data-ng-show="dividend.yearSum"><b>{{dividend.year}} - {{:: 'total' | translate}}</b>
+                    <button type="button" class="btn btn-default btn-xs" ng-click="changeCollapseStatusOfYear(dividend.year)">
+                        <span class="glyphicon glyphicon-plus" data-ng-show="dividend.collapsed"></span>
+                        <span class="glyphicon glyphicon-minus" data-ng-show="!dividend.collapsed"></span>
+                    </button>
+                </td>
+                <td data-ng-hide="dividend.yearSum"></td>
+                <td data-ng-show="dividend.yearSum"></td>
+                <td data-ng-hide="dividend.yearSum">{{dividend.date}}</td>
+                <td>{{MyMath.round(dividend.totalAmount)}} {{company.currency}}</td>
+                <td>{{MyMath.round(dividend.totalAmountInCZK)}} CZK</td>
+                <td>{{MyMath.round(dividend.averageQuotationToCZK)}}</td>
             </tr>
             <tr>
                 <td><b>{{:: 'total' | translate}}</b></td>
+                <td></td>
                 <td></td>
                 <td>{{MyMath.round(company.totalDividends)}} {{company.currency}}</td>
                 <td>{{MyMath.round(company.totalDividendsCZK)}} CZK</td>

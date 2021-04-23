@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import org.jboss.logging.Logger;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.CurrencyRep;
@@ -469,12 +470,15 @@ public class PurchaseManager {
                     .map((entry) -> {
                         double sumOrig = 0;
                         double sumCZK = 0;
+                        List<DividendsSumPerYear.SingleDividendRep> dividendsOfYear = new ArrayList<>();
                         for (DividendPaymentInternal dividend : entry.getValue()) {
                             sumOrig += dividend.currencyToAmount;
                             sumCZK += dividend.currencyToAmount * dividend.getCzkAmountForOneUnit();
+                            DividendsSumPerYear.SingleDividendRep dividendRep = new DividendsSumPerYear.SingleDividendRep(dividend.getDate(), dividend.currencyToAmount, dividend.currencyToAmountInCZK);
+                            dividendsOfYear.add(dividendRep);
                         }
 
-                        return new DividendsSumPerYear(entry.getKey(), sumOrig, sumCZK);
+                        return new DividendsSumPerYear(entry.getKey(), sumOrig, sumCZK, dividendsOfYear);
                     }).collect(Collectors.toList());
 
             return dividendss;
