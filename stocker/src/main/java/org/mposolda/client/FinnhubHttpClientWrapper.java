@@ -94,8 +94,22 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
                                          int maxAttempts, String operationName) {
         int attempts = maxAttempts;
         while (attempts > 0) {
-            OUTPUT output = function.apply(input);
-            if (predicate.test(output)) {
+            OUTPUT output;
+            try {
+                output = function.apply(input);
+            } catch (Exception ioe) {
+                if (attempts > 1) {
+                    String exMessage = ioe.getMessage();
+                    if (ioe.getCause() != null) {
+                        exMessage = exMessage + "Details: " + ioe.getCause().getMessage();
+                    }
+                    log.warn("Exception, but retrying operation " + operationName + ". Exception message: " + exMessage);
+                } else {
+                    log.error("Exception during operation " + operationName + ". Won't retrying again", ioe);
+                }
+                output = null;
+            }
+            if (output != null && predicate.test(output)) {
                 return output;
             } else {
                 attempts -= 1;
