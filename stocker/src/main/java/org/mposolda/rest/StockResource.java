@@ -1,5 +1,13 @@
 package org.mposolda.rest;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Path;
@@ -14,6 +22,7 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.rest.CurrenciesRep;
+import org.mposolda.reps.rest.TransactionsRep;
 import org.mposolda.services.Services;
 
 /**
@@ -85,6 +94,33 @@ public class StockResource {
         CurrenciesRep currencies = Services.instance().getCompanyInfoManager().getCurrencies();
 
         return currencies;
+    }
+
+    /**
+     * Get list of transactions
+     *
+     * @return
+     */
+    @GET
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("transactions")
+    public TransactionsRep getTransactions() {
+        log.debug("getTransactions called");
+
+        CompaniesRep companies = Services.instance().getCompanyInfoManager().getCompanies();
+
+        Set<CompanyFullRep.TradeFull> allTransactions = new TreeSet<>(Comparator.comparing(CompanyFullRep.TradeFull::getDate).thenComparing(CompanyFullRep.TradeFull::getCompanyTicker));
+
+        for (CompanyFullRep company : companies.getCompanies()) {
+            allTransactions.addAll(company.getPurchasesFull());
+            allTransactions.addAll(company.getDisposalsFull());
+        }
+
+        TransactionsRep transactions = new TransactionsRep();
+        transactions.setTransactions(new LinkedList<>(allTransactions));
+
+        return transactions;
     }
 
 }

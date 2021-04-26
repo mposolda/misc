@@ -58,3 +58,11 @@ module.factory('CurrenciesLoader', function(Loader, Currencies, $route) {
         }
     });
 });
+
+module.factory('TransactionsLoader', function(Loader, Transactions, $route) {
+    console.log("TransactionsLoader executed");
+    return Loader.get(Transactions, function() {
+        return {
+        }
+    });
+});

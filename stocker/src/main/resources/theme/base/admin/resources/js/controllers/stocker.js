@@ -85,6 +85,13 @@ module.controller('CurrenciesCtrl', function($scope, Currencies, currencies, MyM
     $scope.ColorMarker = ColorMarker;
 });
 
+module.controller('TransactionsCtrl', function($scope, transactions, MyMath, ColorMarker) {
+    console.log('TransactionsCtrl executed');
+    $scope.transactions = transactions;
+    $scope.MyMath = MyMath;
+    $scope.ColorMarker = ColorMarker;
+});
+
 module.controller('SummaryCtrl', function($scope, Companies, companies, Currencies, currencies, MyMath, ColorMarker) {
     console.log('SummaryCtrl executed');
     $scope.companies = companies;

@@ -236,6 +236,11 @@ module.factory('Currencies', function($resource) {
     });
 });
 
+module.factory('Transactions', function($resource) {
+    return $resource(authUrl + '/rest/transactions', {
+    });
+});
+
 
 module.factory('Current', function(Companies, $route, $rootScope) {
     console.log("Current executed");
@@ -373,6 +378,10 @@ module.factory('ColorMarker', function() {
 
     colorMarker.mark = function(num) {
         return num >=0 ? "color: green" : "color: red";
+    }
+
+    colorMarker.markFromOperation = function(type) {
+        return type==='purchase' ? "color: green" : "color: red";
     }
 
     return colorMarker;

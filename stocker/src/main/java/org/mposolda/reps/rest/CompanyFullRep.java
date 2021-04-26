@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.DisposalRep;
 import org.mposolda.reps.DividendRep;
-import org.mposolda.reps.DividendsSumPerYear;
 import org.mposolda.reps.PurchaseRep;
 
 /**
@@ -352,12 +351,64 @@ public class CompanyFullRep extends CompanyRep {
         // Do nothing. There is better solution to this...
     }
 
-    public static class PurchaseFull extends PurchaseRep {
+    public interface TradeFull {
+
+        String getDate();
+
+        String getCompanyTicker();
+
+        String getOperation();
+
+        String getCurrency();
+
+        int getStocksCount();
+
+        double getPricePerStock();
+
+        double getFee();
+
+        double getPriceTotal();
+
+        double getPriceTotalCZK();
+
+        double getFeeCZK();
+
+        double getCurrencyQuotationDuringTransaction();
+
+    }
+
+    public static class PurchaseFull extends PurchaseRep implements TradeFull {
+
+        private String companyTicker;
+        private String currency;
 
         // Expected backflow at the time of purchase
         private int expectedBackflowInPercent;
         private double priceTotalCZK;
         private double feeCZK;
+
+        @Override
+        public String getCompanyTicker() {
+            return companyTicker;
+        }
+
+        public void setCompanyTicker(String companyTicker) {
+            this.companyTicker = companyTicker;
+        }
+
+        @Override
+        public String getOperation() {
+            return "purchase";
+        }
+
+        @Override
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
 
         public int getExpectedBackflowInPercent() {
             return expectedBackflowInPercent;
@@ -392,11 +443,36 @@ public class CompanyFullRep extends CompanyRep {
         }
     }
 
-    public static class DisposalFull extends DisposalRep {
+    public static class DisposalFull extends DisposalRep implements TradeFull {
 
+        private String companyTicker;
+        private String currency;
         private double priceTotal;
         private double priceTotalCZK;
         private double feeCZK;
+
+        @Override
+        public String getCompanyTicker() {
+            return companyTicker;
+        }
+
+        public void setCompanyTicker(String companyTicker) {
+            this.companyTicker = companyTicker;
+        }
+
+        @Override
+        public String getOperation() {
+            return "disposal";
+        }
+
+        @Override
+        public String getCurrency() {
+            return currency;
+        }
+
+        public void setCurrency(String currency) {
+            this.currency = currency;
+        }
 
         @Override
         public double getPricePerStock() {
@@ -406,6 +482,11 @@ public class CompanyFullRep extends CompanyRep {
         @Override
         public double getCurrencyPriceToCZKAtTheDisposalTime() {
             return this.priceTotalCZK / this.getPriceTotal();
+        }
+
+        @Override
+        public double getCurrencyQuotationDuringTransaction() {
+            return getCurrencyPriceToCZKAtTheDisposalTime();
         }
 
         public double getPriceTotal() {

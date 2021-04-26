@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mposolda.reps.DividendsSumPerYear;
+import org.mposolda.reps.rest.DividendsSumPerYear;
 import org.mposolda.services.PurchaseManager;
 
 /**

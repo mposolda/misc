@@ -100,6 +100,15 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'SummaryCtrl'
         })
+        .when('/transactions', {
+            templateUrl : resourceUrl + '/partials/transactions.html',
+            resolve : {
+                transactions : function(TransactionsLoader) {
+                    return TransactionsLoader();
+                }
+            },
+            controller : 'TransactionsCtrl'
+        })
         .when('/logout', {
             templateUrl : resourceUrl + '/partials/home.html',
             controller : 'LogoutCtrl'

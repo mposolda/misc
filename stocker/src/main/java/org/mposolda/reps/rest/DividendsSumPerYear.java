@@ -1,4 +1,4 @@
-package org.mposolda.reps;
+package org.mposolda.reps.rest;
 
 import java.util.List;
 

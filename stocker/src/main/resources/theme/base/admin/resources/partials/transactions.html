@@ -1,0 +1,45 @@
+<div class="col-sm-9 col-md-12 col-sm-push-0 col-md-push-0">
+
+    <ol class="breadcrumb">
+        <li><a href="#/transactions">{{:: 'transactions' | translate}}</a></li>
+    </ol>
+
+    <kc-tabs-companies></kc-tabs-companies>
+
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'transactions' | translate}}</span>
+        </legend>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>{{:: 'date' | translate}}</th>
+                <th>{{:: 'company-ticker' | translate}}</th>
+                <th>{{:: 'operation' | translate}}</th>
+                <th>{{:: 'stocks-count' | translate}}</th>
+                <th>{{:: 'price-per-stock' | translate}}</th>
+                <th>{{:: 'price-total' | translate}}</th>
+                <th>{{:: 'price-total-czk' | translate}}</th>
+                <th>{{:: 'currency-quotation-during-transaction' | translate}}</th>
+                <th>{{:: 'fee' | translate}}</th>
+                <th>{{:: 'fee-czk' | translate}}</th>
+            </tr>
+            </thead>
+            <tr ng-repeat="transaction in transactions.transactions">
+                <td>{{transaction.date}}</td>
+                <td>{{transaction.companyTicker}}</td>
+                <td style="{{ColorMarker.markFromOperation(transaction.operation)}}">{{transaction.operation}}</td>
+                <td>{{transaction.stocksCount}}</td>
+                <td>{{MyMath.round(transaction.pricePerStock)}} {{transaction.currency}}</td>
+                <td style="{{ColorMarker.markFromOperation(transaction.operation)}}">{{MyMath.round(transaction.priceTotal)}} {{transaction.currency}}</td>
+                <td style="{{ColorMarker.markFromOperation(transaction.operation)}}">{{MyMath.round(transaction.priceTotalCZK)}} CZK</td>
+                <td>{{MyMath.round(transaction.currencyQuotationDuringTransaction)}}</td>
+                <td>{{MyMath.round(transaction.fee)}} {{transaction.currency}}</td>
+                <td>{{MyMath.round(transaction.feeCZK)}} CZK</td>
+            </tr>
+        </table>
+    </fieldset>
+
+</div>
+
+<!--<kc-menu></kc-menu>-->

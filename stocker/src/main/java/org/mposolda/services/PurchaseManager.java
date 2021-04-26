@@ -2,11 +2,8 @@ package org.mposolda.services;
 
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,17 +11,15 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.sun.xml.bind.v2.runtime.unmarshaller.XsiNilLoader;
 import org.jboss.logging.Logger;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
 import org.mposolda.reps.DisposalRep;
 import org.mposolda.reps.DividendRep;
-import org.mposolda.reps.DividendsSumPerYear;
+import org.mposolda.reps.rest.DividendsSumPerYear;
 import org.mposolda.reps.PurchaseRep;
 import org.mposolda.util.DateUtil;
 import org.mposolda.util.JsonUtil;
@@ -541,6 +536,14 @@ public class PurchaseManager {
 
             // Compute date
             this.dateNumber = DateUtil.dateToNumber(date);
+        }
+
+        public String getCompanyTicker() {
+            return companyTicker;
+        }
+
+        public String getCurrency() {
+            return currency;
         }
 
         private void setTotalPriceInCZK(double totalPriceInCZK) {
