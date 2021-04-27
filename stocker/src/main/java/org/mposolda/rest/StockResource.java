@@ -120,7 +120,28 @@ public class StockResource {
         TransactionsRep transactions = new TransactionsRep();
         transactions.setTransactions(new LinkedList<>(allTransactions));
 
+        // Transaction summaries
+        for (CompanyFullRep.TradeFull transaction : allTransactions) {
+            String date = transaction.getDate();
+            String year = date.substring(0, 4);
+            String yearAndMonth = date.substring(0, 7);
+
+            addTransactionToSummary(transaction, transactions.findOrAddMonthSummary(yearAndMonth));
+            addTransactionToSummary(transaction, transactions.findOrAddYearSummary(year));
+            addTransactionToSummary(transaction, transactions.getTotalSummary());
+        }
+
         return transactions;
+    }
+
+    private void addTransactionToSummary(CompanyFullRep.TradeFull transaction, TransactionsRep.TransactionSummary transactionSummary) {
+        if (transaction.getOperation().equals("purchase")) {
+            transactionSummary.setPurchasesCount(transactionSummary.getPurchasesCount() + 1);
+            transactionSummary.setTotalPurchasesCZK(transactionSummary.getTotalPurchasesCZK() + transaction.getPriceTotalCZK());
+        } else {
+            transactionSummary.setDisposalsCount(transactionSummary.getDisposalsCount() + 1);
+            transactionSummary.setTotalDisposalsCZK(transactionSummary.getTotalDisposalsCZK() + transaction.getPriceTotalCZK());
+        }
     }
 
 }

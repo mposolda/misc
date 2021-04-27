@@ -384,6 +384,10 @@ module.factory('ColorMarker', function() {
         return type==='purchase' ? "color: green" : "color: red";
     }
 
+    colorMarker.markFromTransactionSummary = function(summary) {
+        return summary.yearSum ? "font-weight: bold" : "";
+    }
+
     return colorMarker;
 });
 
