@@ -1,5 +1,7 @@
 package org.mposolda;
 
+import java.util.Date;
+
 import io.undertow.Undertow;
 import io.undertow.servlet.api.DefaultServletConfig;
 import io.undertow.servlet.api.DeploymentInfo;
@@ -77,7 +79,7 @@ public class StockerServer {
 
             logger.info("Started Stocker (http://" + HOST + ":" + PORT + CONTEXT_ROOT
                     + " in "
-                    + (System.currentTimeMillis() - startTimeMs) + " ms\n");
+                    + (System.currentTimeMillis() - startTimeMs) + " ms. Current Date: " + new Date() + "\n");
         } catch (RuntimeException e) {
             server.stop();
             throw e;
