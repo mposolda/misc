@@ -17,6 +17,10 @@ public class CompanyRep implements QuoteLoaderRep {
     @JsonProperty("currency")
     public String currency;
 
+    // If true, then it will skip loading quote at startup
+    @JsonProperty("skipLoadingQuote")
+    public boolean skipLoadingQuote = false;
+
     // This is used when we want to use currency like GBP, however the quote price is sent in the currency like GBX. For this example, the ratio would be 100.
     @JsonProperty("currencyFromQuoteRatio")
     public Integer currencyFromQuoteRatio;
@@ -56,6 +60,14 @@ public class CompanyRep implements QuoteLoaderRep {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public boolean isSkipLoadingQuote() {
+        return skipLoadingQuote;
+    }
+
+    public void setSkipLoadingQuote(boolean skipLoadingQuote) {
+        this.skipLoadingQuote = skipLoadingQuote;
     }
 
     @Override

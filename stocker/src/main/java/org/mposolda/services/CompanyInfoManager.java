@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jboss.logging.Logger;
 import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
 import org.mposolda.reps.DisposalRep;
@@ -18,11 +20,15 @@ import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.rest.CurrenciesRep;
 import org.mposolda.reps.rest.CurrencyFullRep;
 import org.mposolda.util.JsonUtil;
+import org.mposolda.util.NumberUtil;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
 public class CompanyInfoManager {
+
+    protected final Logger log = Logger.getLogger(this.getClass().getName());
+
 
     private final FinnhubHttpClient finhubClient;
 
@@ -34,10 +40,13 @@ public class CompanyInfoManager {
 
     private final CurrenciesRep currencies = new CurrenciesRep();
 
-    CompanyInfoManager(FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor, String companiesJsonFileLocation) {
+    private final CandlesHistoryManager candlesManager;
+
+    CompanyInfoManager(FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor, String companiesJsonFileLocation, CandlesHistoryManager candlesManager) {
         this.finhubClient = finhubClient;
         this.currencyConvertor = currencyConvertor;
         this.companiesJsonFileLocation = companiesJsonFileLocation;
+        this.candlesManager = candlesManager;
     }
 
     void start() {
@@ -84,10 +93,21 @@ public class CompanyInfoManager {
     private CompanyFullRep computeCompanyFull(CompanyRep company) {
         CompanyFullRep result = new CompanyFullRep(company);
 
-        QuoteRep quote = finhubClient.getQuoteRep(company, true);
+        double currentPrice = 0;
+        if (!company.isSkipLoadingQuote()) {
+            QuoteRep quote = finhubClient.getQuoteRep(company, true);
 
-        // Using current price for now.
-        double currentPrice = quote.getCurrentPrice();
+            // Using current price for now
+            currentPrice = quote.getCurrentPrice();
+
+            if (NumberUtil.isZero(currentPrice)) {
+                log.warnf("Was not able to load quote for the company %s. Fallback to last candle", company.getTicker());
+                currentPrice = getCurrentPriceFromLastCandle(result);
+            }
+        } else {
+            log.infof("Skip loading quote for the company %s. Fallback to last candle", company.getTicker());
+            currentPrice = getCurrentPriceFromLastCandle(result);
+        }
 
         result.setCurrentStockPrice(currentPrice);
         int totalStocksInHold = 0;
@@ -150,6 +170,23 @@ public class CompanyInfoManager {
         result.setTotalBackflowInPercent(totalBackflowInPercent);
 
         return result;
+    }
+
+    private double getCurrentPriceFromLastCandle(CompanyFullRep company) {
+        try {
+            CandlesRep companyCandles = candlesManager.getStockCandles(company, false);
+            if (companyCandles.getCandles().isEmpty()) {
+                log.warnf("No candle available for company %s. Fallback to 0", company.getTicker());
+                return 0;
+            } else {
+                CandlesRep.CandleRep lastCandle = companyCandles.getCandles().get(companyCandles.getCandles().size() - 1);
+                company.setLastCandleDate(lastCandle.getDate());
+                return lastCandle.getValue();
+            }
+        } catch (FailedCandleDownloadException fcde) {
+            // Should not happen
+            throw new RuntimeException(fcde);
+        }
     }
 
     private List<CurrencyFullRep> computeCurrencies(List<CurrencyRep> currencies) {

@@ -44,6 +44,7 @@ public class CandlesHistoryManager {
             log.info("Loaded candles representation for currency " + currency.getTicker());
         }
 
+        List<String> fallbackFailedCompanies = new LinkedList<>();
         List<String> failedCompanies = new LinkedList<>();
         for (CompanyRep company : database.getCompanies()) {
             try {
@@ -51,11 +52,17 @@ public class CandlesHistoryManager {
                 log.info("Loaded candles representation for company " + company.getTicker());
             } catch (FailedCandleDownloadException e) {
                 log.warn("Failed to download candles representation for company " + company.getTicker() + ". Fallback was needed to download only quote for current day.");
+                fallbackFailedCompanies.add(company.getTicker());
+            } catch (RuntimeException re) {
+                log.warnf(re, "Unexpected exception when downloading candle for company %s. Will skip the candle", company.getTicker());
                 failedCompanies.add(company.getTicker());
             }
         }
 
-        log.infof("All failed company tickers where fallback was needed " + failedCompanies);
+        log.infof("All failed company tickers where fallback was needed " + fallbackFailedCompanies);
+        if (!failedCompanies.isEmpty()) {
+            log.warnf("All failed company tickers where fallback was not used " + failedCompanies);
+        }
     }
 
     public CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest) throws FailedCandleDownloadException {

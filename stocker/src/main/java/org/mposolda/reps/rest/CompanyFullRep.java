@@ -78,12 +78,17 @@ public class CompanyFullRep extends CompanyRep {
     @JsonProperty("dividendsSumPerYear")
     private List<DividendsSumPerYear> dividendsSumPerYear;
 
+    // Date when the "lastCandle" of this company was loaded. Used only for companies with "skipLoadingQuote"
+    @JsonProperty("lastCandleDate")
+    public String lastCandleDate;
+
     // This probably should be handled better... Having constructor this way is not so great...
     public CompanyFullRep(CompanyRep companyRep) {
         this.name = companyRep.getName();
         this.ticker = companyRep.getTicker();
         this.currency = companyRep.getCurrency();
         this.expectedBackflows = new LinkedList<>(companyRep.getExpectedBackflows());
+        this.skipLoadingQuote = companyRep.isSkipLoadingQuote();
     }
 
     public double getCurrentStockPrice() {
@@ -318,6 +323,14 @@ public class CompanyFullRep extends CompanyRep {
 
     public void setDividendsSumPerYear(List<DividendsSumPerYear> dividendsSumPerYear) {
         this.dividendsSumPerYear = dividendsSumPerYear;
+    }
+
+    public String getLastCandleDate() {
+        return lastCandleDate;
+    }
+
+    public void setLastCandleDate(String lastCandleDate) {
+        this.lastCandleDate = lastCandleDate;
     }
 
     @Override

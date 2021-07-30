@@ -32,7 +32,11 @@
             <tr ng-repeat="company in companies.companies">
                 <td><a href="#/companies/{{company.ticker}}">{{company.name}}</a></td>
                 <td>{{company.ticker}}</td>
-                <td>{{MyMath.round(company.currentStockPrice)}} {{company.currency}}</td>
+                <td>{{MyMath.round(company.currentStockPrice)}} {{company.currency}}
+                    <span data-ng-show="{{company.skipLoadingQuote}}">
+                        <br><small>({{company.lastCandleDate}})</small>
+                    </span>
+                </td>
                 <td>{{MyMath.round(company.expectedYearBackflowInPercentRightNow)}} %</td>
                 <td>{{company.totalStocksInHold}}</td>
                 <td>{{MyMath.round(company.totalPricePayed)}} {{company.currency}}</td>

@@ -75,12 +75,11 @@ public class Services {
         currencyConvertor.start();
         log.info("Created currencyConvertor and loaded currencies from forex");
 
-        companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, companiesJsonFileLocation);
+        candlesManager = new CandlesHistoryManager(companiesJsonFileLocation, stocksDirLocation, finhubClient);
+
+        companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, companiesJsonFileLocation, candlesManager);
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
-
-        candlesManager = new CandlesHistoryManager(companiesJsonFileLocation, stocksDirLocation, finhubClient);
-        log.info("Created candlesHistoryManager and loaded companies");
     }
 
     // Called at the server shutdown
