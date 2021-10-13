@@ -2,9 +2,7 @@ package org.mposolda.rest;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -23,8 +21,6 @@ import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.rest.CurrenciesRep;
 import org.mposolda.reps.rest.DividendsAllSumRep;
-import org.mposolda.reps.rest.DividendsSumPerYear;
-import org.mposolda.reps.rest.DividendsSumPerYearAndMonth;
 import org.mposolda.reps.rest.TransactionsRep;
 import org.mposolda.services.Services;
 
@@ -191,9 +187,27 @@ public class StockResource {
         }
 
         // Sum for whole year and month
-        // TODO:mposolda
+        Set<DividendsAllSumRep.DividendsSumPerYearAndMonth> dividendsYM = new TreeSet<>(
+                Comparator.comparing(DividendsAllSumRep.DividendsSumPerYearAndMonth::getYear)
+                        .thenComparing(DividendsAllSumRep.DividendsSumPerYearAndMonth::isYearSum)
+                        .thenComparing(DividendsAllSumRep.DividendsSumPerYearAndMonth::getYearAndMonth));
+        result.setDividendsByYearAndMonth(dividendsYM);
 
+        companies.getCompanies().forEach((companyFull) -> {
+            companyFull.getDividendsSumPerYear().forEach(dividendsSumPerYear -> {
+                dividendsSumPerYear.getDividendsOfYear().forEach(singleDividendRep -> {
+                    String date = singleDividendRep.getDate();
+                    String year = date.substring(0, 4);
+                    String yearAndMonth = date.substring(0, 7);
 
+                    DividendsAllSumRep.DividendsSumPerYearAndMonth yearAndMonthSum = result.findOrAddYearAndMonthSummaryInYearAndMonthDividends(year, yearAndMonth);
+                    DividendsAllSumRep.DividendsSumPerYearAndMonth yearSum = result.findOrAddYearSummaryInYearAndMonthDividends(year);
+
+                    yearAndMonthSum.setSumCZK(yearAndMonthSum.getSumCZK() + singleDividendRep.getTotalAmountInCZK());
+                    yearSum.setSumCZK(yearSum.getSumCZK() + singleDividendRep.getTotalAmountInCZK());
+                });
+            });
+        });
 
         return result;
     }

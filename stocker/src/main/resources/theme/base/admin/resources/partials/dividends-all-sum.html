@@ -57,18 +57,14 @@
                 <th>{{:: 'dividends-czk' | translate}}</th>
             </tr>
             </thead>
-            <!--<tr ng-repeat="summary in dividendsAllSum.dividendsByYearAndCompany">
+            <tr ng-repeat="summary in dividendsAllSum.dividendsByYearAndMonth">
                 <td data-ng-show="summary.yearSum"><b>{{summary.year}} - {{:: 'total' | translate}}</b></td>
                 <td data-ng-show="summary.yearSum"></td>
-                <td data-ng-show="summary.yearSum"></td>
-                <td data-ng-show="summary.yearSum"><b>{{MyMath.round(summary.totalAmountInCZK)}} CZK</b></td>
-                <td data-ng-show="summary.yearSum"></td>
+                <td data-ng-show="summary.yearSum"><b>{{MyMath.round(summary.sumCZK)}} CZK</b></td>
                 <td data-ng-hide="summary.yearSum"></td>
-                <td data-ng-hide="summary.yearSum">{{summary.companyTicker}}</td>
-                <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.totalAmount)}} {{summary.currency}}</td>
-                <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.totalAmountInCZK)}} CZK</td>
-                <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.averageQuotationToCZK)}}</td>
-            </tr>-->
+                <td data-ng-hide="summary.yearSum">{{summary.yearAndMonth}}</td>
+                <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.sumCZK)}} CZK</td>
+            </tr>
         </table>
     </fieldset>
 
