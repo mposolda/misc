@@ -63,6 +63,10 @@
     <script src="${resourceCommonUrl}/lib/ui-ace/min/ace.js"></script>
     <script src="${resourceCommonUrl}/lib/ui-ace/ui-ace.min.js"></script>
 
+    <!-- Zingchart -->
+    <script src="${resourceCommonUrl}/lib/zingchart/zingchart-2.1.4.min.js"></script>
+    <script src="${resourceCommonUrl}/lib/zingchart/zingchart-angularjs-1.0.4.js"></script>
+
     <script src="${resourceUrl}/js/app.js" type="text/javascript"></script>
     <script src="${resourceUrl}/js/controllers/stocker.js" type="text/javascript"></script>
     <script src="${resourceUrl}/js/loaders.js" type="text/javascript"></script>

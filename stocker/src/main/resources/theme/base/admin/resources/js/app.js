@@ -3,7 +3,8 @@
 var auth = {};
 var resourceBundle;
 
-var module = angular.module('keycloak', [ 'keycloak.services', 'keycloak.loaders', 'ui.bootstrap', 'ui.select2', 'angularFileUpload', 'angularTreeview', 'pascalprecht.translate', 'ngCookies', 'ngSanitize', 'ui.ace']);
+var module = angular.module('keycloak', [ 'keycloak.services', 'keycloak.loaders', 'ui.bootstrap', 'ui.select2', 'angularFileUpload',
+                                          'angularTreeview', 'pascalprecht.translate', 'ngCookies', 'ngSanitize', 'ui.ace', 'zingchart-angularjs']);
 var resourceRequests = 0;
 var loadingTimer = -1;
 
