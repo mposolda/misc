@@ -66,3 +66,11 @@ module.factory('TransactionsLoader', function(Loader, Transactions, $route) {
         }
     });
 });
+
+module.factory('DividendsAllSumLoader', function(Loader, DividendsAllSum, $route) {
+    console.log("DividendsAllSumLoader executed");
+    return Loader.get(DividendsAllSum, function() {
+        return {
+        }
+    });
+});

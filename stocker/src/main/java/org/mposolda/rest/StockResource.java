@@ -22,6 +22,9 @@ import org.jboss.resteasy.annotations.cache.NoCache;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.rest.CurrenciesRep;
+import org.mposolda.reps.rest.DividendsAllSumRep;
+import org.mposolda.reps.rest.DividendsSumPerYear;
+import org.mposolda.reps.rest.DividendsSumPerYearAndMonth;
 import org.mposolda.reps.rest.TransactionsRep;
 import org.mposolda.services.Services;
 
@@ -142,6 +145,57 @@ public class StockResource {
             transactionSummary.setDisposalsCount(transactionSummary.getDisposalsCount() + 1);
             transactionSummary.setTotalDisposalsCZK(transactionSummary.getTotalDisposalsCZK() + transaction.getPriceTotalCZK());
         }
+    }
+
+
+    /**
+     * Get list of dividends sum of all companies for the "Dividends" tab
+     *
+     * @return
+     */
+    @GET
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("dividends-all-sum")
+    public DividendsAllSumRep getDividendsSumByCompany() {
+        log.debug("getDividendsByMonths called");
+
+        CompaniesRep companies = Services.instance().getCompanyInfoManager().getCompanies();
+
+        Set<DividendsAllSumRep.DividendsSumPerYear2> dividends = new TreeSet<>(
+                Comparator.comparing(DividendsAllSumRep.DividendsSumPerYear2::getYear)
+                        .thenComparing(DividendsAllSumRep.DividendsSumPerYear2::isYearSum)
+                        .thenComparing(DividendsAllSumRep.DividendsSumPerYear2::getCompanyTicker));
+
+        // Add dividends of all companies
+        companies.getCompanies().forEach((companyFull) -> {
+            companyFull.getDividendsSumPerYear().forEach(dividendsSumPerYear -> {
+                DividendsAllSumRep.DividendsSumPerYear2 dividend2 = new DividendsAllSumRep.DividendsSumPerYear2();
+                dividend2.setCompanyTicker(companyFull.getTicker());
+                dividend2.setCurrency(companyFull.getCurrency());
+                dividend2.setYearSum(false);
+                dividend2.setYear(dividendsSumPerYear.getYear());
+                dividend2.setTotalDividendsPaymentsInCZK(dividendsSumPerYear.getTotalDividendsPaymentsInCZK());
+                dividend2.setTotalDividendsPaymentsInOriginalCurrency(dividendsSumPerYear.getTotalDividendsPaymentsInOriginalCurrency());
+
+                dividends.add(dividend2);
+            });
+        });
+
+        // Add year sums
+        DividendsAllSumRep result = new DividendsAllSumRep();
+        result.setDividendsByYearAndCompany(dividends);
+        for (DividendsAllSumRep.DividendsSumPerYear2 dividend2 : new ArrayList<>(dividends)) {
+            DividendsAllSumRep.DividendsSumPerYear2 dividendSum = result.findOrAddYearSummaryInCompanyDividends(dividend2.getYear());
+            dividendSum.setTotalDividendsPaymentsInCZK(dividendSum.getTotalDividendsPaymentsInCZK() + dividend2.getTotalDividendsPaymentsInCZK());
+        }
+
+        // Sum for whole year and month
+        // TODO:mposolda
+
+
+
+        return result;
     }
 
 }

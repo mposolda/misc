@@ -1,0 +1,40 @@
+<div class="col-sm-9 col-md-12 col-sm-push-0 col-md-push-0">
+
+    <ol class="breadcrumb">
+        <li><a href="#/dividends">{{:: 'dividends' | translate}}</a></li>
+    </ol>
+
+    <kc-tabs-companies></kc-tabs-companies>
+
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'transactions-summary' | translate}}</span>
+        </legend>
+        <table class="table table-striped table-bordered">
+            <thead>
+            <tr>
+                <th>{{:: 'year-total' | translate}}</th>
+                <th>{{:: 'ticker' | translate}}</th>
+                <th>{{:: 'dividends-orig-currency' | translate}}</th>
+                <th>{{:: 'dividends-czk' | translate}}</th>
+                <th>{{:: 'average-quotation' | translate}}</th>
+            </tr>
+            </thead>
+            <tr ng-repeat="summary in dividendsAllSum.dividendsByYearAndCompany">
+                <td data-ng-show="summary.yearSum"><b>{{summary.year}} - {{:: 'total' | translate}}</b></td>
+                <td data-ng-show="summary.yearSum"></td>
+                <td data-ng-show="summary.yearSum"></td>
+                <td data-ng-show="summary.yearSum"><b>{{MyMath.round(summary.totalAmountInCZK)}} CZK</b></td>
+                <td data-ng-show="summary.yearSum"></td>
+                <td data-ng-hide="summary.yearSum"></td>
+                <td data-ng-hide="summary.yearSum">{{summary.companyTicker}}</td>
+                <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.totalAmount)}} {{summary.currency}}</td>
+                <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.totalAmountInCZK)}} CZK</td>
+                <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.averageQuotationToCZK)}}</td>
+            </tr>
+        </table>
+    </fieldset>
+
+</div>
+
+<!--<kc-menu></kc-menu>-->

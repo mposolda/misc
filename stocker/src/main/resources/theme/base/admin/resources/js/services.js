@@ -241,6 +241,11 @@ module.factory('Transactions', function($resource) {
     });
 });
 
+module.factory('DividendsAllSum', function($resource) {
+    return $resource(authUrl + '/rest/dividends-all-sum', {
+    });
+});
+
 
 module.factory('Current', function(Companies, $route, $rootScope) {
     console.log("Current executed");

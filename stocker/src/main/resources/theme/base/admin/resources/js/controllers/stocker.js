@@ -92,6 +92,14 @@ module.controller('TransactionsCtrl', function($scope, transactions, MyMath, Col
     $scope.ColorMarker = ColorMarker;
 });
 
+module.controller('DividendsAllSumCtrl', function($scope, dividendsAllSum, MyMath, ColorMarker) {
+    console.log('DividendsAllSumCtrl executed');
+    $scope.dividendsAllSum = dividendsAllSum;
+    $scope.MyMath = MyMath;
+    $scope.ColorMarker = ColorMarker;
+});
+
+
 module.controller('SummaryCtrl', function($scope, Companies, companies, Currencies, currencies, MyMath, ColorMarker) {
     console.log('SummaryCtrl executed');
     $scope.companies = companies;

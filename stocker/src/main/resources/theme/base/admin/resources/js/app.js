@@ -109,6 +109,15 @@ module.config([ '$routeProvider', function($routeProvider) {
             },
             controller : 'TransactionsCtrl'
         })
+        .when('/dividends', {
+            templateUrl : resourceUrl + '/partials/dividends-all-sum.html',
+            resolve : {
+                dividendsAllSum : function(DividendsAllSumLoader) {
+                    return DividendsAllSumLoader();
+                }
+            },
+            controller : 'DividendsAllSumCtrl'
+        })
         .when('/logout', {
             templateUrl : resourceUrl + '/partials/home.html',
             controller : 'LogoutCtrl'
