@@ -231,6 +231,12 @@ module.factory('Company', function($resource) {
     });
 });
 
+module.factory('CompanyCandles', function($resource) {
+    return $resource(authUrl + '/rest/companies/candle/:ticker', {
+        ticker : '@ticker'
+    });
+});
+
 module.factory('Currencies', function($resource) {
     return $resource(authUrl + '/rest/currencies', {
     });

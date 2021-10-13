@@ -1,4 +1,4 @@
-<div class="col-sm-9 col-md-12 col-sm-push-0 col-md-push-0">
+<div class="col-sm-9 col-md-8 col-sm-push-0 col-md-push-0">
 
     <ol class="breadcrumb">
         <li><a href="#/companies">{{:: 'companies' | translate}}</a></li>
@@ -146,5 +146,19 @@
             </tr>
         </table>
     </fieldset>
+
+    <br>
+    <br>
+
+</div>
+<div class="col-sm-9 col-md-10 col-sm-push-0 col-md-push-0">
+
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'stock-price-history-chart' | translate}}</span>
+        </legend>
+    </fieldset>
+
+    <div zingchart id="chart-1" zc-json="stockChartJson" zc-width="100%" zc-height="568px"></div>
 
 </div>

@@ -51,6 +51,15 @@ module.factory('CompanyLoader', function(Loader, Company, $route) {
     });
 });
 
+module.factory('CompanyCandlesLoader', function(Loader, CompanyCandles, $route) {
+    console.log("CompanyCandlesLoader executed");
+    return Loader.get(CompanyCandles, function() {
+        return {
+            ticker : $route.current.params.ticker
+        }
+    });
+});
+
 module.factory('CurrenciesLoader', function(Loader, Currencies, $route) {
     console.log("CurrenciesLoader executed");
     return Loader.get(Currencies, function() {

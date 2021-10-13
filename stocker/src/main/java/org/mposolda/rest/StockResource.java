@@ -17,11 +17,14 @@ import javax.ws.rs.core.MediaType;
 
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
+import org.mposolda.reps.CandlesRep;
+import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.rest.CurrenciesRep;
 import org.mposolda.reps.rest.DividendsAllSumRep;
 import org.mposolda.reps.rest.TransactionsRep;
+import org.mposolda.services.FailedCandleDownloadException;
 import org.mposolda.services.Services;
 
 /**
@@ -75,6 +78,29 @@ public class StockResource {
                 .findFirst().orElseThrow(NotFoundException::new);
 
         return companyFound;
+    }
+
+
+    /**
+     * Get company stock candles ticker
+     *
+     * @param ticker
+     * @return
+     */
+    @GET
+    @NoCache
+    @Path("companies/candle/{ticker}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CandlesRep getCandlesByTicker(@PathParam("ticker") String ticker) {
+        log.debugf("getCandlesByTicker called for ticker %s", ticker);
+
+        try {
+            CandlesRep candlesRep = Services.instance().getCandlesHistoryManager().getStockCandles(QuoteLoaderRep.fromTicker(ticker), false);
+            return candlesRep;
+        } catch (FailedCandleDownloadException fcde) {
+            // should not happen
+            throw new RuntimeException(fcde);
+        }
     }
 
 

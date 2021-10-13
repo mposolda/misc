@@ -76,6 +76,9 @@ module.config([ '$routeProvider', function($routeProvider) {
             resolve : {
                 company : function(CompanyLoader) {
                     return CompanyLoader();
+                },
+                companyCandles : function(CompanyCandlesLoader) {
+                    return CompanyCandlesLoader();
                 }
             },
             controller : 'CompanyCtrl'
