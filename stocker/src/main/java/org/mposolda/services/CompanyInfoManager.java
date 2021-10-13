@@ -238,6 +238,7 @@ public class CompanyInfoManager {
         purchaseFull.setExpectedBackflowInPercent(expectedBackflowInPercent);
 
         purchaseFull.setCompanyTicker(purchaseInternal.getCompanyTicker());
+        purchaseFull.setCompanyName(purchaseInternal.getCompanyName());
         purchaseFull.setCurrency(purchaseInternal.getCurrency());
         purchaseFull.setDate(purchaseInternal.getDate());
         purchaseFull.setStocksCount(purchaseInternal.getStocksCount());
@@ -261,6 +262,7 @@ public class CompanyInfoManager {
         CompanyFullRep.DisposalFull disposalFull = new CompanyFullRep.DisposalFull();
         disposalFull.setDate(disposalInternal.getDate());
         disposalFull.setCompanyTicker(disposalInternal.getCompanyTicker());
+        disposalFull.setCompanyName(disposalInternal.getCompanyName());
         disposalFull.setCurrency(disposalInternal.getCurrency());
         disposalFull.setStocksCount(disposalInternal.getSoldStocksCount());
         disposalFull.setPriceTotal(disposalInternal.getTotalAmountInOriginalCurrency());

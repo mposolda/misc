@@ -91,7 +91,7 @@ public class PurchaseManager {
         for (CompanyRep company : database.getCompanies()) {
             List<PurchaseRep> purchases = company.getPurchases();
             for (PurchaseRep purchase : purchases) {
-                CompanyPurchaseInternal pi = new CompanyPurchaseInternal(company.getTicker(), company.getCurrency(), purchase);
+                CompanyPurchaseInternal pi = new CompanyPurchaseInternal(company.getTicker(), company.getName(), company.getCurrency(), purchase);
                 sortedCompanyPurchases.add(pi);
             }
         }
@@ -160,7 +160,7 @@ public class PurchaseManager {
         for (CompanyRep company : database.getCompanies()) {
 
             for (DisposalRep disposal : company.getDisposals()) {
-                StockDisposalInternal disposalInternal = new StockDisposalInternal(disposal.getDate(), company.getTicker(),
+                StockDisposalInternal disposalInternal = new StockDisposalInternal(disposal.getDate(), company.getTicker(), company.getName(),
                         disposal.getStocksCount(),
                         company.getCurrency(), (disposal.getPricePerStock() * disposal.getStocksCount()) - disposal.getFee(),
                         disposal.getCurrencyPriceToCZKAtTheDisposalTime(), disposal.getFee());
@@ -514,6 +514,7 @@ public class PurchaseManager {
     public static class CompanyPurchaseInternal implements PurchaseInternal {
 
         private final String companyTicker;
+        private final String companyName;
         private final String currency;
 
         private final String date;
@@ -526,8 +527,9 @@ public class PurchaseManager {
 
         private double totalFeeInCZK;
 
-        private CompanyPurchaseInternal(String companyTicker, String currency, PurchaseRep purchase) {
+        private CompanyPurchaseInternal(String companyTicker, String companyName, String currency, PurchaseRep purchase) {
             this.companyTicker = companyTicker;
+            this.companyName = companyName;
             this.currency = currency;
             this.date = purchase.getDate();
             this.stocksCount = purchase.getStocksCount();
@@ -540,6 +542,10 @@ public class PurchaseManager {
 
         public String getCompanyTicker() {
             return companyTicker;
+        }
+
+        public String getCompanyName() {
+            return companyName;
         }
 
         public String getCurrency() {
@@ -797,6 +803,8 @@ public class PurchaseManager {
 
         String getCompanyTicker();
 
+        String getCompanyName();
+
         String getCurrency();
 
         int getSoldStocksCount();
@@ -823,6 +831,8 @@ public class PurchaseManager {
 
         private final String companyTicker;
 
+        private final String companyName;
+
         private final int soldStocksCount;
 
         private final double currencyToAmount;
@@ -837,11 +847,12 @@ public class PurchaseManager {
 
         private final double totalFeeInCZK;
 
-        private StockDisposalInternal(String date, String companyTicker, int soldStocksCount, String currencyTo, double currencyToAmount,
+        private StockDisposalInternal(String date, String companyTicker, String companyName, int soldStocksCount, String currencyTo, double currencyToAmount,
                                      double czkAmountForOneUnitOfOrigCurrency, double totalFeeInOriginalCurrency) {
             this.date = date;
             this.dateNumber = DateUtil.dateToNumber(date);
             this.companyTicker = companyTicker;
+            this.companyName = companyName;
             this.soldStocksCount = soldStocksCount;
             this.currencyTo = currencyTo;
             this.currencyToAmount = currencyToAmount;
@@ -902,6 +913,11 @@ public class PurchaseManager {
         @Override
         public String getCompanyTicker() {
             return companyTicker;
+        }
+
+        @Override
+        public String getCompanyName() {
+            return companyName;
         }
 
         @Override

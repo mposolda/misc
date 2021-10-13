@@ -17,7 +17,7 @@
             <thead>
             <tr>
                 <th>{{:: 'date' | translate}}</th>
-                <th>{{:: 'company-ticker' | translate}}</th>
+                <th>{{:: 'company-name' | translate}}</th>
                 <th>{{:: 'operation' | translate}}</th>
                 <th>{{:: 'stocks-count' | translate}}</th>
                 <th>{{:: 'price-per-stock' | translate}}</th>
@@ -30,7 +30,7 @@
             </thead>
             <tr ng-repeat="transaction in transactions.transactions">
                 <td>{{transaction.date}}</td>
-                <td>{{transaction.companyTicker}}</td>
+                <td><a href="#/companies/{{transaction.companyTicker}}">{{transaction.companyName}}</a></td>
                 <td style="{{ColorMarker.markFromOperation(transaction.operation)}}">{{:: transaction.operation | translate}}</td>
                 <td>{{transaction.stocksCount}}</td>
                 <td>{{MyMath.round(transaction.pricePerStock)}} {{transaction.currency}}</td>

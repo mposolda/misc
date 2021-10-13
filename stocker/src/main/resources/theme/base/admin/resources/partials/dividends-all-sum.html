@@ -17,7 +17,7 @@
             <thead>
             <tr>
                 <th>{{:: 'year-total' | translate}}</th>
-                <th>{{:: 'company-ticker' | translate}}</th>
+                <th>{{:: 'company-name' | translate}}</th>
                 <th>{{:: 'dividends-orig-currency' | translate}}</th>
                 <th>{{:: 'dividends-czk' | translate}}</th>
                 <th>{{:: 'average-quotation' | translate}}</th>
@@ -30,7 +30,7 @@
                 <td data-ng-show="summary.yearSum"><b>{{MyMath.round(summary.totalAmountInCZK)}} CZK</b></td>
                 <td data-ng-show="summary.yearSum"></td>
                 <td data-ng-hide="summary.yearSum"></td>
-                <td data-ng-hide="summary.yearSum">{{summary.companyTicker}}</td>
+                <td data-ng-hide="summary.yearSum"><a href="#/companies/{{summary.companyTicker}}">{{summary.companyName}}</a></td>
                 <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.totalAmount)}} {{summary.currency}}</td>
                 <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.totalAmountInCZK)}} CZK</td>
                 <td data-ng-hide="summary.yearSum">{{MyMath.round(summary.averageQuotationToCZK)}}</td>

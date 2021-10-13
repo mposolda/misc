@@ -77,6 +77,8 @@ public class DividendsAllSumRep {
 
         private String companyTicker;
 
+        private String companyName;
+
         private String currency;
 
         // True if this entry corresponds to the summary for the whole year
@@ -88,6 +90,14 @@ public class DividendsAllSumRep {
 
         public void setCompanyTicker(String companyTicker) {
             this.companyTicker = companyTicker;
+        }
+
+        public String getCompanyName() {
+            return companyName;
+        }
+
+        public void setCompanyName(String companyName) {
+            this.companyName = companyName;
         }
 
         public String getCurrency() {

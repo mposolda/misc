@@ -368,6 +368,8 @@ public class CompanyFullRep extends CompanyRep {
 
         String getDate();
 
+        String getCompanyName();
+
         String getCompanyTicker();
 
         String getOperation();
@@ -393,6 +395,7 @@ public class CompanyFullRep extends CompanyRep {
     public static class PurchaseFull extends PurchaseRep implements TradeFull {
 
         private String companyTicker;
+        private String companyName;
         private String currency;
 
         // Expected backflow at the time of purchase
@@ -407,6 +410,15 @@ public class CompanyFullRep extends CompanyRep {
 
         public void setCompanyTicker(String companyTicker) {
             this.companyTicker = companyTicker;
+        }
+
+        @Override
+        public String getCompanyName() {
+            return companyName;
+        }
+
+        public void setCompanyName(String companyName) {
+            this.companyName = companyName;
         }
 
         @Override
@@ -459,6 +471,7 @@ public class CompanyFullRep extends CompanyRep {
     public static class DisposalFull extends DisposalRep implements TradeFull {
 
         private String companyTicker;
+        private String companyName;
         private String currency;
         private double priceTotal;
         private double priceTotalCZK;
@@ -471,6 +484,15 @@ public class CompanyFullRep extends CompanyRep {
 
         public void setCompanyTicker(String companyTicker) {
             this.companyTicker = companyTicker;
+        }
+
+        @Override
+        public String getCompanyName() {
+            return companyName;
+        }
+
+        public void setCompanyName(String companyName) {
+            this.companyName = companyName;
         }
 
         @Override

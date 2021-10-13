@@ -168,6 +168,7 @@ public class StockResource {
             companyFull.getDividendsSumPerYear().forEach(dividendsSumPerYear -> {
                 DividendsAllSumRep.DividendsSumPerYear2 dividend2 = new DividendsAllSumRep.DividendsSumPerYear2();
                 dividend2.setCompanyTicker(companyFull.getTicker());
+                dividend2.setCompanyName(companyFull.getName());
                 dividend2.setCurrency(companyFull.getCurrency());
                 dividend2.setYearSum(false);
                 dividend2.setYear(dividendsSumPerYear.getYear());
