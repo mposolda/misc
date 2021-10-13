@@ -1,7 +1,6 @@
 package org.mposolda.services;
 
 import java.io.Closeable;
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import org.jboss.logging.Logger;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.client.FinnhubHttpClientImpl;
 import org.mposolda.client.FinnhubHttpClientWrapper;
+import org.mposolda.mock.MockFinnhubClient;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -34,52 +34,44 @@ public class Services {
     private CompanyInfoManager companyInfoManager;
     private CandlesHistoryManager candlesManager;
 
-    private String companiesJsonFileLocation;
+    private StockerConfig config;
 
     private List<Closeable> closeables = new LinkedList<>();
 
 
     public void start() {
-        String token = System.getProperty("token");
-        if (token == null) {
-            throw new IllegalArgumentException("Need to provide system property 'token' with the finnhub API token");
-        }
-        String stocksDirLocation = System.getProperty("stocksDir");
-        if (stocksDirLocation == null) {
-            throw new IllegalArgumentException("Need to provide system property 'stocksDir' with the directory, which will need" +
-                    "to contain stocks.json file with the data about companies and currencies");
-        }
-
-        File stocksDir = new File(stocksDirLocation);
-        if (!stocksDir.exists() || !stocksDir.isDirectory()) {
-            throw new IllegalArgumentException("Directory '" + stocksDirLocation +  "' does not exists or it is not a directory");
-        }
-        this.companiesJsonFileLocation = stocksDir + File.separator + "stocks.json";
-        File companiesJsonFile = new File(companiesJsonFileLocation);
-        if (!companiesJsonFile.exists()) {
-            throw new IllegalArgumentException("File '" + companiesJsonFile +  "' does not exists");
-        }
+        this.config = new StockerConfigImpl();
 
         // Just test if network host/port is available to be able to fail-fast
         new QuickNetworkTestManager().test();
 
-        purchaseManager = new PurchaseManager(companiesJsonFileLocation);
+        purchaseManager = new PurchaseManager();
         purchaseManager.start();
         log.info("Created purchase manager");
 
-        finhubClient = new FinnhubHttpClientWrapper(new FinnhubHttpClientImpl(token));
+        if (this.config.isOfflineMode()) {
+            finhubClient = new MockFinnhubClient(this.config.getStocksDirLocation());
+            log.info("Created MOCK finnhub client");
+        } else {
+            finhubClient = new FinnhubHttpClientWrapper(new FinnhubHttpClientImpl());
+            log.info("Created finnhub client");
+        }
         closeables.add(finhubClient);
-        log.info("Created finnhub client");
 
         currencyConvertor = new CurrencyConvertor(finhubClient);
         currencyConvertor.start();
         log.info("Created currencyConvertor and loaded currencies from forex");
 
-        candlesManager = new CandlesHistoryManager(companiesJsonFileLocation, stocksDirLocation, finhubClient);
+        candlesManager = new CandlesHistoryManager(finhubClient);
 
-        companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, companiesJsonFileLocation, candlesManager);
+        companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, candlesManager);
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
+    }
+
+    /** Use in unit tests only! */
+    public void startTests(StockerConfig config) {
+        this.config = config;
     }
 
     // Called at the server shutdown
@@ -91,6 +83,10 @@ public class Services {
                 log.warn("Exception when closing " + closeable, e);
             }
         }
+    }
+
+    public StockerConfig getConfig() {
+        return config;
     }
 
     public FinnhubHttpClient getFinhubClient() {
@@ -113,7 +109,4 @@ public class Services {
         return candlesManager;
     }
 
-    public String getCompaniesJsonFileLocation() {
-        return companiesJsonFileLocation;
-    }
 }

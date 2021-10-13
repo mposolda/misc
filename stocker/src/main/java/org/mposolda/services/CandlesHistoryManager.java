@@ -23,9 +23,9 @@ public class CandlesHistoryManager {
     private final String stocksDir;
     private final CandlesDAO candlesDAO;
 
-    public CandlesHistoryManager(String companiesJsonFileLocation, String stocksDir, FinnhubHttpClient finhubClient) {
-        this.companiesJsonFileLocation = companiesJsonFileLocation;
-        this.stocksDir = stocksDir;
+    public CandlesHistoryManager(FinnhubHttpClient finhubClient) {
+        this.companiesJsonFileLocation = Services.instance().getConfig().getCompaniesJsonFileLocation();
+        this.stocksDir = Services.instance().getConfig().getStocksDirLocation();
         this.candlesDAO = new CandlesDAO(stocksDir, finhubClient);
     }
 
@@ -33,8 +33,7 @@ public class CandlesHistoryManager {
      * Will try to download all currency candles and company candles
      */
     public void allCandlesDownload() {
-        String companyJsonFileLocation = Services.instance().getCompaniesJsonFileLocation();
-        DatabaseRep database = JsonUtil.loadDatabase(companyJsonFileLocation);
+        DatabaseRep database = JsonUtil.loadDatabase(companiesJsonFileLocation);
 
         for (CurrencyRep currency : database.getCurrencies()) {
             // Skip "EUR"

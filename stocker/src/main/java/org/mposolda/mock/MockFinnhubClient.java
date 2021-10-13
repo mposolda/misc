@@ -1,9 +1,12 @@
-package org.mposolda.test;
+package org.mposolda.mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
@@ -14,14 +17,14 @@ import org.mposolda.util.JsonUtil;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class MockFinhubClient implements FinnhubHttpClient {
+public class MockFinnhubClient implements FinnhubHttpClient {
 
     private final String resourcesDir;
 
     private String lastStartDateUsed;
     private String lastEndDateUsed;
 
-    public MockFinhubClient(String resourcesDir) {
+    public MockFinnhubClient(String resourcesDir) {
         this.resourcesDir = resourcesDir;
     }
 
@@ -43,7 +46,24 @@ public class MockFinhubClient implements FinnhubHttpClient {
 
     @Override
     public CurrenciesRep getCurrencies() {
-        return null;
+
+        File[] currencyCandles = new File(resourcesDir).listFiles((dir, fileName) ->
+
+                fileName.startsWith(("cur_"))
+
+        );
+
+        Map<String, Double> quotes = new HashMap<>();
+        for (File currencyCandleFile : currencyCandles) {
+            CandlesRep candles = JsonUtil.loadFileToJson(currencyCandleFile.getAbsolutePath(), CandlesRep.class);
+            String currencyTicker = candles.getCurrencyTicker();
+            CandlesRep.CandleRep lastCandle = candles.getCandles().get(candles.getCandles().size() - 1);
+            quotes.put(currencyTicker, lastCandle.getValue());
+        }
+
+        CurrenciesRep currenciesRep = new CurrenciesRep();
+        currenciesRep.setQuote(quotes);
+        return currenciesRep;
     }
 
     @Override

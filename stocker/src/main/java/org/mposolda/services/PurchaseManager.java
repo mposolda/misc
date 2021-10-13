@@ -38,8 +38,8 @@ public class PurchaseManager {
 
     private CurrenciesInfo currenciesInfo = new CurrenciesInfo();
 
-    public PurchaseManager(String companiesJsonFileLocation) {
-        this.companiesJsonFileLocation = companiesJsonFileLocation;
+    public PurchaseManager() {
+        this.companiesJsonFileLocation = Services.instance().getConfig().getCompaniesJsonFileLocation();
     }
 
 

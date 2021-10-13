@@ -9,8 +9,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mposolda.mock.MockConfigImpl;
+import org.mposolda.mock.MockFinnhubClient;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.services.CandlesHistoryManager;
+import org.mposolda.services.Services;
 import org.mposolda.util.DateUtil;
 
 /**
@@ -22,7 +25,7 @@ public class CandlesHistoryManagerTest {
 
     private String workingDir;
     private CandlesHistoryManager candlesManager;
-    MockFinhubClient mockClient;
+    MockFinnhubClient mockClient;
 
     // Contains simple file names, which should be under the working dir
     private List<String> filesToCleanupAfterTest = new LinkedList<>();
@@ -37,10 +40,12 @@ public class CandlesHistoryManagerTest {
             workingDirFile.mkdir();
         }
 
-        mockClient = new MockFinhubClient(getUserDir() + "/src/test/resources");
+        Services.instance().startTests(new MockConfigImpl(workingDir, null));
+
+        mockClient = new MockFinnhubClient(getUserDir() + "/src/test/resources");
 
         // Will need to replace null if we need CompaniesJsonFileLocation
-        candlesManager = new CandlesHistoryManager(null, workingDir, mockClient);
+        candlesManager = new CandlesHistoryManager(mockClient);
     }
 
     @After

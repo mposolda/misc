@@ -10,6 +10,7 @@ import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.finhub.CandleRep;
+import org.mposolda.services.Services;
 import org.mposolda.util.DateUtil;
 
 /**
@@ -24,8 +25,8 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     private final String token;
     private final CloseableHttpClient httpClient;
 
-    public FinnhubHttpClientImpl(String token) {
-        this.token = token;
+    public FinnhubHttpClientImpl() {
+        this.token = Services.instance().getConfig().getToken();
         this.httpClient = new HttpClientBuilder().build();
     }
 

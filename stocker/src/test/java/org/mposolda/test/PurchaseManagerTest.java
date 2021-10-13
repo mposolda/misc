@@ -5,8 +5,10 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mposolda.mock.MockConfigImpl;
 import org.mposolda.reps.rest.DividendsSumPerYear;
 import org.mposolda.services.PurchaseManager;
+import org.mposolda.services.Services;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -16,8 +18,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks1() {
         String jsonFile = getJsonFilesDir() + "/stocks-1-usd-single-company-no-fees.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
@@ -30,8 +33,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks2() {
         String jsonFile = getJsonFilesDir() + "/stocks-2-usd-single-company-fees.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
@@ -47,8 +51,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks3() {
         String jsonFile = getJsonFilesDir() + "/stocks-3-usd-cad-more-companies-no-fees.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOOCAD");
@@ -65,8 +70,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks4() {
         String jsonFile = getJsonFilesDir() + "/stocks-4-usd-cad-more-companies-fees.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOOCAD");
@@ -83,8 +89,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks5() {
         String jsonFile = getJsonFilesDir() + "/stocks-5-usd-single-company-no-fees-dividends.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
@@ -104,8 +111,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks6() {
         String jsonFile = getJsonFilesDir() + "/stocks-6-usd-cad-more-companies-fees-dividends.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOOCAD");
@@ -126,8 +134,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks7() {
         String jsonFile = getJsonFilesDir() + "/stocks-7-usd-single-company-fees-sold.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
@@ -146,8 +155,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks8() {
         String jsonFile = getJsonFilesDir() + "/stocks-8-usd-single-company-fees-dividends-sold.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("FOO");
@@ -170,8 +180,9 @@ public class PurchaseManagerTest {
     @Test
     public void testStocks9() {
         String jsonFile = getJsonFilesDir() + "/stocks-9-gbp-single-company-disposals-fees.json";
+        Services.instance().startTests(new MockConfigImpl( jsonFile));
 
-        PurchaseManager mgr = new PurchaseManager(jsonFile);
+        PurchaseManager mgr = new PurchaseManager();
         mgr.start();
 
         PurchaseManager.CompanyPurchasesPrice company = mgr.getCompanyPurchases("DREC.L");

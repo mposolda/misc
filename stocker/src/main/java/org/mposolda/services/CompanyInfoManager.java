@@ -42,10 +42,10 @@ public class CompanyInfoManager {
 
     private final CandlesHistoryManager candlesManager;
 
-    CompanyInfoManager(FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor, String companiesJsonFileLocation, CandlesHistoryManager candlesManager) {
+    CompanyInfoManager(FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor, CandlesHistoryManager candlesManager) {
         this.finhubClient = finhubClient;
         this.currencyConvertor = currencyConvertor;
-        this.companiesJsonFileLocation = companiesJsonFileLocation;
+        this.companiesJsonFileLocation = Services.instance().getConfig().getCompaniesJsonFileLocation();
         this.candlesManager = candlesManager;
     }
 
