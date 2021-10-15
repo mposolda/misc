@@ -187,6 +187,9 @@ public class StockResource {
         Set<DividendsAllSumRep.DividendsSumPerYear2> dividends = new TreeSet<>(
                 Comparator.comparing(DividendsAllSumRep.DividendsSumPerYear2::getYear)
                         .thenComparing(DividendsAllSumRep.DividendsSumPerYear2::isYearSum)
+                        .thenComparing((divSum1, divSum2) -> {
+                            return (int) Math.round(Math.signum(divSum2.getTotalDividendsPaymentsInCZK() - divSum1.getTotalDividendsPaymentsInCZK()));
+                        })
                         .thenComparing(DividendsAllSumRep.DividendsSumPerYear2::getCompanyTicker));
 
         // Add dividends of all companies
