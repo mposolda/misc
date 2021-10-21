@@ -29,11 +29,27 @@ public class StockerRunner {
             public void run() {
                 log.info("Closing services");
                 services.close();
-                log.info("Stoping the undertow server");
+                log.info("Stopping the undertow server");
                 server.stop();
             }
 
         });
+
+        // Starting download of all candles in the ASYNC thread
+        if (!services.getConfig().isOfflineMode()) {
+            new Thread(() -> {
+                try {
+                    log.info("Sleeping 60 seconds before download all candles");
+                    Thread.sleep(60000);
+                    log.info("Starting allCandlesDownload");
+                    services.getCandlesHistoryManager().allCandlesDownload();
+                    log.info("allCandlesDownloaded");
+                } catch (InterruptedException ie) {
+                    log.info("Interrupting thread");
+                    Thread.currentThread().interrupt();
+                }
+            }).start();
+        }
 
         // Start CLI
         StockerCli cli = new StockerCli(services);
