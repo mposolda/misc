@@ -1,5 +1,8 @@
 package org.mposolda.services;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.reps.finhub.CurrenciesRep;
 
@@ -9,14 +12,18 @@ import org.mposolda.reps.finhub.CurrenciesRep;
 public class CurrencyConvertor {
 
     private final FinnhubHttpClient finhubClient;
+    private final PurchaseManager purchaseManager;
     private CurrenciesRep currencies;
 
-    CurrencyConvertor(FinnhubHttpClient finhubClient) {
+
+    CurrencyConvertor(FinnhubHttpClient finhubClient, PurchaseManager purchaseManager) {
         this.finhubClient = finhubClient;
+        this.purchaseManager = purchaseManager;
     }
 
     void start() {
-        currencies = finhubClient.getCurrencies();
+        List<String> currencies = new ArrayList<>(purchaseManager.getCurrenciesInfo().getCurrencyRemainingAmount().keySet());
+        this.currencies = finhubClient.getCurrencies(currencies);
     }
 
     public double exchangeMoney(double currencyFromAmount, String currencyFrom, String currencyTo) {
@@ -31,7 +38,7 @@ public class CurrencyConvertor {
         if ("EUR".equals(currencySymbol)) {
             return 1;
         } else {
-            Double result = currencies.getQuote().get(currencySymbol);
+            Double result = currencies.getRates().get(currencySymbol);
             if (result == null) {
                 throw new IllegalArgumentException("Cant find currency with symbol: " + currencySymbol);
             }

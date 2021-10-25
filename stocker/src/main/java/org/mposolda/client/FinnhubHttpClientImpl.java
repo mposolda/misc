@@ -1,6 +1,7 @@
 package org.mposolda.client;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -26,7 +27,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     private final CloseableHttpClient httpClient;
 
     public FinnhubHttpClientImpl() {
-        this.token = Services.instance().getConfig().getToken();
+        this.token = Services.instance().getConfig().getFinnhubToken();
         this.httpClient = new HttpClientBuilder().build();
     }
 
@@ -78,15 +79,16 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
-    public CurrenciesRep getCurrencies() {
-        try {
-            String url = URL_PREFIX + "/forex/rates?token=" + token;
-            return SimpleHttp.doGet(url, httpClient)
-                    .asJson(new TypeReference<CurrenciesRep>() {
-                    });
-        } catch (IOException ioe) {
-            throw new RuntimeException("Exception when loading currencies", ioe);
-        }
+    public CurrenciesRep getCurrencies(List<String> sourceCurrencies) {
+        throw new UnsupportedOperationException("This is not supported as it is payed API for Finnhub");
+//        try {
+//            String url = URL_PREFIX + "/forex/rates?token=" + token;
+//            return SimpleHttp.doGet(url, httpClient)
+//                    .asJson(new TypeReference<CurrenciesRep>() {
+//                    });
+//        } catch (IOException ioe) {
+//            throw new RuntimeException("Exception when loading currencies", ioe);
+//        }
     }
 
     @Override

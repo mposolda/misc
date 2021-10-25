@@ -13,8 +13,8 @@ public class CurrenciesRep extends BaseRep {
     @JsonProperty("base")
     private String base;
 
-    @JsonProperty("quote")
-    private Map<String, Double> quote;
+    @JsonProperty("rates")
+    private Map<String, Double> rates;
 
     public String getBase() {
         return base;
@@ -24,11 +24,11 @@ public class CurrenciesRep extends BaseRep {
         this.base = base;
     }
 
-    public Map<String, Double> getQuote() {
-        return quote;
+    public Map<String, Double> getRates() {
+        return rates;
     }
 
-    public void setQuote(Map<String, Double> quote) {
-        this.quote = quote;
+    public void setRates(Map<String, Double> rates) {
+        this.rates = rates;
     }
 }

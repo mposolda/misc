@@ -1,6 +1,7 @@
 package org.mposolda.client;
 
 import java.io.Closeable;
+import java.util.List;
 
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
@@ -22,7 +23,7 @@ public interface FinnhubHttpClient extends Closeable {
      */
     CandleRep getStockCandle(QuoteLoaderRep company, String startDate, String endDate);
 
-    CurrenciesRep getCurrencies();
+    CurrenciesRep getCurrencies(List<String> currencies);
 
     /**
      * Get currency candles from EUR to the target currency (How much "currency" amount is needed for 1 EUR)

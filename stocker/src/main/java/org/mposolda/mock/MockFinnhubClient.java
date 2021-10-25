@@ -3,6 +3,7 @@ package org.mposolda.mock;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mposolda.client.FinnhubHttpClient;
@@ -45,7 +46,7 @@ public class MockFinnhubClient implements FinnhubHttpClient {
     }
 
     @Override
-    public CurrenciesRep getCurrencies() {
+    public CurrenciesRep getCurrencies(List<String> currencies) {
 
         File[] currencyCandles = new File(resourcesDir).listFiles((dir, fileName) ->
 
@@ -62,7 +63,7 @@ public class MockFinnhubClient implements FinnhubHttpClient {
         }
 
         CurrenciesRep currenciesRep = new CurrenciesRep();
-        currenciesRep.setQuote(quotes);
+        currenciesRep.setRates(quotes);
         return currenciesRep;
     }
 

@@ -8,6 +8,7 @@ import org.jboss.logging.Logger;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.client.FinnhubHttpClientImpl;
 import org.mposolda.client.FinnhubHttpClientWrapper;
+import org.mposolda.client.FixerHttpClientImpl;
 import org.mposolda.mock.MockFinnhubClient;
 
 /**
@@ -53,12 +54,12 @@ public class Services {
             finhubClient = new MockFinnhubClient(this.config.getStocksDirLocation());
             log.info("Created MOCK finnhub client");
         } else {
-            finhubClient = new FinnhubHttpClientWrapper(new FinnhubHttpClientImpl());
+            finhubClient = new FinnhubHttpClientWrapper(new FinnhubHttpClientImpl(), new FixerHttpClientImpl());
             log.info("Created finnhub client");
         }
         closeables.add(finhubClient);
 
-        currencyConvertor = new CurrencyConvertor(finhubClient);
+        currencyConvertor = new CurrencyConvertor(finhubClient, purchaseManager);
         currencyConvertor.start();
         log.info("Created currencyConvertor and loaded currencies from forex");
 

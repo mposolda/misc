@@ -20,7 +20,12 @@ public class MockConfigImpl implements StockerConfig {
     }
 
     @Override
-    public String getToken() {
+    public String getFinnhubToken() {
+        return null;
+    }
+
+    @Override
+    public String getFixerToken() {
         return null;
     }
 

@@ -1,6 +1,7 @@
 package org.mposolda.client;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -26,12 +27,17 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     // Max count of attempts for every HTTP request sent to Finnhub
     private static final int MAX_ATTEMPTS = 10;
 
+    // Used for call finnhub
     private final FinnhubHttpClient delegate;
+
+    // Used for some endpoints, which are payed for finnhub
+    private final FinnhubHttpClient fixerDelegate;
 
     private long lastCallTimeMs;
 
-    public FinnhubHttpClientWrapper(FinnhubHttpClient delegate) {
+    public FinnhubHttpClientWrapper(FinnhubHttpClient delegate, FixerHttpClientImpl fixerDelegate) {
         this.delegate = delegate;
+        this.fixerDelegate = fixerDelegate;
     }
 
     @Override
@@ -66,8 +72,9 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     }
 
     @Override
-    public CurrenciesRep getCurrencies() {
-        return waitAndCall(null, (str) -> delegate.getCurrencies());
+    public CurrenciesRep getCurrencies(List<String> currencies) {
+        // Delegate to fixer
+        return waitAndCall(null, (str) -> fixerDelegate.getCurrencies(currencies));
     }
 
     @Override

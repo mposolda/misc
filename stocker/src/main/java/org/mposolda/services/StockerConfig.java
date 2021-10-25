@@ -5,7 +5,9 @@ package org.mposolda.services;
  */
 public interface StockerConfig {
 
-    String getToken();
+    String getFinnhubToken();
+
+    String getFixerToken();
 
     String getStocksDirLocation();
 

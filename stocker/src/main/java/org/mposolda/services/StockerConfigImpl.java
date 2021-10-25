@@ -9,7 +9,8 @@ import java.io.File;
  */
 public class StockerConfigImpl implements StockerConfig {
 
-    private final String token;
+    private final String token; // Used for calling finnhub
+    private final String fixerToken; // Used for calling fixer
     private final String stocksDirLocation;
     private final String companiesJsonFileLocation;
     private final boolean offlineMode; // Assumption is no internet connection during offline mode. Stuff loaded from last candles. Useful for development only
@@ -19,6 +20,10 @@ public class StockerConfigImpl implements StockerConfig {
         this.token = System.getProperty("token");
         if (this.token == null) {
             throw new IllegalArgumentException("Need to provide system property 'token' with the finnhub API token");
+        }
+        this.fixerToken = System.getProperty("fixerToken");
+        if (this.fixerToken == null) {
+            throw new IllegalArgumentException("Need to provide system property 'fixerToken' with the fixer API token");
         }
         this.stocksDirLocation = System.getProperty("stocksDir");
         if (stocksDirLocation == null) {
@@ -40,8 +45,13 @@ public class StockerConfigImpl implements StockerConfig {
     }
 
     @Override
-    public String getToken() {
+    public String getFinnhubToken() {
         return token;
+    }
+
+    @Override
+    public String getFixerToken() {
+        return fixerToken;
     }
 
     @Override
