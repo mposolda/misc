@@ -87,6 +87,7 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     @Override
     public void close() throws IOException {
         delegate.close();
+        fixerDelegate.close();
     }
 
     private <INPUT, OUTPUT> OUTPUT waitAndCall(INPUT input, Function<INPUT, OUTPUT> function) {
