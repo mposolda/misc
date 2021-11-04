@@ -1,6 +1,7 @@
 package org.mposolda.services;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,11 +60,13 @@ public class Services {
         }
         closeables.add(finhubClient);
 
-        currencyConvertor = new CurrencyConvertor(finhubClient, purchaseManager);
+        List<String> currencyTickers = new ArrayList<>(purchaseManager.getCurrenciesInfo().getCurrencyRemainingAmount().keySet());
+
+        currencyConvertor = new CurrencyConvertor(finhubClient, currencyTickers);
         currencyConvertor.start();
         log.info("Created currencyConvertor and loaded currencies from forex");
 
-        candlesManager = new CandlesHistoryManager(finhubClient);
+        candlesManager = new CandlesHistoryManager(finhubClient, currencyTickers);
 
         companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, candlesManager);
         companyInfoManager.start();

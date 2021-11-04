@@ -1,6 +1,7 @@
 package org.mposolda.test;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class CandlesHistoryManagerTest {
         mockClient = new MockFinnhubClient(getUserDir() + "/src/test/resources");
 
         // Will need to replace null if we need CompaniesJsonFileLocation
-        candlesManager = new CandlesHistoryManager(mockClient);
+        candlesManager = new CandlesHistoryManager(mockClient, Arrays.asList("CAD", "USD", "GBP"));
     }
 
     @After

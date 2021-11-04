@@ -1,8 +1,10 @@
 package org.mposolda.cli;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.mposolda.reps.finhub.CandleRep;
+import org.mposolda.reps.finhub.CurrencyCandlesRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -20,7 +22,7 @@ public class CurrencyCandleCommand extends AbstractCommand {
         String startDate = getArg(1);
         String endDate = getArg(2);
 
-        CandleRep currencyCandle = services.getFinhubClient().getCurrencyCandle(currencyTicker, startDate, endDate);
+        CurrencyCandlesRep currencyCandle = services.getFinhubClient().getCurrencyCandles(Collections.singletonList(currencyTicker), startDate, endDate);
 
         log.info("Info: " + currencyCandle);
     }

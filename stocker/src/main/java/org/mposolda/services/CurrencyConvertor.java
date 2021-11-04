@@ -12,18 +12,17 @@ import org.mposolda.reps.finhub.CurrenciesRep;
 public class CurrencyConvertor {
 
     private final FinnhubHttpClient finhubClient;
-    private final PurchaseManager purchaseManager;
+    private final List<String> currencyTickers;
     private CurrenciesRep currencies;
 
 
-    CurrencyConvertor(FinnhubHttpClient finhubClient, PurchaseManager purchaseManager) {
+    CurrencyConvertor(FinnhubHttpClient finhubClient, List<String> currencyTickers) {
         this.finhubClient = finhubClient;
-        this.purchaseManager = purchaseManager;
+        this.currencyTickers = currencyTickers;
     }
 
     void start() {
-        List<String> currencies = new ArrayList<>(purchaseManager.getCurrenciesInfo().getCurrencyRemainingAmount().keySet());
-        this.currencies = finhubClient.getCurrencies(currencies);
+        this.currencies = finhubClient.getCurrencies(currencyTickers);
     }
 
     public double exchangeMoney(double currencyFromAmount, String currencyFrom, String currencyTo) {

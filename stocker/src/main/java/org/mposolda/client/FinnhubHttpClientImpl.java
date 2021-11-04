@@ -9,6 +9,7 @@ import org.jboss.logging.Logger;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
+import org.mposolda.reps.finhub.CurrencyCandlesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.services.Services;
@@ -92,22 +93,23 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
-    public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
-        try {
-            log.infof("Loading currency candles from EUR to %s. From %s to %s", targetCurrencyTicker, startDate, endDate);
-
-            long start = DateUtil.dateToNumberSeconds(startDate);
-            long end = DateUtil.dateToNumberSeconds(endDate);
-
-            log.infof("Timestamps %d to %d", start, end);
-
-            String url = URL_PREFIX + "/forex/candle?symbol=OANDA:EUR_" + targetCurrencyTicker + "&resolution=D&from=" + start + "&to=" + end + "&token=" + token;
-            return SimpleHttp.doGet(url, httpClient)
-                    .asJson(new TypeReference<CandleRep>() {
-                    });
-        } catch (IOException ioe) {
-            throw new RuntimeException("Exception getting currency candles rep for " + targetCurrencyTicker, ioe);
-        }
+    public CurrencyCandlesRep getCurrencyCandles(List<String> targetCurrenciesTickers, String startDate, String endDate) {
+        throw new UnsupportedOperationException("This is not supported as it is payed API for Finnhub");
+//        try {
+//            log.infof("Loading currency candles from EUR to %s. From %s to %s", targetCurrencyTicker, startDate, endDate);
+//
+//            long start = DateUtil.dateToNumberSeconds(startDate);
+//            long end = DateUtil.dateToNumberSeconds(endDate);
+//
+//            log.infof("Timestamps %d to %d", start, end);
+//
+//            String url = URL_PREFIX + "/forex/candle?symbol=OANDA:EUR_" + targetCurrencyTicker + "&resolution=D&from=" + start + "&to=" + end + "&token=" + token;
+//            return SimpleHttp.doGet(url, httpClient)
+//                    .asJson(new TypeReference<CandleRep>() {
+//                    });
+//        } catch (IOException ioe) {
+//            throw new RuntimeException("Exception getting currency candles rep for " + targetCurrencyTicker, ioe);
+//        }
     }
 
     @Override

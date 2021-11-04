@@ -12,6 +12,7 @@ import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
+import org.mposolda.reps.finhub.CurrencyCandlesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.util.JsonUtil;
 
@@ -67,19 +68,26 @@ public class MockFinnhubClient implements FinnhubHttpClient {
         return currenciesRep;
     }
 
+    // TODO:mposolda
     @Override
-    public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
-        // Load dummy currency candle from the file
-        String file = resourcesDir + "/candles_" + targetCurrencyTicker + "_" + startDate + "_" + endDate + ".json";
-        if (!new File(file).exists()) {
-            throw new IllegalArgumentException("File does not exists " + file);
-        }
-
-        this.lastStartDateUsed = startDate;
-        this.lastEndDateUsed = endDate;
-
-        return JsonUtil.loadFileToJson(file, CandleRep.class);
+    public CurrencyCandlesRep getCurrencyCandles(List<String> targetCurrenciesTickers, String startDate, String endDate) {
+        throw new UnsupportedOperationException("TODO:mposolda this needs to be implemented");
     }
+
+    // TODO:mposolda
+//    @Override
+//    public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
+//        // Load dummy currency candle from the file
+//        String file = resourcesDir + "/candles_" + targetCurrencyTicker + "_" + startDate + "_" + endDate + ".json";
+//        if (!new File(file).exists()) {
+//            throw new IllegalArgumentException("File does not exists " + file);
+//        }
+//
+//        this.lastStartDateUsed = startDate;
+//        this.lastEndDateUsed = endDate;
+//
+//        return JsonUtil.loadFileToJson(file, CandleRep.class);
+//    }
 
     @Override
     public void close() throws IOException {

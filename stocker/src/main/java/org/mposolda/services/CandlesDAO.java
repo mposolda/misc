@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.finhub.CandleRep;
+import org.mposolda.reps.finhub.CurrencyCandlesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.util.DateUtil;
 import org.mposolda.util.JsonUtil;
@@ -30,10 +32,15 @@ class CandlesDAO {
 
     private final String stocksDir;
     private final FinnhubHttpClient finhubClient;
+    private final List<String> currencyTickers; // All currency tickers
 
-    CandlesDAO(String stocksDir, FinnhubHttpClient finhubClient) {
+    // Make sure we load this just once per JVM
+    private CurrencyCandlesRep fixerCurrencyCandles = null;
+
+    CandlesDAO(String stocksDir, FinnhubHttpClient finhubClient, List<String> currencyTickers) {
         this.stocksDir = stocksDir;
         this.finhubClient = finhubClient;
+        this.currencyTickers = currencyTickers;
     }
 
     CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest) throws FailedCandleDownloadException {
@@ -95,8 +102,18 @@ class CandlesDAO {
         // 6) Download the newest candle from "lastDate" to the current date from finhub
         long startDateToUse = Math.max(startDate, lastComputedTimestamp);
         String startDateToUseStr = DateUtil.numberInSecondsToDate(startDateToUse);
-        CandleRep finhubCandle = isCurrencyCandle ? finhubClient.getCurrencyCandle(ticker, startDateToUseStr, endDateStr)
-                : finhubClient.getStockCandle(quoteLoaderInputRep, startDateToUseStr, endDateStr);
+
+        CandleRep finhubCandle = null;
+
+        if (isCurrencyCandle) {
+            if (this.fixerCurrencyCandles == null) {
+                this.fixerCurrencyCandles = finhubClient.getCurrencyCandles(currencyTickers, startDateToUseStr, endDateStr);
+            }
+            // Convert fixer candle to finhub currency candle - This assumes that "startDate" and "endDate" correspond to the same date, which was used for loading fixerCurrencyCandles
+            finhubCandle = convertFixerCandleToFinhubCandle(ticker);
+        } else {
+            finhubCandle = finhubClient.getStockCandle(quoteLoaderInputRep, startDateToUseStr, endDateStr);
+        }
 
         // 7 For failed company candles, we will fallback to download current quote and just use the quote from the current day
         boolean fallbackNeeded = false;
@@ -129,6 +146,30 @@ class CandlesDAO {
         }
 
         return candlesRep;
+    }
+
+    private CandleRep convertFixerCandleToFinhubCandle(String ticker) {
+        CandleRep result = new CandleRep();
+        result.setStatus("ok");
+
+        for (Map.Entry<String, Map<String, Double>> dateEntry : this.fixerCurrencyCandles.getRates().entrySet()) {
+            String date = dateEntry.getKey();
+            Double value = dateEntry.getValue().get(ticker);
+            if (value == null) {
+                // Should not happen
+                throw new RuntimeException("Not found candle for ticker " + ticker + " and date " + date + ". Loaded fixer candles: " + this.fixerCurrencyCandles);
+            }
+
+            //
+            long timestamp = DateUtil.dateToNumberSeconds(date);
+            result.getCurrentPrice().add(value);
+            result.getHighDayPrice().add(value);
+            result.getLowDayPrice().add(value);
+            result.getOpenDayPrice().add(value);
+            result.getTimestamps().add(timestamp);
+        }
+
+        return result;
     }
 
     private CandlesRep createEmptyCandlesRepForTicker(String ticker, boolean isCurrencyCandle) {

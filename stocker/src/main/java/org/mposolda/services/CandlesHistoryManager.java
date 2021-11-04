@@ -23,10 +23,10 @@ public class CandlesHistoryManager {
     private final String stocksDir;
     private final CandlesDAO candlesDAO;
 
-    public CandlesHistoryManager(FinnhubHttpClient finhubClient) {
+    public CandlesHistoryManager(FinnhubHttpClient finhubClient, List<String> currencyTickers) {
         this.companiesJsonFileLocation = Services.instance().getConfig().getCompaniesJsonFileLocation();
         this.stocksDir = Services.instance().getConfig().getStocksDirLocation();
-        this.candlesDAO = new CandlesDAO(stocksDir, finhubClient);
+        this.candlesDAO = new CandlesDAO(stocksDir, finhubClient, currencyTickers);
     }
 
     /**

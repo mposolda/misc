@@ -6,6 +6,7 @@ import java.util.List;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
+import org.mposolda.reps.finhub.CurrencyCandlesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.finhub.CandleRep;
 
@@ -26,14 +27,14 @@ public interface FinnhubHttpClient extends Closeable {
     CurrenciesRep getCurrencies(List<String> currencies);
 
     /**
-     * Get currency candles from EUR to the target currency (How much "currency" amount is needed for 1 EUR)
+     * Get currency candles from EUR to the target currencies specified by tickers (How much "currency" amount is needed for 1 EUR)
      *
      * Dates are in the format like "2020-10-20"
      *
-     * @param targetCurrencyTicker
+     * @param targetCurrenciesTickers
      * @param startDate
      * @param endDate
      * @return
      */
-    CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate);
+    CurrencyCandlesRep getCurrencyCandles(List<String> targetCurrenciesTickers, String startDate, String endDate);
 }

@@ -9,6 +9,7 @@ import org.jboss.logging.Logger;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CompanyProfileRep;
 import org.mposolda.reps.finhub.CurrenciesRep;
+import org.mposolda.reps.finhub.CurrencyCandlesRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.util.NumberUtil;
@@ -78,9 +79,9 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     }
 
     @Override
-    public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
-        return waitAndCall(targetCurrencyTicker, ticker2 -> {
-            return delegate.getCurrencyCandle(ticker2, startDate, endDate);
+    public CurrencyCandlesRep getCurrencyCandles(List<String> targetCurrenciesTickers, String startDate, String endDate) {
+        return waitAndCall(targetCurrenciesTickers, targetCurrenciesTickers2 -> {
+            return fixerDelegate.getCurrencyCandles(targetCurrenciesTickers2, startDate, endDate);
         });
     }
 
