@@ -45,7 +45,7 @@ public class CandlesHistoryManagerTest {
         mockClient = new MockFinnhubClient(getUserDir() + "/src/test/resources");
 
         // Will need to replace null if we need CompaniesJsonFileLocation
-        candlesManager = new CandlesHistoryManager(mockClient);
+        candlesManager = new CandlesHistoryManager(mockClient, Services.instance().getCurrencyConvertor());
     }
 
     @After

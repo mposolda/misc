@@ -63,7 +63,7 @@ public class Services {
         currencyConvertor.start();
         log.info("Created currencyConvertor and loaded currencies from forex");
 
-        candlesManager = new CandlesHistoryManager(finhubClient);
+        candlesManager = new CandlesHistoryManager(finhubClient, currencyConvertor);
 
         companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, candlesManager);
         companyInfoManager.start();

@@ -30,10 +30,12 @@ class CandlesDAO {
 
     private final String stocksDir;
     private final FinnhubHttpClient finhubClient;
+    private final CurrencyConvertor currencyConvertor;
 
-    CandlesDAO(String stocksDir, FinnhubHttpClient finhubClient) {
+    CandlesDAO(String stocksDir, FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor) {
         this.stocksDir = stocksDir;
         this.finhubClient = finhubClient;
+        this.currencyConvertor = currencyConvertor;
     }
 
     CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest) throws FailedCandleDownloadException {
@@ -95,22 +97,38 @@ class CandlesDAO {
         // 6) Download the newest candle from "lastDate" to the current date from finhub
         long startDateToUse = Math.max(startDate, lastComputedTimestamp);
         String startDateToUseStr = DateUtil.numberInSecondsToDate(startDateToUse);
-        CandleRep finhubCandle = isCurrencyCandle ? finhubClient.getCurrencyCandle(ticker, startDateToUseStr, endDateStr)
+        CandleRep finhubCandle = isCurrencyCandle ? null //finhubClient.getCurrencyCandle(ticker, startDateToUseStr, endDateStr) - does not work anymore. It is payed API...
                 : finhubClient.getStockCandle(quoteLoaderInputRep, startDateToUseStr, endDateStr);
 
-        // 7 For failed company candles, we will fallback to download current quote and just use the quote from the current day
-        boolean fallbackNeeded = false;
-        if (!isCurrencyCandle && finhubCandle.getOpenDayPrice() == null) {
-            fallbackNeeded = true;
-            QuoteRep quote = finhubClient.getQuoteRep(quoteLoaderInputRep, true);
+        // Used only in unit tests for now
+        if (currencyConvertor == null) {
+            finhubCandle = finhubClient.getCurrencyCandle(ticker, startDateToUseStr, endDateStr);
+        }
 
-            // Just manually create candlesRep from the quote
-            finhubCandle = new CandleRep();
-            finhubCandle.setCurrentPrice(Collections.singletonList(quote.getCurrentPrice()));
-            finhubCandle.setHighDayPrice (Collections.singletonList(quote.getHighDayPrice()));
-            finhubCandle.setLowDayPrice(Collections.singletonList(quote.getLowDayPrice()));
-            finhubCandle.setOpenDayPrice(Collections.singletonList(quote.getOpenDayPrice()));
-            finhubCandle.setTimestamps(Collections.singletonList(DateUtil.getCurrentTimestamp()));
+        // 7 For failed company candles, we will fallback to download current quote and just use the quote from the current day.
+        // For currency candles, just stick to latest currency because finhub nor fixer does not work for download currency candles...
+        boolean fallbackNeeded = false;
+        if (finhubCandle == null || finhubCandle.getOpenDayPrice() == null) {
+            if (!isCurrencyCandle) {
+                fallbackNeeded = true;
+                QuoteRep quote = finhubClient.getQuoteRep(quoteLoaderInputRep, true);
+
+                // Just manually create candlesRep from the quote
+                finhubCandle = new CandleRep();
+                finhubCandle.setCurrentPrice(Collections.singletonList(quote.getCurrentPrice()));
+                finhubCandle.setHighDayPrice(Collections.singletonList(quote.getHighDayPrice()));
+                finhubCandle.setLowDayPrice(Collections.singletonList(quote.getLowDayPrice()));
+                finhubCandle.setOpenDayPrice(Collections.singletonList(quote.getOpenDayPrice()));
+                finhubCandle.setTimestamps(Collections.singletonList(DateUtil.getCurrentTimestamp()));
+            } else {
+                double ourCurrencyToEur = currencyConvertor.exchangeMoney(1, "EUR", quoteLoaderInputRep.getTicker());
+                finhubCandle = new CandleRep();
+                finhubCandle.setCurrentPrice(Collections.singletonList(ourCurrencyToEur));
+                finhubCandle.setHighDayPrice(Collections.singletonList(ourCurrencyToEur));
+                finhubCandle.setLowDayPrice(Collections.singletonList(ourCurrencyToEur));
+                finhubCandle.setOpenDayPrice(Collections.singletonList(ourCurrencyToEur));
+                finhubCandle.setTimestamps(Collections.singletonList(DateUtil.getCurrentTimestamp()));
+            }
 
             // Rather wait to enforce some pause among calls
             WaitUtil.pause(WaitUtil.INTERVAL * 2);
