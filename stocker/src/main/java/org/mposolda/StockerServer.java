@@ -10,6 +10,7 @@ import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.jboss.resteasy.spi.ResteasyDeployment;
 import org.mposolda.rest.StockerApplication;
+import org.mposolda.services.Services;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -20,8 +21,6 @@ public class StockerServer {
 
     public static final String HOST = "localhost";
 
-    public static final int PORT = 8085;
-
     public static final String CONTEXT_ROOT = "/stocker";
 
     public static final int WORKER_THREADS = Math.max(Runtime.getRuntime().availableProcessors(), 2) * 8;
@@ -31,11 +30,13 @@ public class StockerServer {
     private UndertowJaxrsServer server;
 
     public void start(long startTimeMs) throws Throwable {
+        int port = Services.instance().getConfig().getUndertowPort();
+
         ResteasyDeployment deployment = new ResteasyDeployment();
         deployment.setApplicationClass(StockerApplication.class.getName());
 
         Undertow.Builder builder = Undertow.builder()
-                .addHttpListener(PORT, HOST)
+                .addHttpListener(port, HOST)
                 .setWorkerThreads(WORKER_THREADS)
                 .setIoThreads(WORKER_THREADS / 8);
 
@@ -77,7 +78,7 @@ public class StockerServer {
 //                info("Loading resources from " + config.getResourcesHome());
 //            }
 
-            logger.info("Started Stocker (http://" + HOST + ":" + PORT + CONTEXT_ROOT
+            logger.info("Started Stocker (http://" + HOST + ":" + port + CONTEXT_ROOT
                     + " in "
                     + (System.currentTimeMillis() - startTimeMs) + " ms. Current Date: " + new Date() + "\n");
         } catch (RuntimeException e) {

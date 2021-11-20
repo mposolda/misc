@@ -9,6 +9,7 @@ import java.io.File;
  */
 public class StockerConfigImpl implements StockerConfig {
 
+    private final Integer port; // Port where server will listen
     private final String token; // Used for calling finnhub
     private final String fixerToken; // Used for calling fixer
     private final String stocksDirLocation;
@@ -17,6 +18,7 @@ public class StockerConfigImpl implements StockerConfig {
 
 
     public StockerConfigImpl() {
+        this.port = Integer.parseInt(System.getProperty("port", "8085"));
         this.token = System.getProperty("token");
         if (this.token == null) {
             throw new IllegalArgumentException("Need to provide system property 'token' with the finnhub API token");
@@ -42,6 +44,11 @@ public class StockerConfigImpl implements StockerConfig {
         }
 
         this.offlineMode = Boolean.getBoolean("offlineMode");
+    }
+
+    @Override
+    public Integer getUndertowPort() {
+        return port;
     }
 
     @Override

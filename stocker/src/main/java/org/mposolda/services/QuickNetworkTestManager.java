@@ -13,9 +13,10 @@ public class QuickNetworkTestManager {
 
     public void test() {
         try {
-            Socket socket = new Socket(StockerServer.HOST, StockerServer.PORT);
+            int port = Services.instance().getConfig().getUndertowPort();
+            Socket socket = new Socket(StockerServer.HOST, port);
             socket.close();
-            throw new RuntimeException("Address already in use " + StockerServer.HOST + ":" + StockerServer.PORT);
+            throw new RuntimeException("Address already in use " + StockerServer.HOST + ":" + port);
         } catch (ConnectException e) {
             // This is expected
         } catch (IOException e) {

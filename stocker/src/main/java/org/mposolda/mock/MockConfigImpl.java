@@ -20,6 +20,11 @@ public class MockConfigImpl implements StockerConfig {
     }
 
     @Override
+    public Integer getUndertowPort() {
+        return 8087;
+    }
+
+    @Override
     public String getFinnhubToken() {
         return null;
     }

@@ -5,6 +5,8 @@ package org.mposolda.services;
  */
 public interface StockerConfig {
 
+    Integer getUndertowPort();
+
     String getFinnhubToken();
 
     String getFixerToken();
