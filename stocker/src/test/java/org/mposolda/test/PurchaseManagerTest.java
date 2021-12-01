@@ -144,6 +144,7 @@ public class PurchaseManagerTest {
         assertPurchaseAndDisposalFees(company, 550, 200, 140, 210);
 
         assertDisposals(company, 210, 4410, 4410);
+        assertDisposalTaxes(company.getDisposals().get(0), -147, -22.05);
 
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 1993);
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
@@ -165,6 +166,7 @@ public class PurchaseManagerTest {
         assertPurchaseAndDisposalFees(company, 550, 200, 140, 210);
 
         assertDisposals(company, 210, 4410, 4410);
+        assertDisposalTaxes(company.getDisposals().get(0), -147, -22.05);
 
         assertCurrency(mgr.getCurrenciesInfo(), "USD", 2013);
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 459800);
@@ -190,11 +192,26 @@ public class PurchaseManagerTest {
         assertPurchaseAndDisposalFees(company, 3150, 150, 1500, 1500);
 
         assertDisposals(company, 1550, 46500, 22500, 24000);
+        assertDisposalTaxes(company.getDisposals().get(0), 0, 0);
+        assertDisposalTaxes(company.getDisposals().get(1), 1350, 202.5);
 
         assertCurrency(mgr.getCurrenciesInfo(), "GBP", 2045);
         assertCurrency(mgr.getCurrenciesInfo(), "CZK", 439900);
 
         Assert.assertEquals(100, mgr.getCurrenciesInfo().getCzkFeesTotal(), 0.1);
+    }
+
+    @Test
+    public void testStocks10() {
+        try {
+            String jsonFile = getJsonFilesDir() + "/stocks-10-gbp-error-due-disposals-bigger-than-purchases.json";
+            Services.instance().startTests(new MockConfigImpl(jsonFile));
+
+            PurchaseManager mgr = new PurchaseManager();
+            mgr.start();
+        } catch (IllegalStateException ise) {
+            Assert.assertEquals("Not enough purchases for process disposal of company DREC.L", ise.getMessage());
+        }
     }
 
 
@@ -226,6 +243,11 @@ public class PurchaseManagerTest {
             Assert.assertEquals(expectedDisposalsCZK[i], stockDisposal.getTotalAmountInCZK(), 0.1);
             i++;
         }
+    }
+
+    private void assertDisposalTaxes(PurchaseManager.DisposalInternal disposal, double expectedGainForTaxInCZK, double expectedTaxFromDisposal) {
+        Assert.assertEquals(disposal.getGainForTaxInCZK(), expectedGainForTaxInCZK, 0.1);
+        Assert.assertEquals(disposal.getTaxFromDisposalInCZK(), expectedTaxFromDisposal, 0.1);
     }
 
     private void assertPurchaseAndDisposalFees(PurchaseManager.CompanyPurchasesPrice companies, double expectedTotalFeesCZK, double... expectedFeesCZK) {

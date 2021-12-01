@@ -368,6 +368,12 @@ public class PurchaseManager {
         double czkRemaining = currenciesInfo.currencyRemainingAmount.get("CZK");
         czkRemaining -= czkFeesForCurrencyPurchasesTotal;
         currenciesInfo.currencyRemainingAmount.put("CZK", czkRemaining);
+
+        // 10 - Compute taxes from disposals
+        PurchaseTaxManager prTaxManager = new PurchaseTaxManager();
+        for (Map.Entry<String, CompanyPurchasesPrice> companies : companiesPurchases.entrySet()) {
+            prTaxManager.computeTaxPurchases(companies.getValue());
+        }
     }
 
     // Class, which corresponds overal amount of CZK bought for ALL the purchases of the particular company
@@ -391,6 +397,10 @@ public class PurchaseManager {
 
         public List<DisposalInternal> getDisposals() {
             return new ArrayList<DisposalInternal>(disposals);
+        }
+
+        public String getCompanyTicker() {
+            return companyTicker;
         }
 
         private void addPurchase(CompanyPurchaseInternal purchase) {
@@ -809,6 +819,9 @@ public class PurchaseManager {
 
         int getSoldStocksCount();
 
+        // Currency quotation
+        double getCzkAmountForOneUnit();
+
         double getTotalAmountInOriginalCurrency();
 
         double getTotalAmountInCZK();
@@ -816,6 +829,21 @@ public class PurchaseManager {
         double getTotalFeeInOriginalCurrency();
 
         double getTotalFeeInCZK();
+
+        void setTaxFromDisposalInCZK(double taxInCZK);
+
+        double getTaxFromDisposalInCZK();
+
+        void setGainForTaxInCZK(double gainInCZK);
+
+        /**
+         * This gain is used as "Base for tax from the disposal" . It does not take into account
+         * CZK purchase price of the currency when we bought the stock and when we dispose the stock
+         *
+         * It is not strictly "gain for tax" as it returns gain even if time-period was longer than 3 years
+         * @return
+         */
+        double getGainForTaxInCZK();
 
     }
 
@@ -846,6 +874,10 @@ public class PurchaseManager {
         private final double totalFeeInOriginalCurrency;
 
         private final double totalFeeInCZK;
+
+        private double gainInCZK;
+
+        private double taxFromDisposalInCZK;
 
         private StockDisposalInternal(String date, String companyTicker, String companyName, int soldStocksCount, String currencyTo, double currencyToAmount,
                                      double czkAmountForOneUnitOfOrigCurrency, double totalFeeInOriginalCurrency) {
@@ -938,6 +970,26 @@ public class PurchaseManager {
         @Override
         public double getTotalFeeInOriginalCurrency() {
             return totalFeeInOriginalCurrency;
+        }
+
+        @Override
+        public void setTaxFromDisposalInCZK(double taxInCZK) {
+            this.taxFromDisposalInCZK = taxInCZK;
+        }
+
+        @Override
+        public double getTaxFromDisposalInCZK() {
+            return this.taxFromDisposalInCZK;
+        }
+
+        @Override
+        public void setGainForTaxInCZK(double gainInCZK) {
+            this.gainInCZK = gainInCZK;
+        }
+
+        @Override
+        public double getGainForTaxInCZK() {
+            return gainInCZK;
         }
     }
 }
