@@ -113,7 +113,7 @@ public class PurchaseTaxManager {
             double totalTaxBasedGainInCZK = totalGainInOrigCurrency * disposal.getCzkAmountForOneUnit();
 
             // We can add the tax to the disposal
-            disposal.setGainForTaxInCZK(totalTaxBasedGainInCZK);
+            disposal.setGainInCZKIgnoringPurchaseCurrency(totalTaxBasedGainInCZK);
             disposal.setTaxFromDisposalInCZK(totalTaxBasedGainInOrigCurrency * disposal.getCzkAmountForOneUnit() * TAX_RATIO);
         }
     }

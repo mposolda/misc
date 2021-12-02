@@ -1,6 +1,6 @@
 P1
 
-- Finish tax from disposals in the UI (Including simulation for disposal)
+- Tax from disposals in the "companies" and "summary" view
 
 - Update from latest dividends from Lynx (activity statement)
 
@@ -11,6 +11,8 @@ P1
 - Implement charts (and other info) for stocks including dividend gain
 
 - Implement charts( and other info) for history of the portfolio
+
+- Support for completely skip loading stocks like vdntl
 
 P2: 
 

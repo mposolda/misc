@@ -834,16 +834,17 @@ public class PurchaseManager {
 
         double getTaxFromDisposalInCZK();
 
-        void setGainForTaxInCZK(double gainInCZK);
+        void setGainInCZKIgnoringPurchaseCurrency(double gainInCZK);
 
         /**
          * This gain is used as "Base for tax from the disposal" . It does not take into account
-         * CZK purchase price of the currency when we bought the stock and when we dispose the stock
+         * CZK purchase price of the currency when we bought the stock.
          *
-         * It is not strictly "gain for tax" as it returns gain even if time-period was longer than 3 years
+         * It is just gain in the original currency, which is multiplied by the currency quotation at the disposal time
+         *
          * @return
          */
-        double getGainForTaxInCZK();
+        double getGainInCZKIgnoringPurchaseCurrency();
 
     }
 
@@ -983,12 +984,12 @@ public class PurchaseManager {
         }
 
         @Override
-        public void setGainForTaxInCZK(double gainInCZK) {
+        public void setGainInCZKIgnoringPurchaseCurrency(double gainInCZK) {
             this.gainInCZK = gainInCZK;
         }
 
         @Override
-        public double getGainForTaxInCZK() {
+        public double getGainInCZKIgnoringPurchaseCurrency() {
             return gainInCZK;
         }
     }

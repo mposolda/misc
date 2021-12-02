@@ -477,6 +477,10 @@ public class CompanyFullRep extends CompanyRep {
         private double priceTotalCZK;
         private double feeCZK;
 
+        private double gainInCZKIgnoringPurchaseCurrency;
+        private double taxFromDisposalInCZK;
+
+
         @Override
         public String getCompanyTicker() {
             return companyTicker;
@@ -546,6 +550,22 @@ public class CompanyFullRep extends CompanyRep {
 
         public double getFeeCZK() {
             return this.feeCZK;
+        }
+
+        public double getGainInCZKIgnoringPurchaseCurrency() {
+            return gainInCZKIgnoringPurchaseCurrency;
+        }
+
+        public void setGainInCZKIgnoringPurchaseCurrency(double gainInCZKIgnoringPurchaseCurrency) {
+            this.gainInCZKIgnoringPurchaseCurrency = gainInCZKIgnoringPurchaseCurrency;
+        }
+
+        public double getTaxFromDisposalInCZK() {
+            return taxFromDisposalInCZK;
+        }
+
+        public void setTaxFromDisposalInCZK(double taxFromDisposalInCZK) {
+            this.taxFromDisposalInCZK = taxFromDisposalInCZK;
         }
     }
 

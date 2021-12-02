@@ -246,7 +246,7 @@ public class PurchaseManagerTest {
     }
 
     private void assertDisposalTaxes(PurchaseManager.DisposalInternal disposal, double expectedGainForTaxInCZK, double expectedTaxFromDisposal) {
-        Assert.assertEquals(disposal.getGainForTaxInCZK(), expectedGainForTaxInCZK, 0.1);
+        Assert.assertEquals(disposal.getGainInCZKIgnoringPurchaseCurrency(), expectedGainForTaxInCZK, 0.1);
         Assert.assertEquals(disposal.getTaxFromDisposalInCZK(), expectedTaxFromDisposal, 0.1);
     }
 

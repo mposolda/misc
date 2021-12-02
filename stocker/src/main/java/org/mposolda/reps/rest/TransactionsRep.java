@@ -93,6 +93,9 @@ public class TransactionsRep {
         private double totalPurchasesCZK;
         private double totalDisposalsCZK;
 
+        private double totalGainInCZKIgnoringPurchaseCurrency;
+        private double totalTaxFromDisposalInCZK;
+
         public boolean isYearSum() {
             return yearSum;
         }
@@ -147,6 +150,22 @@ public class TransactionsRep {
 
         public void setTotalDisposalsCZK(double totalDisposalsCZK) {
             this.totalDisposalsCZK = totalDisposalsCZK;
+        }
+
+        public double getTotalGainInCZKIgnoringPurchaseCurrency() {
+            return totalGainInCZKIgnoringPurchaseCurrency;
+        }
+
+        public void setTotalGainInCZKIgnoringPurchaseCurrency(double totalGainInCZKIgnoringPurchaseCurrency) {
+            this.totalGainInCZKIgnoringPurchaseCurrency = totalGainInCZKIgnoringPurchaseCurrency;
+        }
+
+        public double getTotalTaxFromDisposalInCZK() {
+            return totalTaxFromDisposalInCZK;
+        }
+
+        public void setTotalTaxFromDisposalInCZK(double totalTaxFromDisposalInCZK) {
+            this.totalTaxFromDisposalInCZK = totalTaxFromDisposalInCZK;
         }
     }
 }

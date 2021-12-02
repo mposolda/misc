@@ -269,6 +269,8 @@ public class CompanyInfoManager {
         disposalFull.setPriceTotalCZK(disposalInternal.getTotalAmountInCZK());
         disposalFull.setFee(disposalInternal.getTotalFeeInOriginalCurrency());
         disposalFull.setFeeCZK(disposalInternal.getTotalFeeInCZK());
+        disposalFull.setGainInCZKIgnoringPurchaseCurrency(disposalInternal.getGainInCZKIgnoringPurchaseCurrency());
+        disposalFull.setTaxFromDisposalInCZK(disposalInternal.getTaxFromDisposalInCZK());
         return disposalFull;
     }
 

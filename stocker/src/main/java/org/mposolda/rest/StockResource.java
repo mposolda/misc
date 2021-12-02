@@ -135,7 +135,9 @@ public class StockResource {
 
         CompaniesRep companies = Services.instance().getCompanyInfoManager().getCompanies();
 
-        Set<CompanyFullRep.TradeFull> allTransactions = new TreeSet<>(Comparator.comparing(CompanyFullRep.TradeFull::getDate).thenComparing(CompanyFullRep.TradeFull::getCompanyTicker));
+        Set<CompanyFullRep.TradeFull> allTransactions = new TreeSet<>(Comparator.comparing(CompanyFullRep.TradeFull::getDate)
+                .thenComparing(CompanyFullRep.TradeFull::getCompanyTicker)
+                .thenComparing(CompanyFullRep.TradeFull::getOperation));
 
         for (CompanyFullRep company : companies.getCompanies()) {
             allTransactions.addAll(company.getPurchasesFull());
@@ -166,6 +168,8 @@ public class StockResource {
         } else {
             transactionSummary.setDisposalsCount(transactionSummary.getDisposalsCount() + 1);
             transactionSummary.setTotalDisposalsCZK(transactionSummary.getTotalDisposalsCZK() + transaction.getPriceTotalCZK());
+            transactionSummary.setTotalGainInCZKIgnoringPurchaseCurrency(transactionSummary.getTotalGainInCZKIgnoringPurchaseCurrency() + ((CompanyFullRep.DisposalFull) transaction).getGainInCZKIgnoringPurchaseCurrency());
+            transactionSummary.setTotalTaxFromDisposalInCZK(transactionSummary.getTotalTaxFromDisposalInCZK() + ((CompanyFullRep.DisposalFull) transaction).getTaxFromDisposalInCZK());
         }
     }
 

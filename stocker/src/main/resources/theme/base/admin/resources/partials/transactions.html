@@ -26,6 +26,8 @@
                 <th>{{:: 'currency-quotation-during-transaction' | translate}}</th>
                 <th>{{:: 'fee' | translate}}</th>
                 <th>{{:: 'fee-czk' | translate}}</th>
+                <th>{{:: 'gain-in-czk-ignoring-purchase-currency' | translate}}</th>
+                <th>{{:: 'tax-from-disposal-in-czk' | translate}}</th>
             </tr>
             </thead>
             <tr ng-repeat="transaction in transactions.transactions">
@@ -39,6 +41,10 @@
                 <td>{{MyMath.round(transaction.currencyQuotationDuringTransaction)}}</td>
                 <td>{{MyMath.round(transaction.fee)}} {{transaction.currency}}</td>
                 <td>{{MyMath.round(transaction.feeCZK)}} CZK</td>
+                <td data-ng-show="transaction.operation === 'purchase'"></td>
+                <td data-ng-hide="transaction.operation === 'purchase'" style="{{ColorMarker.mark(transaction.gainInCZKIgnoringPurchaseCurrency)}}">{{MyMath.round(transaction.gainInCZKIgnoringPurchaseCurrency)}} CZK</td>
+                <td data-ng-show="transaction.operation === 'purchase'"></td>
+                <td data-ng-hide="transaction.operation === 'purchase'" style="{{ColorMarker.mark(-transaction.taxFromDisposalInCZK)}}">{{MyMath.round(transaction.taxFromDisposalInCZK)}} CZK</td>
             </tr>
         </table>
     </fieldset>
@@ -61,6 +67,8 @@
                 <th>{{:: 'disposals-count' | translate}}</th>
                 <th>{{:: 'purchases-total-czk' | translate}}</th>
                 <th>{{:: 'disposals-total-czk' | translate}}</th>
+                <th>{{:: 'gain-in-czk-ignoring-purchase-currency-total' | translate}}</th>
+                <th>{{:: 'tax-from-disposal-in-czk-total' | translate}}</th>
             </tr>
             </thead>
             <tr ng-repeat="summary in transactions.transactionSummaries">
@@ -72,6 +80,8 @@
                 <td style="{{ColorMarker.markFromTransactionSummary(summary)}}">{{summary.disposalsCount}}</td>
                 <td style="{{ColorMarker.markFromTransactionSummary(summary)}}">{{MyMath.round(summary.totalPurchasesCZK)}} CZK</td>
                 <td style="{{ColorMarker.markFromTransactionSummary(summary)}}">{{MyMath.round(summary.totalDisposalsCZK)}} CZK</td>
+                <td style="{{ColorMarker.markFromTransactionSummary(summary)}}">{{MyMath.round(summary.totalGainInCZKIgnoringPurchaseCurrency)}} CZK</td>
+                <td style="{{ColorMarker.markFromTransactionSummary(summary)}}">{{MyMath.round(summary.totalTaxFromDisposalInCZK)}} CZK</td>
             </tr>
             <tr>
                 <td><b>{{:: 'total' | translate}}</b></td>
@@ -80,6 +90,8 @@
                 <td style="font-weight: bold; color: red">{{transactions.totalSummary.disposalsCount}}</td>
                 <td style="font-weight: bold; color: green">{{MyMath.round(transactions.totalSummary.totalPurchasesCZK)}} CZK</td>
                 <td style="font-weight: bold; color: red">{{MyMath.round(transactions.totalSummary.totalDisposalsCZK)}} CZK</td>
+                <td style="font-weight: bold; color: green">{{MyMath.round(transactions.totalSummary.totalGainInCZKIgnoringPurchaseCurrency)}} CZK</td>
+                <td style="font-weight: bold; color: red">{{MyMath.round(transactions.totalSummary.totalTaxFromDisposalInCZK)}} CZK</td>
             </tr>
         </table>
     </fieldset>
