@@ -1,5 +1,7 @@
 P1
 
+- Display "Average purchase price" in the Transactions view in the first table.
+
 - Tax from disposals in the "companies" and "summary" view
 
 - Update from latest dividends from Lynx (activity statement)
