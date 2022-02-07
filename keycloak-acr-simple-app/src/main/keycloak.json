@@ -1,0 +1,7 @@
+{
+  "realm" : "example",
+  "auth-server-url" : "http://localhost:8081/auth",
+  "ssl-required" : "external",
+  "resource" : "acr-app",
+  "public-client" : true
+}

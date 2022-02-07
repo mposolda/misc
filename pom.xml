@@ -49,6 +49,7 @@
     <module>webauthndemo</module>
     <module>keycloak-script-provider</module>
       <module>stocker</module>
+      <module>keycloak-acr-simple-app</module>
   </modules>
 
   <repositories>
