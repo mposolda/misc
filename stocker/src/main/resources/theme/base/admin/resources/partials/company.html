@@ -7,15 +7,21 @@
 
     <fieldset>
         <div class="form-group clearfix">
-            <label class="col-md-1 control-label">{{:: 'company-name' | translate}}</label>
+            <label class="col-md-2 control-label">{{:: 'company-name' | translate}}</label>
             <div class="col-md-6">
                 {{company.name}}
             </div>
         </div>
         <div class="form-group clearfix">
-            <label class="col-md-1 control-label">{{:: 'company-ticker' | translate}} </label>
+            <label class="col-md-2 control-label">{{:: 'company-ticker' | translate}} </label>
             <div class="col-md-6">
                 {{company.ticker}}
+            </div>
+        </div>
+        <div class="form-group clearfix">
+            <label class="col-md-2 control-label">{{:: 'current-stock-price' | translate}} </label>
+            <div class="col-md-6">
+                {{company.currentStockPrice}} {{company.currency}}
             </div>
         </div>
     </fieldset>

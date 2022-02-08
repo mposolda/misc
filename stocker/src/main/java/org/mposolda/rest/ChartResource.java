@@ -56,7 +56,9 @@ public class ChartResource {
             DefaultPieDataset dataset = new DefaultPieDataset();
             for (CompanyFullRep company : companies.getCompanies()) {
                 Long value = valueFromCompanyFunction.apply(company);
-                dataset.setValue(company.getName(), value);
+                if (value > 0) {
+                    dataset.setValue(company.getName(), value);
+                }
             }
 
             // Add cash
