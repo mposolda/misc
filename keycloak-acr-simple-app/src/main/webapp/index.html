@@ -21,19 +21,29 @@
 </head>
 <body>
 
+<h2>Requested authentication levels</h2>
+
 <div>
-    <button onclick="keycloak.login()">Login</button>
+    <table>
+        <tr><td>Authentication levels: </td><td><input id="acr"></td></td></tr>
+        <tr><td>Essential: </td><td><input id="essential" type="checkbox" /></td></tr>
+    </table>
+</div>
+
+<br />
+
+<div>
+    <button onclick="login()">Login</button>
     <button onclick="keycloak.logout()">Logout</button>
     <button onclick="keycloak.accountManagement()">Account</button>
     <button onclick="output(keycloak.tokenParsed)">Show Token</button>
     <button onclick="output(keycloak.idTokenParsed)">Show ID Token</button>
     <button onclick="output(keycloak)">Show Details</button>
-    <button onclick="output(keycloak.createLoginUrl())">Show Login URL</button>
+    <button onclick="createLoginUrl()">Show Login URL</button>
     <button onclick="output(keycloak.createLogoutUrl())">Show Logout URL</button>
     <button onclick="output(keycloak.createAccountUrl())">Show Account URL</button>
 
 </div>
-
 
 <h2>Result</h2>
 <pre style="background-color: #ddd; border: 1px solid #ccc; padding: 10px; word-wrap: break-word; white-space: pre-wrap;" id="output"></pre>
@@ -41,8 +51,28 @@
 <h2>Events</h2>
 <pre style="background-color: #ddd; border: 1px solid #ccc; padding: 10px; word-wrap: break-word; white-space: pre-wrap;" id="events"></pre>
 
-
 <script>
+
+    function login() {
+        keycloak.login({ claims: getClaimsParameter() });
+    }
+
+    function createLoginUrl() {
+        var claimsParam = getClaimsParameter();
+        output("<b>Claims: </b>" + JSON.stringify(JSON.parse(claimsParam),null,2) + "<br /><b>Login URL: </b>" + keycloak.createLoginUrl({ claims: claimsParam }));
+    }
+
+    function getClaimsParameter() {
+        var acr = document.getElementById('acr').value;
+        var essential = document.getElementById('essential').checked;
+        console.log("acr: " + acr + ", essential: " + essential);
+
+        var acrArray = acr.trim().length === 0 ? [] : acr.trim().split(' ');
+
+        return keycloak.claimsBuilder()
+            .acr(acrArray, essential)
+            .build();
+    }
 
     function output(data) {
         if (typeof data === 'object') {
