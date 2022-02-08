@@ -35,7 +35,7 @@ public class MockFinnhubClient implements FinnhubHttpClient {
     }
 
     @Override
-    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, boolean retryIfNeeded) {
+    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, int maxAttempts) {
         return null;
     }
 

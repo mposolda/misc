@@ -25,7 +25,7 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     private static final Logger log = Logger.getLogger(FinnhubHttpClientWrapper.class);
 
     // Max count of attempts for every HTTP request sent to Finnhub
-    private static final int MAX_ATTEMPTS = 10;
+    public static final int MAX_ATTEMPTS = 10;
 
     // Used for call finnhub
     private final FinnhubHttpClient delegate;
@@ -46,12 +46,11 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     }
 
     @Override
-    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, boolean retryIfNeeded) {
-        int maxAttempts = retryIfNeeded ? MAX_ATTEMPTS : 1;
+    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, int maxAttempts) {
         QuoteRep result = retry(
                        quoteLoader,
                         quoteLoader2 -> {
-                           return waitAndCall(quoteLoader2, (quoteLoaderr) -> delegate.getQuoteRep(quoteLoaderr, false));
+                           return waitAndCall(quoteLoader2, (quoteLoaderr) -> delegate.getQuoteRep(quoteLoaderr, 1));
                        },
                        quoteRep -> {
                            return !NumberUtil.isZero(quoteRep.getCurrentPrice());

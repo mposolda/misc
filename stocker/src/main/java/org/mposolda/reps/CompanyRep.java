@@ -17,9 +17,13 @@ public class CompanyRep implements QuoteLoaderRep {
     @JsonProperty("currency")
     public String currency;
 
-    // If true, then it will skip loading quote at startup
+    // If true, then it will skip loading quote at startup. But we will still try to download the candle (unless skipLoadingCandle is true as well)
     @JsonProperty("skipLoadingQuote")
     public boolean skipLoadingQuote = false;
+
+    // If true, then it will skip loading candle at the time when candles are downloaded.
+    @JsonProperty("skipLoadingCandle")
+    public boolean skipLoadingCandle = false;
 
     // This is used when we want to use currency like GBP, however the quote price is sent in the currency like GBX. For this example, the ratio would be 100.
     @JsonProperty("currencyFromQuoteRatio")
@@ -68,6 +72,14 @@ public class CompanyRep implements QuoteLoaderRep {
 
     public void setSkipLoadingQuote(boolean skipLoadingQuote) {
         this.skipLoadingQuote = skipLoadingQuote;
+    }
+
+    public boolean isSkipLoadingCandle() {
+        return skipLoadingCandle;
+    }
+
+    public void setSkipLoadingCandle(boolean skipLoadingCandle) {
+        this.skipLoadingCandle = skipLoadingCandle;
     }
 
     @Override

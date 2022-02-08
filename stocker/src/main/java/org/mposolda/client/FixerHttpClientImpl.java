@@ -38,7 +38,7 @@ public class FixerHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
-    public QuoteRep getQuoteRep(QuoteLoaderRep company, boolean retryIfFailure) {
+    public QuoteRep getQuoteRep(QuoteLoaderRep company, int maxAttempts) {
         throw new UnsupportedOperationException("This is not supported for Fixer client");
     }
 

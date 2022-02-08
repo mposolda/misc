@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.client.FinnhubHttpClientWrapper;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
@@ -95,7 +96,7 @@ public class CompanyInfoManager {
 
         double currentPrice = 0;
         if (!company.isSkipLoadingQuote()) {
-            QuoteRep quote = finhubClient.getQuoteRep(company, true);
+            QuoteRep quote = finhubClient.getQuoteRep(company, FinnhubHttpClientWrapper.MAX_ATTEMPTS);
 
             // Using current price for now
             currentPrice = quote.getCurrentPrice();

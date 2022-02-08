@@ -20,7 +20,7 @@ public class QuoteCommand extends AbstractCommand {
         String ticker = getArg(0);
         QuoteLoaderRep quoteLoader = QuoteLoaderRep.fromTicker(ticker);
 
-        QuoteRep quote = services.getFinhubClient().getQuoteRep(quoteLoader, false);
+        QuoteRep quote = services.getFinhubClient().getQuoteRep(quoteLoader, 1);
 
         log.info("Info: " + quote);
     }

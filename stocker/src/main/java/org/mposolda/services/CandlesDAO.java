@@ -14,6 +14,7 @@ import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.util.DateUtil;
 import org.mposolda.util.JsonUtil;
+import org.mposolda.util.NumberUtil;
 import org.mposolda.util.WaitUtil;
 
 /**
@@ -111,7 +112,12 @@ class CandlesDAO {
         if (finhubCandle == null || finhubCandle.getOpenDayPrice() == null) {
             if (!isCurrencyCandle) {
                 fallbackNeeded = true;
-                QuoteRep quote = finhubClient.getQuoteRep(quoteLoaderInputRep, true);
+                QuoteRep quote = finhubClient.getQuoteRep(quoteLoaderInputRep, 3);
+
+                // Treat downloaded quote with price 0 as failure
+                if (NumberUtil.isZero(quote.getCurrentPrice())) {
+                    throw new FailedCandleDownloadException("Failed to download candle for the company " + ticker + ". Downloading quote failed as well", true);
+                }
 
                 // Just manually create candlesRep from the quote
                 finhubCandle = new CandleRep();
@@ -143,7 +149,7 @@ class CandlesDAO {
 
         // Just throw the exception if we needed to fallback. This is not so great solution, but sufficient for now...
         if (fallbackNeeded) {
-            throw new FailedCandleDownloadException("Failed to download candle for the company " + ticker);
+            throw new FailedCandleDownloadException("Failed to download candle for the company " + ticker, false);
         }
 
         return candlesRep;

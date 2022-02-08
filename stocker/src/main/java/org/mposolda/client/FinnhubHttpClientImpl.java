@@ -45,7 +45,7 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
     }
 
     @Override
-    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, boolean retryIfNeeded) {
+    public QuoteRep getQuoteRep(QuoteLoaderRep quoteLoader, int maxAttempts) {
         String ticker = quoteLoader.getTicker();
         try {
             log.infof("Loading quote for company: %s", ticker);

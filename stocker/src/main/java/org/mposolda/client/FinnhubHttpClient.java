@@ -16,7 +16,13 @@ public interface FinnhubHttpClient extends Closeable {
 
     CompanyProfileRep getCompanyProfile(String ticker);
 
-    QuoteRep getQuoteRep(QuoteLoaderRep company, boolean retryIfFailure);
+    /**
+     *
+     * @param company
+     * @param maxAttempts how many retries we try in case that download fails
+     * @return
+     */
+    QuoteRep getQuoteRep(QuoteLoaderRep company, int maxAttempts);
 
     /**
      * Dates are in the format like "2020-10-20"

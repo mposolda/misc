@@ -40,7 +40,7 @@ public class StockerRunner {
             new Thread(() -> {
                 try {
                     log.info("Sleeping 60 seconds before download all candles");
-                    Thread.sleep(60000);
+                    Thread.sleep(10000);
                     log.info("Starting allCandlesDownload");
                     services.getCandlesHistoryManager().allCandlesDownload();
                     log.info("allCandlesDownloaded");

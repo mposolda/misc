@@ -43,21 +43,33 @@ public class CandlesHistoryManager {
             log.info("Loaded candles representation for currency " + currency.getTicker());
         }
 
+        List<String> skippedCompanies = new LinkedList<>();
         List<String> fallbackFailedCompanies = new LinkedList<>();
         List<String> failedCompanies = new LinkedList<>();
         for (CompanyRep company : database.getCompanies()) {
             try {
-                CandlesRep stockCandle = getStockCandles(company, true);
-                log.info("Loaded candles representation for company " + company.getTicker());
+                if (company.isSkipLoadingCandle()) {
+                    log.info("Skip loading candle for company " + company.getTicker());
+                    skippedCompanies.add(company.getTicker());
+                } else {
+                    CandlesRep stockCandle = getStockCandles(company, true);
+                    log.info("Loaded candles representation for company " + company.getTicker());
+                }
             } catch (FailedCandleDownloadException e) {
-                log.warn("Failed to download candles representation for company " + company.getTicker() + ". Fallback was needed to download only quote for current day.");
-                fallbackFailedCompanies.add(company.getTicker());
+                if (e.isQuoteFallbackFailed()) {
+                    log.warnf("Failed to download candles representation for company '%s'. Fallback failed as well.", company.getTicker());
+                    failedCompanies.add(company.getTicker());
+                } else {
+                    log.warnf("Failed to download candles representation for company '%s'. Fallback was needed to download only quote for current day.", company.getTicker());
+                    fallbackFailedCompanies.add(company.getTicker());
+                }
             } catch (RuntimeException re) {
                 log.warnf(re, "Unexpected exception when downloading candle for company %s. Will skip the candle", company.getTicker());
                 failedCompanies.add(company.getTicker());
             }
         }
 
+        log.infof("All skipped company tickers for candles download " + skippedCompanies);
         log.infof("All failed company tickers where fallback was needed " + fallbackFailedCompanies);
         if (!failedCompanies.isEmpty()) {
             log.warnf("All failed company tickers where fallback was not used " + failedCompanies);

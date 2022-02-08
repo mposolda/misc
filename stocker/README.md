@@ -14,8 +14,6 @@ P1
 
 - Implement charts( and other info) for history of the portfolio
 
-- Support for completely skip loading stocks like vdntl
-
 P2: 
 
 - Rename FinhubHttpClient interface to something like "RESTDataClient" . 
