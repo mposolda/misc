@@ -54,24 +54,23 @@
 <script>
 
     function login() {
-        keycloak.login({ claims: getClaimsParameter() });
+        keycloak.login({ acr: getAcrOption() });
     }
 
     function createLoginUrl() {
-        var claimsParam = getClaimsParameter();
-        output("<b>Claims: </b>" + JSON.stringify(JSON.parse(claimsParam),null,2) + "<br /><b>Login URL: </b>" + keycloak.createLoginUrl({ claims: claimsParam }));
+        var acrOption = getAcrOption();
+        output("<b>Acr option to be used: </b>" + JSON.stringify(acrOption,null,2) + "<br /><br /><b>Login URL: </b>" + keycloak.createLoginUrl({ acr: acrOption }));
     }
 
-    function getClaimsParameter() {
+    function getAcrOption() {
         var acr = document.getElementById('acr').value;
         var essential = document.getElementById('essential').checked;
         console.log("acr: " + acr + ", essential: " + essential);
-
         var acrArray = acr.trim().length === 0 ? [] : acr.trim().split(' ');
-
-        return keycloak.claimsBuilder()
-            .acr(acrArray, essential)
-            .build();
+        return {
+            values: acrArray,
+            essential: essential
+        }
     }
 
     function output(data) {
