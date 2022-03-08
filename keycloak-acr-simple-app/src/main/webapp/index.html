@@ -32,6 +32,20 @@
 
 <br />
 
+<h2>Logout options</h2>
+
+<div>
+    <table>
+        <tr><td>Post Logout Redirect URI: </td><td><input id="post_logout_redirect_uri"></td></tr>
+        <tr><td>Redirect URI: </td><td><input id="redirect_uri"></td></tr>
+        <tr><td>ID Token Hint: </td><td><input id="id_token_hint" type="checkbox" /></td></tr>
+        <tr><td>State: </td><td><input id="state"></td></tr>
+        <tr><td>UI Locales: </td><td><input id="ui_locales"></td></tr>
+    </table>
+</div>
+
+<br />
+
 <div>
     <button onclick="login()">Login</button>
     <button onclick="keycloak.logout()">Logout</button>
@@ -40,7 +54,7 @@
     <button onclick="output(keycloak.idTokenParsed)">Show ID Token</button>
     <button onclick="output(keycloak)">Show Details</button>
     <button onclick="createLoginUrl()">Show Login URL</button>
-    <button onclick="output(keycloak.createLogoutUrl())">Show Logout URL</button>
+    <button onclick="createLogoutUrl()">Show Logout URL</button>
     <button onclick="output(keycloak.createAccountUrl())">Show Account URL</button>
 
 </div>
@@ -61,6 +75,56 @@
         var acrOption = getAcrOption();
         output("<b>Acr option to be used: </b>" + JSON.stringify(acrOption,null,2) + "<br /><br /><b>Login URL: </b>" + keycloak.createLoginUrl({ acr: acrOption }));
     }
+
+
+    function createLogoutUrl() {
+        var post_logout_redirect_uri = document.getElementById('post_logout_redirect_uri').value;
+        var redirect_uri = document.getElementById('redirect_uri').value;
+        var id_token_hint = document.getElementById('id_token_hint').checked;
+        var state = document.getElementById('state').value;
+        var uiLocales = document.getElementById('ui_locales').value;
+
+        console.log("post_logout_redirect_uri: " + post_logout_redirect_uri + ", redirect_uri: " + redirect_uri + ", id_token_hint: " + id_token_hint + ", state: " + state + ", uiLocales: " + ui_locales);
+
+        var logoutUrl = "http://localhost:8081/auth/realms/test/protocol/openid-connect/logout";
+        var someParam = false;
+
+        if (post_logout_redirect_uri && post_logout_redirect_uri != '') {
+            logoutUrl = addCharToUrl(logoutUrl, someParam) + "post_logout_redirect_uri=" + encodeURIComponent(post_logout_redirect_uri);
+            someParam = true;
+        }
+
+        if (redirect_uri && redirect_uri != '') {
+            logoutUrl = addCharToUrl(logoutUrl, someParam) + "redirect_uri=" + encodeURIComponent(redirect_uri);
+            someParam = true;
+        }
+
+        if (state && state != '') {
+            logoutUrl = addCharToUrl(logoutUrl, someParam) + "state=" + encodeURIComponent(state);
+            someParam = true;
+        }
+
+        if (uiLocales && uiLocales != '') {
+            logoutUrl = addCharToUrl(logoutUrl, someParam) + "ui_locales=" + encodeURIComponent(uiLocales);
+            someParam = true;
+        }
+
+        if (id_token_hint) {
+            logoutUrl = addCharToUrl(logoutUrl, someParam) + "id_token_hint=" + encodeURIComponent(keycloak.idToken);
+        }
+
+        output("<b>Logout URL: </b>" + logoutUrl);
+    }
+
+    function addCharToUrl(logoutUrl, someParam) {
+            if (!someParam) {
+                return logoutUrl + "?";
+            } else {
+                return logoutUrl + "&";
+            }
+    }
+
+
 
     function getAcrOption() {
         var acr = document.getElementById('acr').value;
