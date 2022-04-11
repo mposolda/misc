@@ -50,7 +50,7 @@ public class ScriptTest {
         for (int i = 0; i < TOTAL ; i++) {
             AccessToken token = runTestIteration(i);
             if (i % PER_ITERATION == 0) {
-                log.infof("Executed %d iterations. Time since start: %d", i, (Time.currentTime() - start));
+                System.out.println(String.format("Executed %d iterations. Time since start: %d", i, (Time.currentTime() - start)));
             }
         }
     }

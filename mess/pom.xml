@@ -61,6 +61,13 @@
             <type>maven-plugin</type>
         </dependency>
 
+        <!-- Needed on Java 17 -->
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
