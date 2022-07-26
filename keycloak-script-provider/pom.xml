@@ -21,7 +21,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
-    <!-- Java 15 or later does not have any javascript engine. Nashorn script engine is explicitly added oto have script providers working when Keycloak running on Java 15 or later -->
+    <!-- Java 15 or later does not have any javascript engine. Nashorn script engine is explicitly added to have script providers working when Keycloak running on Java 15 or later -->
     <dependencyManagement>
         <dependencies>
             <dependency>

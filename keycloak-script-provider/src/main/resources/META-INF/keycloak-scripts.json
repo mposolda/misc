@@ -34,5 +34,12 @@
       "fileName": "audience-mapper.js",
       "description": "A script audience mapper"
     }
+  ],
+  "saml-mappers": [
+    {
+      "name": "SAML Mapper",
+      "fileName": "saml-script-mapper.js",
+      "description": "A script mapper"
+    }
   ]
 }
