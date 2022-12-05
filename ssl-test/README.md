@@ -66,3 +66,11 @@ java -cp /home/mposolda/IdeaProjects/keycloak/common/target/ssl-test-0.1-SNAPSHO
      -DkeystoreType=PKCS11 org.mposolda.SSLSocketServer
 ```
 
+Either open `https://localhost:8543` from browser or run client by this command
+(NOTE: Dummy example where client will use exactly same key and truststore for eastablish 2-way SSL as server):
+
+```
+java -cp /home/mposolda/IdeaProjects/keycloak/common/target/ssl-test-0.1-SNAPSHOT.jar \
+     -DkeystoreType=PKCS11 org.mposolda.SSLSocketClient
+```
+
