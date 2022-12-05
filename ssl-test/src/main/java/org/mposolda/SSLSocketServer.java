@@ -65,11 +65,17 @@ public class SSLSocketServer {
     }
 
     public static void securedServer() throws Exception {
-        KeyStore ks = KeyStore.getInstance("JKS");
-        ks.load(new FileInputStream(KEYSTORE_PATH), "secret".toCharArray());
+        String ksType = System.getProperty("keystoreType", "JKS");
+        System.out.println("Configured keystore type by 'keystoreType' system property: " + ksType);
+        SSLConfig cfg = Enum.valueOf(SSLConfig.class, ksType);
+
+        KeyStore ks = KeyStore.getInstance(cfg.toString());
+        InputStream ksInputStream = cfg.getKeystoreFileLocation() == null ? null : new FileInputStream(cfg.getKeystoreFileLocation());
+        char[] ksSecret = cfg.getKeystorePassword() == null ? null : cfg.getKeystorePassword().toCharArray();
+        ks.load(ksInputStream, ksSecret);
 
         KeyManagerFactory kfm = KeyManagerFactory.getInstance("SunX509");
-        kfm.init(ks, "secret".toCharArray());
+        kfm.init(ks, ksSecret);
         KeyManager[] keyManagers = kfm.getKeyManagers();
 
         TrustManagerFactory tmf =
