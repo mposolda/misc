@@ -10,6 +10,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.security.KeyStore;
+import java.util.Enumeration;
+import java.util.HashSet;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -73,6 +75,8 @@ public class SSLSocketServer {
         InputStream ksInputStream = cfg.getKeystoreFileLocation() == null ? null : new FileInputStream(cfg.getKeystoreFileLocation());
         char[] ksSecret = cfg.getKeystorePassword() == null ? null : cfg.getKeystorePassword().toCharArray();
         ks.load(ksInputStream, ksSecret);
+
+        listKeystore(ks, cfg, ksSecret);
 
         KeyManagerFactory kfm = KeyManagerFactory.getInstance("SunX509");
         kfm.init(ks, ksSecret);
@@ -141,5 +145,26 @@ public class SSLSocketServer {
                 System.out.println("Socket exception! Maybe connection closed already");
             }
         }
+    }
+
+    private static void listKeystore(KeyStore ks, SSLConfig cfg, char[] ksSecret) throws Exception {
+        System.out.println("");
+        System.out.println("Loaded keystore. Keystore aliases: " + aliases(ks));
+        System.out.println("Key: " + ks.getKey(cfg.getKeyAliasInKs(), ksSecret));
+        System.out.println("Certificate: " + ks.getCertificate(cfg.getKeyAliasInKs()));
+        System.out.println("");
+    }
+
+    private static String aliases(KeyStore ks) throws Exception {
+        Enumeration<String> en = ks.aliases();
+        StringBuilder sb = null;
+        while (en.hasMoreElements()) {
+            if (sb == null) {
+                sb = new StringBuilder(en.nextElement());
+            } else {
+                sb.append(", " + en.nextElement());
+            }
+        }
+        return sb.toString();
     }
 }
