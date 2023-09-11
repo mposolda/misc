@@ -281,6 +281,10 @@ public class PurchaseManager {
 
                 // Total price of purchase in "currency from"
                 CurrencyPurchase currencyPurchase = stackFrom.currencyPurchases.peek();
+                if (currencyPurchase == null) {
+                    throw new IllegalStateException("Not enough money for currency " + currencyPurchaseTarget.currencyFrom + " for buy the currency " +
+                            currencyPurchaseTarget.currencyTo + " on date " + currencyPurchaseTarget.getDate());
+                }
                 double totalPriceOfPurchaseCZK = 0;
                 double remainingPriceOfPurchase = currencyPurchaseTarget.currencyFromAmount;
                 while (currencyPurchase.getRemainingCurrencyToAmount() < remainingPriceOfPurchase) {
@@ -291,6 +295,10 @@ public class PurchaseManager {
                     // Try another purchase
                     stackFrom.currencyPurchases.remove();
                     currencyPurchase = stackFrom.currencyPurchases.peek();
+                    if (currencyPurchase == null) {
+                        throw new IllegalStateException("Not enough money for currency " + currencyPurchaseTarget.currencyFrom + " for buy the currency " +
+                                currencyPurchaseTarget.currencyTo + " on date " + currencyPurchaseTarget.getDate());
+                    }
                 }
 
                 currencyPurchase.setRemainingCurrencyToAmount(currencyPurchase.getRemainingCurrencyToAmount() - remainingPriceOfPurchase);
