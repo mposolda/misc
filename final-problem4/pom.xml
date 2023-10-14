@@ -5,9 +5,16 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.mongodb</groupId>
-    <artifactId>M101J</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>M101J23</artifactId>
+    <version>1.0-SNAPSHOT</version> 
 
+   <parent>
+        <groupId>org.mposolda</groupId>
+        <artifactId>misc</artifactId>
+        <version>0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    
     <dependencies>
         <dependency>
             <groupId>org.mongodb</groupId>

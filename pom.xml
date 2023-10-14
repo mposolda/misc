@@ -9,18 +9,26 @@
   <name>Misc</name>
   <description>Misc</description>
 
-
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.release>8</maven.compiler.release>
+  </properties>
+  
   <modules>
     <!--<module>jquery-tutorial</module>-->
     <module>distributable-webapp</module>
-      <module>mongodb-tutorial</module>
+
+      <!-- MONGODB course - does not compile on Java 11 -->
+      <!--<module>mongodb-tutorial</module>
       <module>mongo-course</module>
       <module>hw2-3</module>
+      <module>hw3-3</module>
+      <module>hw4-3</module>-->
+      
       <module>ldap-test</module>
       <module>simple-web-app</module>
-      <module>hw3-3</module>
       <module>java8</module>
-      <module>hw4-3</module>
       <!--<module>drools-examples</module>-->
       <module>mess</module>
       <module>simple-portlets</module>
@@ -31,11 +39,11 @@
       <module>kerberos-spnego-servlet</module>
       <module>kc-secured-post-app</module>
     <module>ssl-test</module>
-    <module>service-account-google-test</module>
+    <!--<module>service-account-google-test</module>-->
     <module>jpa-lock-example</module>
     <module>jgit-playground</module>
     <module>session-nocache-servlet</module>
-    <module>jfreechart-test</module>
+    <!--<module>jfreechart-test</module>-->
     <module>undertow-sample</module>
     <module>jwe-example</module>
     <module>jwe-encryption-nimbus</module>
@@ -43,7 +51,7 @@
       <module>files-pictures-download</module>
       <module>rolling-upgrade-ispn</module>
       <module>passwordencoder</module>
-      <module>rolling-upgrade-jpa</module>
+      <!--<module>rolling-upgrade-jpa</module>-->
       <module>no-deps-playground</module>
       <module>ispn-client-listener</module>
     <module>webauthndemo</module>

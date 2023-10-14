@@ -11,6 +11,8 @@ public class DateUtil {
 
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+    private static final long COUNT_MILLISECONDS_PER_YEAR = 31556926000l;
+
     /**
      * Returns conversion from date like "2020-10-20" to milliseconds.
      */
@@ -48,5 +50,13 @@ public class DateUtil {
      */
     public static int getYearFromDate(String dateStr) {
         return Integer.parseInt(dateStr.substring(0, dateStr.indexOf("-")));
+    }
+
+    /**
+     *
+     * @return period between 2 dates in years. For example if startDate is "2020-01-01" and endDate is "2020-04-01" then period is 0.25 (as it is 3 months)
+     */
+    public static double getPeriodInYears(long startDateInMs, long endDateInMs) {
+        return ((double)(endDateInMs - startDateInMs) / (COUNT_MILLISECONDS_PER_YEAR));
     }
 }
