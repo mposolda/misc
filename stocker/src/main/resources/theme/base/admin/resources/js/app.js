@@ -100,6 +100,9 @@ module.config([ '$routeProvider', function($routeProvider) {
                 },
                 currencies : function(CurrenciesLoader) {
                     return CurrenciesLoader();
+                },
+                rateOfReturns : function(RateOfReturnsLoader) {
+                    return RateOfReturnsLoader();
                 }
             },
             controller : 'SummaryCtrl'

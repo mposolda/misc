@@ -9,46 +9,77 @@
 </div>
 
 <div class="col-sm-9 col-md-3 col-sm-push-0 col-md-push-0">
-    <table class="table table-striped table-bordered">
-        <tbody>
-            <tr>
-                <th>{{:: 'deposit-total' | translate}}</th>
-                <td>{{MyMath.round(currencies.depositTotalInCZK)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'payed-for-stocks' | translate}}</th>
-                <td>{{MyMath.round(companies.totalPricePayedCZK)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'sold-for-stocks' | translate}}</th>
-                <td>{{MyMath.round(companies.totalPriceSoldCZK)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'invested-to-stocks-sum' | translate}}</th>
-                <td>{{MyMath.round(companies.totalPriceInvestedCZK)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'value-of-stocks' | translate}}</th>
-                <td>{{MyMath.round(companies.currentPriceOfAllStocksInHoldCZK)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'dividends-czk' | translate}}</th>
-                <td>{{MyMath.round(companies.totalDividendsCZK)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'current-total-cash' | translate}}</th>
-                <td>{{MyMath.round(currencies.priceInHoldCZK)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'total-fees-in-czk' | translate}}</th>
-                <td>{{MyMath.round(totalFees)}} CZK</td>
-            </tr>
-            <tr>
-                <th>{{:: 'current-total-value' | translate}}</th>
-                <td>{{MyMath.round(companies.currentPriceOfAllStocksInHoldCZK + currencies.priceInHoldCZK)}} CZK</td>
-            </tr>
-        </tbody>
-    </table>
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'summary' | translate}}</span>
+        </legend>
+        <table class="table table-striped table-bordered">
+            <tbody>
+                <tr>
+                    <th>{{:: 'deposit-total' | translate}}</th>
+                    <td>{{MyMath.round(currencies.depositTotalInCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'payed-for-stocks' | translate}}</th>
+                    <td>{{MyMath.round(companies.totalPricePayedCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'sold-for-stocks' | translate}}</th>
+                    <td>{{MyMath.round(companies.totalPriceSoldCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'invested-to-stocks-sum' | translate}}</th>
+                    <td>{{MyMath.round(companies.totalPriceInvestedCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'value-of-stocks' | translate}}</th>
+                    <td>{{MyMath.round(companies.currentPriceOfAllStocksInHoldCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'dividends-czk' | translate}}</th>
+                    <td>{{MyMath.round(companies.totalDividendsCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'current-total-cash' | translate}}</th>
+                    <td>{{MyMath.round(currencies.priceInHoldCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'total-fees-in-czk' | translate}}</th>
+                    <td>{{MyMath.round(totalFees)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'current-total-value' | translate}}</th>
+                    <td>{{MyMath.round(companies.currentPriceOfAllStocksInHoldCZK + currencies.priceInHoldCZK)}} CZK</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'rate-of-returns-absolute' | translate}}</th>
+                    <td>{{MyMath.round(rateOfReturns.rateOfReturnAbsolute)}} %</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'rate-of-return-per-year' | translate}}</th>
+                    <td>{{MyMath.round(rateOfReturns.rateOfReturnPerYear)}} %</td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
 
+</div>
 
+<div class="col-sm-9 col-md-3 col-sm-push-0 col-md-push-0">
+
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'comparison-rate-of-returns' | translate}}</span>
+        </legend>
+
+        <table class="table table-striped table-bordered">
+            <tbody>
+                <tr>
+                    <th>{{:: 'rate-of-return-per-year-sp500' | translate}}</th>
+                    <td>{{MyMath.round(rateOfReturns.rateOfReturnPerYearSP500)}} %</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </fieldset>
 </div>

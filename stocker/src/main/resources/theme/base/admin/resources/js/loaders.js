@@ -83,3 +83,11 @@ module.factory('DividendsAllSumLoader', function(Loader, DividendsAllSum, $route
         }
     });
 });
+
+module.factory('RateOfReturnsLoader', function(Loader, RateOfReturns, $route) {
+    console.log("RateOfReturnsLoader executed");
+    return Loader.get(RateOfReturns, function() {
+        return {
+        }
+    });
+});

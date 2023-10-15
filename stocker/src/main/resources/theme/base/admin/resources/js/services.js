@@ -252,6 +252,11 @@ module.factory('DividendsAllSum', function($resource) {
     });
 });
 
+module.factory('RateOfReturns', function($resource) {
+    return $resource(authUrl + '/rest/rate-of-returns', {
+    });
+});
+
 
 module.factory('Current', function(Companies, $route, $rootScope) {
     console.log("Current executed");

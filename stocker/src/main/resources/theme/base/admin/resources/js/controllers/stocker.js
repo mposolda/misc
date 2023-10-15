@@ -202,10 +202,11 @@ module.controller('DividendsAllSumCtrl', function($scope, dividendsAllSum, MyMat
 });
 
 
-module.controller('SummaryCtrl', function($scope, Companies, companies, Currencies, currencies, MyMath, ColorMarker) {
+module.controller('SummaryCtrl', function($scope, Companies, companies, Currencies, currencies, rateOfReturns, MyMath, ColorMarker) {
     console.log('SummaryCtrl executed');
     $scope.companies = companies;
     $scope.currencies = currencies;
+    $scope.rateOfReturns = rateOfReturns;
     $scope.MyMath = MyMath;
     $scope.ColorMarker = ColorMarker;
 

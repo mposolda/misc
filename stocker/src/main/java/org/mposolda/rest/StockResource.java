@@ -19,6 +19,7 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.QuoteLoaderRep;
+import org.mposolda.reps.RateOfReturnsRep;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.rest.CurrenciesRep;
@@ -244,6 +245,27 @@ public class StockResource {
         });
 
         return result;
+    }
+
+    /**
+     * Get list of transactions
+     *
+     * @return
+     */
+    @GET
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("rate-of-returns")
+    public RateOfReturnsRep getRateOfReturns() {
+        // TODO:mposolda
+        log.info("getRateOfReturns called");
+
+        RateOfReturnsRep rep = new RateOfReturnsRep();
+        rep.setRateOfReturnAbsolute(10.5);
+        rep.setRateOfReturnPerYear(4.5);
+        rep.setRateOfReturnPerYearSP500(5.5);
+
+        return rep;
     }
 
 }
