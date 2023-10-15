@@ -26,6 +26,7 @@ import org.mposolda.reps.rest.CurrenciesRep;
 import org.mposolda.reps.rest.DividendsAllSumRep;
 import org.mposolda.reps.rest.TransactionsRep;
 import org.mposolda.services.FailedCandleDownloadException;
+import org.mposolda.services.RateOfReturnsManager;
 import org.mposolda.services.Services;
 
 /**
@@ -257,13 +258,10 @@ public class StockResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("rate-of-returns")
     public RateOfReturnsRep getRateOfReturns() {
-        // TODO:mposolda
-        log.info("getRateOfReturns called");
+        log.debug("getRateOfReturns called");
 
-        RateOfReturnsRep rep = new RateOfReturnsRep();
-        rep.setRateOfReturnAbsolute(10.5);
-        rep.setRateOfReturnPerYear(4.5);
-        rep.setRateOfReturnPerYearSP500(5.5);
+        RateOfReturnsManager mgr = Services.instance().getRateOfReturnsManager();
+        RateOfReturnsRep rep = mgr.getRateOfReturnsRep();
 
         return rep;
     }

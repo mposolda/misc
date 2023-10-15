@@ -34,6 +34,7 @@ public class Services {
     private CurrencyConvertor currencyConvertor;
     private CompanyInfoManager companyInfoManager;
     private CandlesHistoryManager candlesManager;
+    private RateOfReturnsManager rateOfReturnsManager;
 
     private StockerConfig config;
 
@@ -68,6 +69,10 @@ public class Services {
         companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, candlesManager);
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
+
+        rateOfReturnsManager = new RateOfReturnsManager();
+        rateOfReturnsManager.start();
+        log.info("Created rateOfReturnsManager to compute rateOfReturns");
     }
 
     /** Use in unit tests only! */
@@ -110,4 +115,7 @@ public class Services {
         return candlesManager;
     }
 
+    public RateOfReturnsManager getRateOfReturnsManager() {
+        return rateOfReturnsManager;
+    }
 }

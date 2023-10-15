@@ -52,12 +52,8 @@
                     <td>{{MyMath.round(companies.currentPriceOfAllStocksInHoldCZK + currencies.priceInHoldCZK)}} CZK</td>
                 </tr>
                 <tr>
-                    <th>{{:: 'rate-of-returns-absolute' | translate}}</th>
-                    <td>{{MyMath.round(rateOfReturns.rateOfReturnAbsolute)}} %</td>
-                </tr>
-                <tr>
-                    <th>{{:: 'rate-of-return-per-year' | translate}}</th>
-                    <td>{{MyMath.round(rateOfReturns.rateOfReturnPerYear)}} %</td>
+                    <th>{{:: 'earning-czk' | translate}}</th>
+                    <td>{{MyMath.round(companies.currentPriceOfAllStocksInHoldCZK + currencies.priceInHoldCZK - currencies.depositTotalInCZK)}} CZK</td>
                 </tr>
             </tbody>
         </table>
@@ -69,11 +65,19 @@
 
     <fieldset class="border-top">
         <legend>
-            <span class="text">{{:: 'comparison-rate-of-returns' | translate}}</span>
+            <span class="text">{{:: 'rate-of-returns' | translate}}</span>
         </legend>
 
         <table class="table table-striped table-bordered">
             <tbody>
+                <tr>
+                    <th>{{:: 'rate-of-returns-absolute' | translate}}</th>
+                    <td>{{MyMath.round(rateOfReturns.rateOfReturnAbsolute)}} %</td>
+                </tr>
+                <tr>
+                    <th>{{:: 'rate-of-return-per-year' | translate}}</th>
+                    <td>{{MyMath.round(rateOfReturns.rateOfReturnPerYear)}} %</td>
+                </tr>
                 <tr>
                     <th>{{:: 'rate-of-return-per-year-sp500' | translate}}</th>
                     <td>{{MyMath.round(rateOfReturns.rateOfReturnPerYearSP500)}} %</td>
