@@ -23,8 +23,7 @@ public class RateOfReturnUtil {
         for (int i = 0 ; i < MAX_ITERATIONS ; i++) {
             double result1 = tryComputeWithX(input, currentX);
 
-            // TODO:mposolda change to debug or trace
-            log.infof("lower: %s, bigger: %s, currentX: %s, biggerEstablished: %s, result1: %s", lower, bigger, currentX, String.valueOf(biggerEstablished), result1);
+            log.tracef("lower: %s, bigger: %s, currentX: %s, biggerEstablished: %s, result1: %s", lower, bigger, currentX, String.valueOf(biggerEstablished), result1);
 
 
             double diff = result1 - input.getEndValue();

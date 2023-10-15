@@ -1,5 +1,7 @@
 P1
 
+- Comparison RateOfReturns for Berkshire, S&P 500, MSCI stocks and RI?
+
 - Display "Average purchase price" in the Transactions view in the first table.
 
 - Tax from disposals in the "companies" and "summary" view
