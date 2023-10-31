@@ -1,6 +1,7 @@
 package org.mposolda.reps;
 
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -51,6 +52,9 @@ public class CurrencyRep extends BaseRep {
         @JsonProperty("countBought")
         private Double countBought;
 
+        @JsonProperty("benchmarks")
+        private Map<String, Double> benchmarks;
+
         public String getDate() {
             return date;
         }
@@ -65,6 +69,14 @@ public class CurrencyRep extends BaseRep {
 
         public void setCountBought(Double countBought) {
             this.countBought = countBought;
+        }
+
+        public Map<String, Double> getBenchmarks() {
+            return benchmarks;
+        }
+
+        public void setBenchmarks(Map<String, Double> benchmarks) {
+            this.benchmarks = benchmarks;
         }
     }
 

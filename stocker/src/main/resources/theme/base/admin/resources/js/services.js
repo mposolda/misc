@@ -257,6 +257,11 @@ module.factory('RateOfReturns', function($resource) {
     });
 });
 
+module.factory('CzkCurrency', function($resource) {
+    return $resource(authUrl + '/rest/czk-currency', {
+    });
+});
+
 
 module.factory('Current', function(Companies, $route, $rootScope) {
     console.log("Current executed");

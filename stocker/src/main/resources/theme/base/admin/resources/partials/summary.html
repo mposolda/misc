@@ -87,3 +87,32 @@
 
     </fieldset>
 </div>
+
+<div class="col-sm-9 col-md-3 col-sm-push-0 col-md-push-0">
+
+    <fieldset class="border-top">
+        <legend>
+            <span class="text">{{:: 'deposits' | translate}}</span>
+        </legend>
+
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>{{:: 'deposit-date' | translate}}</th>
+                    <th>{{:: 'deposit-value' | translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="czkDeposit in czkCurrency.deposits">
+                    <td>{{czkDeposit.date}}</td>
+                    <td>{{MyMath.round(czkDeposit.countBought)}} CZK</td>
+                </tr>
+                <tr>
+                    <td><b>{{:: 'total' | translate}}</b></td>
+                    <td>{{MyMath.round(currencies.depositTotalInCZK)}} CZK</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </fieldset>
+</div>

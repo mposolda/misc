@@ -91,3 +91,11 @@ module.factory('RateOfReturnsLoader', function(Loader, RateOfReturns, $route) {
         }
     });
 });
+
+module.factory('CzkCurrencyLoader', function(Loader, CzkCurrency, $route) {
+    console.log("CzkCurrencyLoader executed");
+    return Loader.get(CzkCurrency, function() {
+        return {
+        }
+    });
+});

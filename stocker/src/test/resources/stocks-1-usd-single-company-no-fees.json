@@ -34,7 +34,13 @@
       "deposits": [
         {
           "date": "2020-05-27",
-          "countBought": 200000.0
+          "countBought": 200000.0,
+          "benchmarks": {
+            "sp500Price": 100,
+            "berkshireBPrice": 200,
+            "markelPrice": 300,
+            "czkToUsd": 25
+          }
         },
         {
           "date": "2020-05-28",

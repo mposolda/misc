@@ -18,6 +18,8 @@ import javax.ws.rs.core.MediaType;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.annotations.cache.NoCache;
 import org.mposolda.reps.CandlesRep;
+import org.mposolda.reps.CurrencyRep;
+import org.mposolda.reps.DatabaseRep;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.RateOfReturnsRep;
 import org.mposolda.reps.rest.CompaniesRep;
@@ -28,6 +30,7 @@ import org.mposolda.reps.rest.TransactionsRep;
 import org.mposolda.services.FailedCandleDownloadException;
 import org.mposolda.services.RateOfReturnsManager;
 import org.mposolda.services.Services;
+import org.mposolda.util.JsonUtil;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -264,6 +267,19 @@ public class StockResource {
         RateOfReturnsRep rep = mgr.getRateOfReturnsRep();
 
         return rep;
+    }
+
+    @GET
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("czk-currency")
+    public CurrencyRep getCzkCurrency() {
+        String companiesJsonFileLocation = Services.instance().getConfig().getCompaniesJsonFileLocation();
+        DatabaseRep database = JsonUtil.loadDatabase(companiesJsonFileLocation);
+        CurrencyRep czkCurrency = database.getCurrencies().stream()
+                .filter(currencyRep -> "CZK".equals(currencyRep.getTicker()))
+                .findFirst().orElseThrow();
+        return czkCurrency;
     }
 
 }

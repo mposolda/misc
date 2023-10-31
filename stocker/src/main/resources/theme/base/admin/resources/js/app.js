@@ -103,6 +103,9 @@ module.config([ '$routeProvider', function($routeProvider) {
                 },
                 rateOfReturns : function(RateOfReturnsLoader) {
                     return RateOfReturnsLoader();
+                },
+                czkCurrency : function(CzkCurrencyLoader) {
+                    return CzkCurrencyLoader();
                 }
             },
             controller : 'SummaryCtrl'
