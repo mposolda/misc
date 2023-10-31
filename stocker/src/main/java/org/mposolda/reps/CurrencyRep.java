@@ -53,7 +53,7 @@ public class CurrencyRep extends BaseRep {
         private Double countBought;
 
         @JsonProperty("benchmarks")
-        private Map<String, Double> benchmarks;
+        private DepositBenchmarksRep benchmarks;
 
         public String getDate() {
             return date;
@@ -71,12 +71,59 @@ public class CurrencyRep extends BaseRep {
             this.countBought = countBought;
         }
 
-        public Map<String, Double> getBenchmarks() {
+        public DepositBenchmarksRep getBenchmarks() {
             return benchmarks;
         }
 
-        public void setBenchmarks(Map<String, Double> benchmarks) {
+        public void setBenchmarks(DepositBenchmarksRep benchmarks) {
             this.benchmarks = benchmarks;
+        }
+    }
+
+    public static class DepositBenchmarksRep extends BaseRep {
+
+        @JsonProperty("sp500Price")
+        private Double sp500Price;
+
+        @JsonProperty("berkshireBPrice")
+                    private Double berkshireBPrice;
+
+        @JsonProperty("markelPrice")
+        private Double markelPrice;
+
+        @JsonProperty("czkToUsd")
+        private Double czkToUsd;
+
+        public Double getSp500Price() {
+            return sp500Price;
+        }
+
+        public void setSp500Price(Double sp500Price) {
+            this.sp500Price = sp500Price;
+        }
+
+        public Double getBerkshireBPrice() {
+            return berkshireBPrice;
+        }
+
+        public void setBerkshireBPrice(Double berkshireBPrice) {
+            this.berkshireBPrice = berkshireBPrice;
+        }
+
+        public Double getMarkelPrice() {
+            return markelPrice;
+        }
+
+        public void setMarkelPrice(Double markelPrice) {
+            this.markelPrice = markelPrice;
+        }
+
+        public Double getCzkToUsd() {
+            return czkToUsd;
+        }
+
+        public void setCzkToUsd(Double czkToUsd) {
+            this.czkToUsd = czkToUsd;
         }
     }
 
