@@ -14,6 +14,10 @@ public class RateOfReturnsRep {
     // Rate-of-return for S&P 500 index aligned to my deposits TODO:mposolda implement
     private Double rateOfReturnPerYearSP500;
 
+    private Double rateOfReturnPerYearBerkshire;
+
+    private Double rateOfReturnPerYearMarkel;
+
     public Double getRateOfReturnAbsolute() {
         return rateOfReturnAbsolute;
     }
@@ -36,5 +40,21 @@ public class RateOfReturnsRep {
 
     public void setRateOfReturnPerYearSP500(Double rateOfReturnPerYearSP500) {
         this.rateOfReturnPerYearSP500 = rateOfReturnPerYearSP500;
+    }
+
+    public Double getRateOfReturnPerYearBerkshire() {
+        return rateOfReturnPerYearBerkshire;
+    }
+
+    public void setRateOfReturnPerYearBerkshire(Double rateOfReturnPerYearBerkshire) {
+        this.rateOfReturnPerYearBerkshire = rateOfReturnPerYearBerkshire;
+    }
+
+    public Double getRateOfReturnPerYearMarkel() {
+        return rateOfReturnPerYearMarkel;
+    }
+
+    public void setRateOfReturnPerYearMarkel(Double rateOfReturnPerYearMarkel) {
+        this.rateOfReturnPerYearMarkel = rateOfReturnPerYearMarkel;
     }
 }
