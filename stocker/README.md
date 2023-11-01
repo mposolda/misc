@@ -1,6 +1,8 @@
 P1
 
-- Comparison RateOfReturns for Berkshire, S&P 500, MSCI stocks and RI?
+- Figure S&P 500 and implement in RateOfReturnsManager (See TODO)
+
+- Comparison RateOfReturns for MSCI stocks and RI?
 
 - Display "Average purchase price" in the Transactions view in the first table.
 

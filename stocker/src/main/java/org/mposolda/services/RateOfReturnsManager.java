@@ -89,7 +89,14 @@ public class RateOfReturnsManager {
                 });
         rateOfReturnsRep.setRateOfReturnPerYearMarkel(rateOfReturnMarkel);
 
-        // TODO:mposolda S&P 500 and others...
+        // S&P 500
+        double rateOfReturnSP500 = computeBenchmark(czkCurrency, currentCzkToUsdQuotation, deposits,
+                deposit -> deposit.getBenchmarks().getSp500Price(),
+                () -> {
+                    // TODO:mposolda hardcoded value on 2023-10-31. Should be properly loaded from somewhere
+                    return 4193.80;
+                });
+        rateOfReturnsRep.setRateOfReturnPerYearSP500(rateOfReturnSP500);
     }
 
     public RateOfReturnsRep getRateOfReturnsRep() {
