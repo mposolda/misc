@@ -93,8 +93,8 @@ public class RateOfReturnsManager {
         double rateOfReturnSP500 = computeBenchmark(czkCurrency, currentCzkToUsdQuotation, deposits,
                 deposit -> deposit.getBenchmarks().getSp500Price(),
                 () -> {
-                    // TODO:mposolda hardcoded value on 2023-10-31. Should be properly loaded from somewhere
-                    return 4193.80;
+                    // TODO:mposolda hardcoded value on 2023-11-08. Should be properly loaded from somewhere
+                    return 4378.38;
                 });
         rateOfReturnsRep.setRateOfReturnPerYearSP500(rateOfReturnSP500);
     }
