@@ -30,6 +30,7 @@ public class Services {
 
     // Services
     private PurchaseManager purchaseManager;
+    private HistoryManager historyManager;
     private FinnhubHttpClient finhubClient;
     private CurrencyConvertor currencyConvertor;
     private CompanyInfoManager companyInfoManager;
@@ -46,6 +47,9 @@ public class Services {
 
         // Just test if network host/port is available to be able to fail-fast
         new QuickNetworkTestManager().test();
+
+        historyManager = new HistoryManager();
+        historyManager.checkHistoryOfStocksFile();
 
         purchaseManager = new PurchaseManager();
         purchaseManager.start();

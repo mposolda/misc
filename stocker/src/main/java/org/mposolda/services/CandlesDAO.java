@@ -9,7 +9,6 @@ import java.util.List;
 import org.mposolda.client.FinnhubHttpClient;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.CandlesRep;
-import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.finhub.CandleRep;
 import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.util.DateUtil;
@@ -40,7 +39,7 @@ class CandlesDAO {
     }
 
     CandlesRep getStockCandles(QuoteLoaderRep company, boolean downloadNewest) throws FailedCandleDownloadException {
-        String currentDate = DateUtil.numberInSecondsToDate(DateUtil.getCurrentTimestamp());
+        String currentDate = DateUtil.numberInSecondsToDate(DateUtil.getCurrentTimestampInSeconds());
         return getStockCandles(company, downloadNewest, DEFAULT_STARTING_DATE, currentDate);
     }
 
@@ -49,7 +48,7 @@ class CandlesDAO {
     }
 
     CandlesRep getCurrencyCandles(String currencyTicker, boolean downloadNewest) {
-        String currentDate = DateUtil.numberInSecondsToDate(DateUtil.getCurrentTimestamp());
+        String currentDate = DateUtil.numberInSecondsToDate(DateUtil.getCurrentTimestampInSeconds());
         return getCurrencyCandles(currencyTicker, downloadNewest, DEFAULT_STARTING_DATE, currentDate);
     }
 
@@ -125,7 +124,7 @@ class CandlesDAO {
                 finhubCandle.setHighDayPrice(Collections.singletonList(quote.getHighDayPrice()));
                 finhubCandle.setLowDayPrice(Collections.singletonList(quote.getLowDayPrice()));
                 finhubCandle.setOpenDayPrice(Collections.singletonList(quote.getOpenDayPrice()));
-                finhubCandle.setTimestamps(Collections.singletonList(DateUtil.getCurrentTimestamp()));
+                finhubCandle.setTimestamps(Collections.singletonList(DateUtil.getCurrentTimestampInSeconds()));
             } else {
                 double ourCurrencyToEur = currencyConvertor.exchangeMoney(1, "EUR", quoteLoaderInputRep.getTicker());
                 finhubCandle = new CandleRep();
@@ -133,7 +132,7 @@ class CandlesDAO {
                 finhubCandle.setHighDayPrice(Collections.singletonList(ourCurrencyToEur));
                 finhubCandle.setLowDayPrice(Collections.singletonList(ourCurrencyToEur));
                 finhubCandle.setOpenDayPrice(Collections.singletonList(ourCurrencyToEur));
-                finhubCandle.setTimestamps(Collections.singletonList(DateUtil.getCurrentTimestamp()));
+                finhubCandle.setTimestamps(Collections.singletonList(DateUtil.getCurrentTimestampInSeconds()));
             }
 
             // Rather wait to enforce some pause among calls

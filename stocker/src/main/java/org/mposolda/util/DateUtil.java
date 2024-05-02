@@ -33,14 +33,18 @@ public class DateUtil {
     }
 
     public static String numberInSecondsToDate(long timestamp) {
-        Date d = new Date(timestamp * 1000);
+        return numberInMillisecondsToDate(timestamp * 1000);
+    }
+
+    public static String numberInMillisecondsToDate(long timestamp) {
+        Date d = new Date(timestamp);
         return dateFormat.format(d);
     }
 
     /**
      * @return current unix timestamp (Count of seconds since 1.1.1970)
      */
-    public static long getCurrentTimestamp() {
+    public static long getCurrentTimestampInSeconds() {
         return new Date().getTime() / 1000;
     }
 
