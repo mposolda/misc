@@ -2,6 +2,8 @@ package org.mposolda.services;
 
 import java.io.File;
 
+import org.mposolda.util.FileUtil;
+
 /**
  * Static class to handle configs
  *
@@ -13,6 +15,7 @@ public class StockerConfigImpl implements StockerConfig {
     private final String token; // Used for calling finnhub
     private final String fixerToken; // Used for calling fixer
     private final String stocksDirLocation;
+    private final String candlesDirLocation;
     private final String companiesJsonFileLocation;
     private final boolean offlineMode; // Assumption is no internet connection during offline mode. Stuff loaded from last candles. Useful for development only
 
@@ -32,11 +35,11 @@ public class StockerConfigImpl implements StockerConfig {
             throw new IllegalArgumentException("Need to provide system property 'stocksDir' with the directory, which will need" +
                     "to contain stocks.json file with the data about companies and currencies");
         }
+        File stocksDir = FileUtil.checkDirectoryExistsAndIsDirectory(stocksDirLocation);
 
-        File stocksDir = new File(stocksDirLocation);
-        if (!stocksDir.exists() || !stocksDir.isDirectory()) {
-            throw new IllegalArgumentException("Directory '" + stocksDirLocation +  "' does not exists or it is not a directory");
-        }
+        this.candlesDirLocation = this.stocksDirLocation + File.separator + FileUtil.CANDLES_DIR;
+        FileUtil.checkDirectoryExistsAndIsDirectory(this.candlesDirLocation);
+
         this.companiesJsonFileLocation = stocksDir + File.separator + "stocks.json";
         File companiesJsonFile = new File(companiesJsonFileLocation);
         if (!companiesJsonFile.exists()) {
@@ -64,6 +67,11 @@ public class StockerConfigImpl implements StockerConfig {
     @Override
     public String getStocksDirLocation() {
         return stocksDirLocation;
+    }
+
+    @Override
+    public String getCandlesDirLocation() {
+        return candlesDirLocation;
     }
 
     @Override

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 import org.mposolda.util.DateUtil;
+import org.mposolda.util.FileUtil;
 
 /**
  * Possibly copy the current "stocks.json" file to the `history` directory. This is to preserve history of the changes in the stocks.json file.
@@ -82,11 +83,7 @@ public class HistoryManager {
     }
 
     private File getHistoryDir() {
-        File historyDir = new File(this.stocksDirLocation + "/history");
-        if (!historyDir.exists() || !historyDir.isDirectory()) {
-            throw new IllegalArgumentException("Directory " + historyDir.getAbsolutePath() + " does not exists or is not directory");
-        }
-        return historyDir;
+        return FileUtil.checkDirectoryExistsAndIsDirectory(this.stocksDirLocation + File.separator + FileUtil.HISTORY_DIR);
     }
 
     private File getBaseFile() {

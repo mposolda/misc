@@ -40,6 +40,11 @@ public class MockConfigImpl implements StockerConfig {
     }
 
     @Override
+    public String getCandlesDirLocation() {
+        return this.stocksDirLocation;
+    }
+
+    @Override
     public String getCompaniesJsonFileLocation() {
         return this.companiesJsonFile;
     }

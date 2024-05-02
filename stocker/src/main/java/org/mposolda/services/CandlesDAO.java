@@ -28,12 +28,12 @@ class CandlesDAO {
      */
     public static final String DEFAULT_STARTING_DATE = "2020-01-01";
 
-    private final String stocksDir;
+    private final String candlesDir;
     private final FinnhubHttpClient finhubClient;
     private final CurrencyConvertor currencyConvertor;
 
-    CandlesDAO(String stocksDir, FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor) {
-        this.stocksDir = stocksDir;
+    CandlesDAO(String candlesDir, FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor) {
+        this.candlesDir = candlesDir;
         this.finhubClient = finhubClient;
         this.currencyConvertor = currencyConvertor;
     }
@@ -71,7 +71,7 @@ class CandlesDAO {
 
         // 1) Go to the specified directory and check for the file cur_<currencyTicker>.json (in case of currency candles) or
         // comp_<stockTicker>.json in case of stock candles
-        String tickerFile = isCurrencyCandle ? stocksDir + "/cur_" + ticker + ".json" : stocksDir + "/comp_" + ticker + ".json";
+        String tickerFile = isCurrencyCandle ? candlesDir + "/cur_" + ticker + ".json" : candlesDir + "/comp_" + ticker + ".json";
         boolean fileExists = new File(tickerFile).exists();
 
         // 2) If does not exists and "downloadNewest" is false, then return empty CandlesRep

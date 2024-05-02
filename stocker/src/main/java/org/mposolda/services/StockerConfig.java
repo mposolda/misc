@@ -13,6 +13,8 @@ public interface StockerConfig {
 
     String getStocksDirLocation();
 
+    String getCandlesDirLocation();
+
     String getCompaniesJsonFileLocation();
 
     boolean isOfflineMode();
