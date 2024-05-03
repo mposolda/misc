@@ -50,10 +50,10 @@ public class HistoryManager {
             modifiedDateOfLastFile = "0000-00-00";
         } else {
             // Sort files and find the last one
-            List<File> sortedFiles = List.of(files).stream()
-                    .sorted((file1, file2) -> file1.getName().compareTo(file2.getName()))
-                    .collect(Collectors.toList());
-            lastFileName = sortedFiles.get(sortedFiles.size() - 1).getName();
+            lastFileName = List.of(files).stream()
+                    .sorted((file1, file2) -> file2.getName().compareTo(file1.getName()))
+                    .findFirst().
+                    get().getName();
 
             // Check if the date of the current base file is newer than the last history file. If yes, then copy new file into history directory
             modifiedDateOfLastFile = lastFileName.substring(0, 10);
