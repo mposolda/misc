@@ -17,7 +17,7 @@ import org.mposolda.util.DateUtil;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class FinnhubHttpClientImpl implements FinnhubHttpClient {
+public class FinnhubHttpClientImpl implements StockerHttpClient {
 
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
@@ -108,6 +108,11 @@ public class FinnhubHttpClientImpl implements FinnhubHttpClient {
         } catch (IOException ioe) {
             throw new RuntimeException("Exception getting currency candles rep for " + targetCurrencyTicker, ioe);
         }
+    }
+
+    @Override
+    public double getStockIndexValue(StockIndex stockIndex) {
+        throw new UnsupportedOperationException("This is not supported for Finnhub");
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.client.StockerHttpClient;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.finhub.CandleRep;
@@ -18,7 +18,7 @@ import org.mposolda.util.JsonUtil;
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class MockFinnhubClient implements FinnhubHttpClient {
+public class MockFinnhubClient implements StockerHttpClient {
 
     private final String resourcesDir;
 
@@ -79,6 +79,11 @@ public class MockFinnhubClient implements FinnhubHttpClient {
         this.lastEndDateUsed = endDate;
 
         return JsonUtil.loadFileToJson(file, CandleRep.class);
+    }
+
+    @Override
+    public double getStockIndexValue(StockIndex stockIndex) {
+        return 4750;
     }
 
     @Override

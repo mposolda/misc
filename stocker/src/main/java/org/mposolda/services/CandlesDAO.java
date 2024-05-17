@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.client.StockerHttpClient;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.finhub.CandleRep;
@@ -29,10 +29,10 @@ class CandlesDAO {
     public static final String DEFAULT_STARTING_DATE = "2020-01-01";
 
     private final String candlesDir;
-    private final FinnhubHttpClient finhubClient;
+    private final StockerHttpClient finhubClient;
     private final CurrencyConvertor currencyConvertor;
 
-    CandlesDAO(String candlesDir, FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor) {
+    CandlesDAO(String candlesDir, StockerHttpClient finhubClient, CurrencyConvertor currencyConvertor) {
         this.candlesDir = candlesDir;
         this.finhubClient = finhubClient;
         this.currencyConvertor = currencyConvertor;

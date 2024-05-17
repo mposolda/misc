@@ -1,13 +1,12 @@
 package org.mposolda.services;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
-import org.mposolda.client.FinnhubHttpClient;
-import org.mposolda.client.FinnhubHttpClientWrapper;
+import org.mposolda.client.StockerHttpClient;
+import org.mposolda.client.StockerHttpClientWrapper;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
@@ -31,7 +30,7 @@ public class CompanyInfoManager {
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
 
-    private final FinnhubHttpClient finhubClient;
+    private final StockerHttpClient finhubClient;
 
     private final CurrencyConvertor currencyConvertor;
 
@@ -43,7 +42,7 @@ public class CompanyInfoManager {
 
     private final CandlesHistoryManager candlesManager;
 
-    CompanyInfoManager(FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor, CandlesHistoryManager candlesManager) {
+    CompanyInfoManager(StockerHttpClient finhubClient, CurrencyConvertor currencyConvertor, CandlesHistoryManager candlesManager) {
         this.finhubClient = finhubClient;
         this.currencyConvertor = currencyConvertor;
         this.companiesJsonFileLocation = Services.instance().getConfig().getCompaniesJsonFileLocation();
@@ -96,7 +95,7 @@ public class CompanyInfoManager {
 
         double currentPrice = 0;
         if (!company.isSkipLoadingQuote()) {
-            QuoteRep quote = finhubClient.getQuoteRep(company, FinnhubHttpClientWrapper.MAX_ATTEMPTS);
+            QuoteRep quote = finhubClient.getQuoteRep(company, StockerHttpClientWrapper.MAX_ATTEMPTS);
 
             // Using current price for now
             currentPrice = quote.getCurrentPrice();

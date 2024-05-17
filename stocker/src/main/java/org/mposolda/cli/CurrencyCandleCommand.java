@@ -20,7 +20,7 @@ public class CurrencyCandleCommand extends AbstractCommand {
         String startDate = getArg(1);
         String endDate = getArg(2);
 
-        CandleRep currencyCandle = services.getFinhubClient().getCurrencyCandle(currencyTicker, startDate, endDate);
+        CandleRep currencyCandle = services.getStockerHttpClient().getCurrencyCandle(currencyTicker, startDate, endDate);
 
         log.info("Info: " + currencyCandle);
     }

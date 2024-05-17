@@ -3,7 +3,7 @@ package org.mposolda.services;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.client.StockerHttpClient;
 import org.mposolda.reps.finhub.CurrenciesRep;
 
 /**
@@ -11,12 +11,12 @@ import org.mposolda.reps.finhub.CurrenciesRep;
  */
 public class CurrencyConvertor {
 
-    private final FinnhubHttpClient finhubClient;
+    private final StockerHttpClient finhubClient;
     private final PurchaseManager purchaseManager;
     private CurrenciesRep currencies;
 
 
-    CurrencyConvertor(FinnhubHttpClient finhubClient, PurchaseManager purchaseManager) {
+    CurrencyConvertor(StockerHttpClient finhubClient, PurchaseManager purchaseManager) {
         this.finhubClient = finhubClient;
         this.purchaseManager = purchaseManager;
     }

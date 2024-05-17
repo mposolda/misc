@@ -22,7 +22,7 @@ public class StockCandleCommand extends AbstractCommand {
         String endDate = getArg(2);
 
         QuoteLoaderRep quoteLoader = QuoteLoaderRep.fromTicker(ticker);
-        CandleRep stockCandle = services.getFinhubClient().getStockCandle(quoteLoader, startDate, endDate);
+        CandleRep stockCandle = services.getStockerHttpClient().getStockCandle(quoteLoader, startDate, endDate);
 
         log.info("Info: " + stockCandle);
     }

@@ -18,7 +18,7 @@ import org.mposolda.services.Services;
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class FixerHttpClientImpl implements FinnhubHttpClient {
+public class FixerHttpClientImpl implements StockerHttpClient {
 
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
@@ -75,6 +75,11 @@ public class FixerHttpClientImpl implements FinnhubHttpClient {
     @Override
     public CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate) {
         throw new UnsupportedOperationException("This is not supported for Fixer client");
+    }
+
+    @Override
+    public double getStockIndexValue(StockIndex stockIndex) {
+        throw new UnsupportedOperationException("This is not supported for Fixer");
     }
 
     @Override

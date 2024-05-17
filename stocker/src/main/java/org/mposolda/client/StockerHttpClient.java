@@ -10,9 +10,11 @@ import org.mposolda.reps.finhub.QuoteRep;
 import org.mposolda.reps.finhub.CandleRep;
 
 /**
+ * Downloads data about stocks etc from various services (usually REST APIs available for free)
+ *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public interface FinnhubHttpClient extends Closeable {
+public interface StockerHttpClient extends Closeable {
 
     CompanyProfileRep getCompanyProfile(String ticker);
 
@@ -42,4 +44,16 @@ public interface FinnhubHttpClient extends Closeable {
      * @return
      */
     CandleRep getCurrencyCandle(String targetCurrencyTicker, String startDate, String endDate);
+
+    /**
+     * Get the current value of the stock index
+     *
+     * @param stockIndex
+     * @return value of the stock index
+     */
+    double getStockIndexValue(StockIndex stockIndex);
+
+    enum StockIndex {
+        SP500
+    }
 }

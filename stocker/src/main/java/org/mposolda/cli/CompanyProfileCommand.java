@@ -18,7 +18,7 @@ public class CompanyProfileCommand extends AbstractCommand {
     protected void doRunCommand() throws IOException {
         String ticker = getArg(0);
 
-        CompanyProfileRep company = services.getFinhubClient().getCompanyProfile(ticker);
+        CompanyProfileRep company = services.getStockerHttpClient().getCompanyProfile(ticker);
 
         log.info("Info: " + company);
     }

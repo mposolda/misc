@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.client.StockerHttpClient;
 import org.mposolda.client.FinnhubHttpClientImpl;
-import org.mposolda.client.FinnhubHttpClientWrapper;
+import org.mposolda.client.StockerHttpClientWrapper;
 import org.mposolda.client.FixerHttpClientImpl;
 import org.mposolda.mock.MockFinnhubClient;
 
@@ -31,7 +31,7 @@ public class Services {
     // Services
     private PurchaseManager purchaseManager;
     private HistoryManager historyManager;
-    private FinnhubHttpClient finhubClient;
+    private StockerHttpClient stockerHttpClient;
     private CurrencyConvertor currencyConvertor;
     private CompanyInfoManager companyInfoManager;
     private CandlesHistoryManager candlesManager;
@@ -56,21 +56,21 @@ public class Services {
         log.info("Created purchase manager");
 
         if (this.config.isOfflineMode()) {
-            finhubClient = new MockFinnhubClient(this.config.getStocksDirLocation());
+            stockerHttpClient = new MockFinnhubClient(this.config.getStocksDirLocation());
             log.info("Created MOCK finnhub client");
         } else {
-            finhubClient = new FinnhubHttpClientWrapper(new FinnhubHttpClientImpl(), new FixerHttpClientImpl());
+            stockerHttpClient = new StockerHttpClientWrapper(new FinnhubHttpClientImpl(), new FixerHttpClientImpl());
             log.info("Created finnhub client");
         }
-        closeables.add(finhubClient);
+        closeables.add(stockerHttpClient);
 
-        currencyConvertor = new CurrencyConvertor(finhubClient, purchaseManager);
+        currencyConvertor = new CurrencyConvertor(stockerHttpClient, purchaseManager);
         currencyConvertor.start();
         log.info("Created currencyConvertor and loaded currencies from forex");
 
-        candlesManager = new CandlesHistoryManager(finhubClient, currencyConvertor);
+        candlesManager = new CandlesHistoryManager(stockerHttpClient, currencyConvertor);
 
-        companyInfoManager = new CompanyInfoManager(finhubClient, currencyConvertor, candlesManager);
+        companyInfoManager = new CompanyInfoManager(stockerHttpClient, currencyConvertor, candlesManager);
         companyInfoManager.start();
         log.info("Created companyInfoManager and loaded companies");
 
@@ -99,8 +99,8 @@ public class Services {
         return config;
     }
 
-    public FinnhubHttpClient getFinhubClient() {
-        return finhubClient;
+    public StockerHttpClient getStockerHttpClient() {
+        return stockerHttpClient;
     }
 
     public CurrencyConvertor getCurrencyConvertor() {

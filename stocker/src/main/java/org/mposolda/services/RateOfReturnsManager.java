@@ -3,7 +3,6 @@ package org.mposolda.services;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.jboss.logging.Logger;
 import org.mposolda.reps.CurrencyRep;
@@ -18,6 +17,8 @@ import org.mposolda.util.DateUtil;
 import org.mposolda.util.JsonUtil;
 import org.mposolda.util.returner.RateOfReturnInput;
 import org.mposolda.util.returner.RateOfReturnUtil;
+
+import static org.mposolda.client.StockerHttpClient.StockIndex.SP500;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -70,7 +71,7 @@ public class RateOfReturnsManager {
                 deposit -> deposit.getBenchmarks().getBerkshireBPrice(),
                 () -> {
                     QuoteLoaderRep quoteLoader = QuoteLoaderRep.fromTicker("BRK.B");
-                    QuoteRep quote = Services.instance().getFinhubClient().getQuoteRep(quoteLoader, 3);
+                    QuoteRep quote = Services.instance().getStockerHttpClient().getQuoteRep(quoteLoader, 3);
                     double berkshirePrice = quote.getCurrentPrice();
                     log.infof("Berkshire B price: %s", berkshirePrice);
                     return berkshirePrice;
@@ -82,7 +83,7 @@ public class RateOfReturnsManager {
                 deposit -> deposit.getBenchmarks().getMarkelPrice(),
                 () -> {
                     QuoteLoaderRep quoteLoader = QuoteLoaderRep.fromTicker("MKL");
-                    QuoteRep quote = Services.instance().getFinhubClient().getQuoteRep(quoteLoader, 3);
+                    QuoteRep quote = Services.instance().getStockerHttpClient().getQuoteRep(quoteLoader, 3);
                     double markelPrice = quote.getCurrentPrice();
                     log.infof("Markel price: %s", markelPrice);
                     return markelPrice;
@@ -93,8 +94,7 @@ public class RateOfReturnsManager {
         double rateOfReturnSP500 = computeBenchmark(czkCurrency, currentCzkToUsdQuotation, deposits,
                 deposit -> deposit.getBenchmarks().getSp500Price(),
                 () -> {
-                    // TODO:mposolda hardcoded value on 2024-01-02. Should be properly loaded from somewhere
-                    return 4736.57;
+                    return Services.instance().getStockerHttpClient().getStockIndexValue(SP500);
                 });
         rateOfReturnsRep.setRateOfReturnPerYearSP500(rateOfReturnSP500);
     }

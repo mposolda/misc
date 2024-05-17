@@ -1,17 +1,15 @@
 package org.mposolda.services;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-import org.mposolda.client.FinnhubHttpClient;
+import org.mposolda.client.StockerHttpClient;
 import org.mposolda.reps.CandlesRep;
 import org.mposolda.reps.CompanyRep;
 import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
 import org.mposolda.reps.QuoteLoaderRep;
-import org.mposolda.util.FileUtil;
 import org.mposolda.util.JsonUtil;
 
 /**
@@ -25,7 +23,7 @@ public class CandlesHistoryManager {
     private final String candlesDir;
     private final CandlesDAO candlesDAO;
 
-    public CandlesHistoryManager(FinnhubHttpClient finhubClient, CurrencyConvertor currencyConvertor) {
+    public CandlesHistoryManager(StockerHttpClient finhubClient, CurrencyConvertor currencyConvertor) {
         this.companiesJsonFileLocation = Services.instance().getConfig().getCompaniesJsonFileLocation();
         this.candlesDir = Services.instance().getConfig().getCandlesDirLocation();
         this.candlesDAO = new CandlesDAO(candlesDir, finhubClient, currencyConvertor);

@@ -2,6 +2,7 @@ package org.mposolda.client;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -16,28 +17,33 @@ import org.mposolda.util.FinhubOutputUtil;
 import org.mposolda.util.WaitUtil;
 
 /**
- * Just implements some "quotes" to not call Finhub API in big speed - like 10 calls in 1 second
+ * Just implements some "quotes" to not call Finhub API in big speed - like 10 calls in 1 second.
+ *
+ * Also it delegates to other REST providers for downloading the data, which are not provided by Finnhub API
  *
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
  */
-public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
+public class StockerHttpClientWrapper implements StockerHttpClient {
 
-    private static final Logger log = Logger.getLogger(FinnhubHttpClientWrapper.class);
+    private static final Logger log = Logger.getLogger(StockerHttpClientWrapper.class);
 
     // Max count of attempts for every HTTP request sent to Finnhub
     public static final int MAX_ATTEMPTS = 10;
 
     // Used for call finnhub
-    private final FinnhubHttpClient delegate;
+    private final StockerHttpClient delegate;
 
     // Used for some endpoints, which are payed for finnhub
-    private final FinnhubHttpClient fixerDelegate;
+    private final StockerHttpClient fixerDelegate;
 
-    private long lastCallTimeMs;
+    private final GoogleClient googleClient;
 
-    public FinnhubHttpClientWrapper(FinnhubHttpClient delegate, FixerHttpClientImpl fixerDelegate) {
+    private final AtomicReference<Long> lastCallTimeMs = new AtomicReference<>(0l);
+
+    public StockerHttpClientWrapper(StockerHttpClient delegate, FixerHttpClientImpl fixerDelegate) {
         this.delegate = delegate;
         this.fixerDelegate = fixerDelegate;
+        this.googleClient = new GoogleClient();
     }
 
     @Override
@@ -84,15 +90,26 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
     }
 
     @Override
+    public double getStockIndexValue(StockIndex stockIndex) {
+        switch (stockIndex) {
+            // Delegate to google
+            case SP500:
+                return waitAndCall(null, (str) -> googleClient.getSp500());
+            default: throw new IllegalArgumentException("Not known index " + stockIndex);
+        }
+    }
+
+    @Override
     public void close() throws IOException {
         delegate.close();
         fixerDelegate.close();
+        googleClient.close();
     }
 
     private <INPUT, OUTPUT> OUTPUT waitAndCall(INPUT input, Function<INPUT, OUTPUT> function) {
         waitUntilCanCall();
         OUTPUT o = function.apply(input);
-        lastCallTimeMs = System.currentTimeMillis();
+        lastCallTimeMs.set(System.currentTimeMillis());
         return o;
     }
 
@@ -146,6 +163,6 @@ public class FinnhubHttpClientWrapper implements FinnhubHttpClient {
 
     private boolean canCall() {
         long currentTime = System.currentTimeMillis();
-        return (currentTime - lastCallTimeMs > WaitUtil.INTERVAL);
+        return (currentTime - lastCallTimeMs.get() > WaitUtil.INTERVAL);
     }
 }
