@@ -11,11 +11,13 @@ public class RateOfReturnsRep {
     // Rate-of-return properly computed per year
     private Double rateOfReturnPerYear;
 
-    // Rate-of-return for S&P 500 index aligned to my deposits TODO:mposolda implement
+    // Rate-of-return for S&P 500 index aligned to my deposits
     private Double rateOfReturnPerYearSP500;
 
+    // Rate-of-return for Berkshire.b stock aligned to my deposits
     private Double rateOfReturnPerYearBerkshire;
 
+    // Rate-of-return for markel stock aligned to my deposits
     private Double rateOfReturnPerYearMarkel;
 
     public Double getRateOfReturnAbsolute() {
