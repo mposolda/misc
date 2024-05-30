@@ -262,6 +262,11 @@ module.factory('CzkCurrency', function($resource) {
     });
 });
 
+module.factory('SystemInfo', function($resource) {
+    return $resource(authUrl + '/rest/system-info', {
+    });
+});
+
 
 module.factory('Current', function(Companies, $route, $rootScope) {
     console.log("Current executed");

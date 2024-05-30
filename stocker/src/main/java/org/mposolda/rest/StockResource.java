@@ -2,7 +2,9 @@ package org.mposolda.rest;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,6 +24,7 @@ import org.mposolda.reps.CurrencyRep;
 import org.mposolda.reps.DatabaseRep;
 import org.mposolda.reps.QuoteLoaderRep;
 import org.mposolda.reps.RateOfReturnsRep;
+import org.mposolda.reps.SystemInfoRep;
 import org.mposolda.reps.rest.CompaniesRep;
 import org.mposolda.reps.rest.CompanyFullRep;
 import org.mposolda.reps.rest.CurrenciesRep;
@@ -280,6 +283,17 @@ public class StockResource {
                 .filter(currencyRep -> "CZK".equals(currencyRep.getTicker()))
                 .findFirst().orElseThrow();
         return czkCurrency;
+    }
+
+    /**
+     * @return various data about system or environment
+     */
+    @GET
+    @NoCache
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("system-info")
+    public SystemInfoRep getSystemInfo() {
+        return Services.instance().getSystemInfo().copy();
     }
 
 }

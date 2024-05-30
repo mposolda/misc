@@ -99,3 +99,11 @@ module.factory('CzkCurrencyLoader', function(Loader, CzkCurrency, $route) {
         }
     });
 });
+
+module.factory('SystemInfoLoader', function(Loader, SystemInfo, $route) {
+    console.log("SystemInfoLoader executed");
+    return Loader.get(SystemInfo, function() {
+        return {
+        }
+    });
+});

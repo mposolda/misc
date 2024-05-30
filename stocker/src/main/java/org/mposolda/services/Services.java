@@ -10,6 +10,7 @@ import org.mposolda.client.FinnhubHttpClientImpl;
 import org.mposolda.client.StockerHttpClientWrapper;
 import org.mposolda.client.FixerHttpClientImpl;
 import org.mposolda.mock.MockFinnhubClient;
+import org.mposolda.reps.SystemInfoRep;
 
 /**
  * @author <a href="mailto:mposolda@redhat.com">Marek Posolda</a>
@@ -37,9 +38,11 @@ public class Services {
     private CandlesHistoryManager candlesManager;
     private RateOfReturnsManager rateOfReturnsManager;
 
+    private final SystemInfoRep systemInfo = new SystemInfoRep();
+
     private StockerConfig config;
 
-    private List<Closeable> closeables = new LinkedList<>();
+    private final List<Closeable> closeables = new LinkedList<>();
 
 
     public void start() {
@@ -121,5 +124,9 @@ public class Services {
 
     public RateOfReturnsManager getRateOfReturnsManager() {
         return rateOfReturnsManager;
+    }
+
+    public SystemInfoRep getSystemInfo() {
+        return systemInfo;
     }
 }

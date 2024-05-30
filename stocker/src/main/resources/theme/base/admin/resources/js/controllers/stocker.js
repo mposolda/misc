@@ -18,8 +18,9 @@ module.controller('HomeCtrl', function(Auth, Current, $location) {
     console.log('HomeCtrl executed');
 });
 
-module.controller('CompaniesCtrl', function($scope, Companies, companies, MyMath, ColorMarker) {
+module.controller('CompaniesCtrl', function($scope, Companies, companies, systemInfo, MyMath, ColorMarker) {
     console.log('CompaniesCtrl executed');
+    $scope.systemInfo = systemInfo;
     $scope.companies = companies;
     $scope.MyMath = MyMath;
     $scope.ColorMarker = ColorMarker;

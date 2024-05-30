@@ -78,9 +78,11 @@ public class StockerServer {
 //                info("Loading resources from " + config.getResourcesHome());
 //            }
 
+            String startTime = new Date().toString();
+            Services.instance().getSystemInfo().setStartTime(startTime);
             logger.info("Started Stocker (http://" + HOST + ":" + port + CONTEXT_ROOT
                     + " in "
-                    + (System.currentTimeMillis() - startTimeMs) + " ms. Current Date: " + new Date() + "\n");
+                    + (System.currentTimeMillis() - startTimeMs) + " ms. Current Date: " + startTime + "\n");
         } catch (RuntimeException e) {
             server.stop();
             throw e;

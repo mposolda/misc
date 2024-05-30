@@ -67,6 +67,9 @@ module.config([ '$routeProvider', function($routeProvider) {
             resolve : {
                 companies : function(CompaniesLoader) {
                     return CompaniesLoader();
+                },
+                systemInfo : function(SystemInfoLoader) {
+                    return SystemInfoLoader();
                 }
             },
             controller : 'CompaniesCtrl'
