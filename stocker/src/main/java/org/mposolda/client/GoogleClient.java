@@ -17,7 +17,7 @@ public class GoogleClient implements Closeable {
 
     protected final Logger log = Logger.getLogger(this.getClass().getName());
 
-    private static final double SP500_FALLBACK = 5297.1;
+    private static final double SP500_FALLBACK = 5459.1;
 
     private final CloseableHttpClient httpClient;
 

@@ -51,9 +51,6 @@ public class Services {
         // Just test if network host/port is available to be able to fail-fast
         new QuickNetworkTestManager().test();
 
-        historyManager = new HistoryManager();
-        historyManager.checkHistoryOfStocksFile();
-
         purchaseManager = new PurchaseManager();
         purchaseManager.start();
         log.info("Created purchase manager");
@@ -80,6 +77,9 @@ public class Services {
         rateOfReturnsManager = new RateOfReturnsManager();
         rateOfReturnsManager.start();
         log.info("Created rateOfReturnsManager to compute rateOfReturns");
+
+        historyManager = new HistoryManager();
+        historyManager.checkHistoryOfStocksFile();
     }
 
     /** Use in unit tests only! */
